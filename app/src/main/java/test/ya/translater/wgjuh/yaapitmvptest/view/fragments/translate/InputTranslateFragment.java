@@ -54,6 +54,7 @@ public class InputTranslateFragment extends BaseFragment implements InputTransla
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.edittext_translate_block,null,false);
         ButterKnife.bind(this,view);
+        imageButton.setOnClickListener(btn -> inputPresenter.onButtonTranslateClick());
         return view;
     }
 
@@ -65,6 +66,11 @@ public class InputTranslateFragment extends BaseFragment implements InputTransla
     @Override
     public void translateText() {
 
+    }
+
+    @Override
+    public String getTargetText() {
+        return editText.getText().toString();
     }
 
 

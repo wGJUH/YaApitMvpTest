@@ -1,5 +1,6 @@
 package test.ya.translater.wgjuh.yaapitmvptest.model;
 
+import retrofit2.Call;
 import rx.Observable;
 
 import test.ya.translater.wgjuh.yaapitmvptest.model.data.LangsDirsModelPojo;
