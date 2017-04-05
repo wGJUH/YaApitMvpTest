@@ -9,15 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.support.design.widget.Snackbar;
+
 import butterknife.BindView;
-import butterknife.BindViews;
 import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.ActivityCallback;
 import test.ya.translater.wgjuh.yaapitmvptest.DATA;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.InputPresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.TranslateFragmentContainerImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
 
 /**
@@ -31,8 +30,7 @@ public class InputTranslateFragment extends BaseFragment implements InputTransla
     ImageButton imageButton;
 
     private ActivityCallback activityCallback;
-    private InputPresenter inputPresenter = new InputPresenter(this);
-
+    private TranslateFragmentContainerImpl translateFragmentContainer;
 
 
 
@@ -48,13 +46,16 @@ public class InputTranslateFragment extends BaseFragment implements InputTransla
                     + " must implement activityCallback");
         }
     }
+    public void setPresenter(BasePresenter presenter){
+        translateFragmentContainer = (TranslateFragmentContainerImpl) presenter;
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.edittext_translate_block,null,false);
         ButterKnife.bind(this,view);
-        imageButton.setOnClickListener(btn -> inputPresenter.onButtonTranslateClick());
+        imageButton.setOnClickListener(btn -> translateFragmentContainer.onButtonTranslateClick());
         return view;
     }
 
@@ -81,6 +82,6 @@ public class InputTranslateFragment extends BaseFragment implements InputTransla
 
     @Override
     protected BasePresenter getPresenter() {
-        return inputPresenter;
+        return translateFragmentContainer;
     }
 }

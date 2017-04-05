@@ -22,6 +22,7 @@ public class ModelImpl implements Model {
 
     private final Observable.Transformer schedulersTransformer;
     private YandexTranslateApiInterface yandexTranslateApiInterface = YandexTranslateApiModule.getYandexTranslateApiInterface();
+    private Observable<TranslatePojo> c;
 
     public ModelImpl(){
         schedulersTransformer = o -> ((Observable)o).subscribeOn(Schedulers.io())
@@ -33,15 +34,21 @@ public class ModelImpl implements Model {
 
     @Override
     public Observable<LangsDirsModelPojo> getLangsDirsForLanguage(String language) {
+
         return yandexTranslateApiInterface.getLangs(DATA.API_KEY,language)
                 .compose(applySchedulers());
     }
 
     @Override
     public Observable<TranslatePojo> getTranslateForLanguage(String target, String language) {
-        return yandexTranslateApiInterface
+        c = yandexTranslateApiInterface
                 .translateForLanguage(DATA.API_KEY,target,language)
                 .compose(applySchedulers());
+        return c;
+    }
+    @Override
+    public Observable<TranslatePojo> getC() {
+        return c;
     }
     @SuppressWarnings("unchecked")
     private <T> Observable.Transformer<T, T> applySchedulers() {

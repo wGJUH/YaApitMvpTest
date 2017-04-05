@@ -14,4 +14,5 @@ public interface Model {
 
     Observable<LangsDirsModelPojo> getLangsDirsForLanguage(String language);
     Observable<TranslatePojo> getTranslateForLanguage(String target, String language);
+    Observable<TranslatePojo> getC();
 }

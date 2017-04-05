@@ -3,7 +3,6 @@ package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.tabs;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -12,12 +11,12 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import butterknife.BindView;
-import butterknife.BindViews;
 import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.TranslatePresenterImpl;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.TranslateFragmentContainerImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.InputTranslateFragment;
 
 /**
  * Created by wGJUH on 04.04.2017.
@@ -30,7 +29,7 @@ public class TranslateFragment extends BaseFragment implements TransalteFragment
 //    @BindView(R.id.list_translateblock)
             FrameLayout translateFrame;
 
-    private TranslatePresenterImpl translatePresenter = new TranslatePresenterImpl(this);
+    private TranslateFragmentContainerImpl translatePresenter = new TranslateFragmentContainerImpl(this, new InputTranslateFragment());
     private FragmentManager fragmentManager;
 
     public TranslateFragment() {

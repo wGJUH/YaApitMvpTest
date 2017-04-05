@@ -21,9 +21,9 @@ public class LangsModelImpl implements Model {
 
     private final Observable.Transformer schedulersTransformer;
     private YandexTranslateApiInterface yandexTranslateApiInterface = YandexTranslateApiModule.getYandexTranslateApiInterface();
-
+    private Observable<TranslatePojo> c;
     public LangsModelImpl(){
-        schedulersTransformer = o -> o.subscribeOn(Schedulers.io())
+        schedulersTransformer = o -> ((Observable)o).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .unsubscribeOn(Schedulers.io())
         ;
@@ -38,10 +38,19 @@ public class LangsModelImpl implements Model {
 
     @Override
     public Observable<TranslatePojo> getTranslateForLanguage(String target, String language) {
+        c = yandexTranslateApiInterface
+                .translateForLanguage(DATA.API_KEY,target,language)
+                .compose(this.<TranslatePojo>applySchedulers());
+
         return yandexTranslateApiInterface
                 .translateForLanguage(DATA.API_KEY,target,language)
                 .compose(this.<TranslatePojo>applySchedulers());
     }
+
+    public Observable<TranslatePojo> getC() {
+        return c;
+    }
+
     @SuppressWarnings("unchecked")
     private <T> Observable.Transformer<T, T> applySchedulers() {
         return (Observable.Transformer<T, T>) schedulersTransformer;
