@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">YaApitMvpTest</string>
     <string name="hello_blank_fragment">hello blank</string>
+    <string name="translate">Переводчик</string>
 </resources>

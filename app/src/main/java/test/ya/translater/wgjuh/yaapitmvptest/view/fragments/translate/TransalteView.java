@@ -1,7 +1,6 @@
 package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate;
 
 import android.support.v4.app.FragmentManager;
-import android.widget.FrameLayout;
 
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 
@@ -9,7 +8,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
  * Created by wGJUH on 04.04.2017.
  */
 
-public interface TransalteView extends View{
+interface TransalteView extends View{
       FragmentManager getTranslateFragmentManager();
      android.view.View getInputFrame();
      android.view.View getTranslateFrame();

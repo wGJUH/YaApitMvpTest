@@ -11,7 +11,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenterForCompositeView;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.TranslateFragmentContainerImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
@@ -24,20 +24,23 @@ import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
 public class TranslateListFragment extends BaseFragment implements TranslateListView {
     @BindView(R.id.textview_common_translate)
-    TextView translate;
+        TextView translate;
 
-    TranslateFragmentContainerImpl translateFragmentContainer;
+    private TranslateFragmentContainerImpl translateFragmentContainer;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.list_translate_block,null,false);
+        View view = inflater.inflate(R.layout.list_translate_block,container,false);
         ButterKnife.bind(this,view);
+        // TODO: 06.04.2017 Необходимо создать Serializable для сохранения состояния фрагмента перевода 
+        if(savedInstanceState != null)
+            translate.setText(savedInstanceState.getString("TEST"));
         return view;
     }
 
     @Override
-    protected BasePresenter getPresenter() {
+    protected BasePresenterForCompositeView getPresenter() {
         return translateFragmentContainer;
     }
 
@@ -47,13 +50,13 @@ public class TranslateListFragment extends BaseFragment implements TranslateList
     }
 
     @Override
-    public void setBookmark() {
-
-    }
-
-    @Override
     public void showError() {
 
+    }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("TEST",translate.getText().toString());
     }
 
     public void setPresenter(Presenter pre){
@@ -75,5 +78,11 @@ public class TranslateListFragment extends BaseFragment implements TranslateList
     public void onStop() {
         super.onStop();
         Log.d(TAG, "onStop: " + getClass().getName());
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        translateFragmentContainer.onUnbindView(getClass().getName());
     }
 }

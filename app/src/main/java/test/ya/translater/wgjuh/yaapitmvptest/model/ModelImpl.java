@@ -21,7 +21,7 @@ import rx.Observable;
 public class ModelImpl implements Model {
 
     private final Observable.Transformer schedulersTransformer;
-    private YandexTranslateApiInterface yandexTranslateApiInterface = YandexTranslateApiModule.getYandexTranslateApiInterface();
+    private final YandexTranslateApiInterface yandexTranslateApiInterface = YandexTranslateApiModule.getYandexTranslateApiInterface();
     private Observable<TranslatePojo> c;
 
     public ModelImpl(){

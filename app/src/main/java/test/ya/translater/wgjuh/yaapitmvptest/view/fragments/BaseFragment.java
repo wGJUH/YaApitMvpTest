@@ -1,12 +1,8 @@
 package test.ya.translater.wgjuh.yaapitmvptest.view.fragments;
 
 import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.*;
 
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
-
-import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenterForCompositeView;
 
 /**
  * Created by wGJUH on 04.04.2017.
@@ -14,7 +10,7 @@ import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
 public abstract class BaseFragment extends Fragment {
 
-    protected abstract BasePresenter getPresenter();
+    protected abstract BasePresenterForCompositeView getPresenter();
 
     @Override
     public void onStop() {

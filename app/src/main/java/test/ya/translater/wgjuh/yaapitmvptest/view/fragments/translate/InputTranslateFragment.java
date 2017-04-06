@@ -12,10 +12,8 @@ import android.widget.ImageButton;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import test.ya.translater.wgjuh.yaapitmvptest.ActivityCallback;
-import test.ya.translater.wgjuh.yaapitmvptest.DATA;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenterForCompositeView;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.TranslateFragmentContainerImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
@@ -32,16 +30,12 @@ public class InputTranslateFragment extends BaseFragment implements InputTransla
     @BindView(R.id.btn_clear_input)
     ImageButton imageButton;
 
-    private ActivityCallback activityCallback;
     private TranslateFragmentContainerImpl translateFragmentContainer;
-
-
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try{
-            activityCallback = (ActivityCallback)context;
         }catch (ClassCastException e){
 
             Log.e(TAG," "+ e.getMessage());
@@ -49,9 +43,9 @@ public class InputTranslateFragment extends BaseFragment implements InputTransla
                     + " must implement activityCallback");
         }
     }
-    public void setPresenter(Presenter presenter){
-        translateFragmentContainer = (TranslateFragmentContainerImpl) presenter;
-    }
+/*    public void setPresenter(Presenter presenter){
+        translateFragmentContainer = PresenterCache.getInstance().getPresenter(TranslateFragmentContainerImpl.class.getName(),);
+    }*/
     @Override
     public void onDetach() {
         super.onDetach();
@@ -73,20 +67,16 @@ public class InputTranslateFragment extends BaseFragment implements InputTransla
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.edittext_translate_block,null,false);
+        View view = inflater.inflate(R.layout.edittext_translate_block,container,false);
         ButterKnife.bind(this,view);
-        imageButton.setOnClickListener(btn -> translateFragmentContainer.onButtonTranslateClick());
+        imageButton.setOnClickListener(btn -> translateFragmentContainer.onButtonClearClick());
+        editText.setOnEditorActionListener((input,action,event) -> translateFragmentContainer.onButtonTranslateClick());
         return view;
     }
 
     @Override
     public void clearText() {
         editText.setText("");
-    }
-
-    @Override
-    public void translateText() {
-
     }
 
     @Override
@@ -101,7 +91,20 @@ public class InputTranslateFragment extends BaseFragment implements InputTransla
     }
 
     @Override
-    protected BasePresenter getPresenter() {
+    public void onDestroyView() {
+        super.onDestroyView();
+        translateFragmentContainer.onUnbindView(getClass().getName());
+    }
+
+    @Override
+    public void setPresenter(Presenter presenter) {
+        translateFragmentContainer = (TranslateFragmentContainerImpl) presenter;
+    }
+
+    @Override
+    protected BasePresenterForCompositeView getPresenter() {
         return translateFragmentContainer;
     }
+
+
 }

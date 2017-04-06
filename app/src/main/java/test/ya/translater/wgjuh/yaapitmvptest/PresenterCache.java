@@ -20,7 +20,7 @@ public class PresenterCache {
         return instance;
     }
 
-    protected final <T extends Presenter> T getpresenter(String tag, PresenterFactory<T> presenterFactory){
+    public final <T extends Presenter> T getPresenter(String tag, PresenterFactory<T> presenterFactory){
 
         if (presenters == null){
             presenters = new SimpleArrayMap<>();
@@ -38,6 +38,4 @@ public class PresenterCache {
         }
         return t;
     }
-
-
 }

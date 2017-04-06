@@ -8,5 +8,4 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 
 public interface TranslateListView extends View {
     void showTranslate(String s);
-    void setBookmark();
 }

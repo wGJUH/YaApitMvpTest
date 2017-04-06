@@ -53,11 +53,6 @@ public class TabActivity extends AppCompatActivity implements ActivityCallback {
     }
 
     @Override
-    public void onButtonTranslate() {
-
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy: " + getClass().getName());
