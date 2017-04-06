@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/input_word_frame"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textview_common_translate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/btn_add_bookmark"
+        android:background="@drawable/input_word_frame"
+        android:text="@string/hello_blank_fragment" />
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/textview_common_translate"
+        android:layout_toLeftOf="@+id/btn_add_bookmark"
+        android:background="@drawable/input_word_frame">
+    </android.support.v7.widget.RecyclerView>
+
+    <ImageButton
+        android:id="@+id/btn_add_bookmark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:background="@color/transparent"
+        android:src="@android:drawable/btn_star" />
+</RelativeLayout>

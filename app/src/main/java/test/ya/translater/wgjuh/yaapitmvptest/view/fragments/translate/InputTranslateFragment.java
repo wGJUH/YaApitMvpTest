@@ -16,8 +16,11 @@ import test.ya.translater.wgjuh.yaapitmvptest.ActivityCallback;
 import test.ya.translater.wgjuh.yaapitmvptest.DATA;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.TranslateFragmentContainerImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
+
+import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
 /**
  * Created by wGJUH on 04.04.2017.
@@ -41,13 +44,30 @@ public class InputTranslateFragment extends BaseFragment implements InputTransla
             activityCallback = (ActivityCallback)context;
         }catch (ClassCastException e){
 
-            Log.e(DATA.TAG," "+ e.getMessage());
+            Log.e(TAG," "+ e.getMessage());
             throw new ClassCastException(context.toString()
                     + " must implement activityCallback");
         }
     }
-    public void setPresenter(BasePresenter presenter){
+    public void setPresenter(Presenter presenter){
         translateFragmentContainer = (TranslateFragmentContainerImpl) presenter;
+    }
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.d(TAG, "onDetach: " + getClass().getName());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: " + getClass().getName());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop: " + getClass().getName());
     }
 
     @Nullable
@@ -77,7 +97,7 @@ public class InputTranslateFragment extends BaseFragment implements InputTransla
 
     @Override
     public void showError() {
-        Log.e(DATA.TAG," showError");
+        Log.e(TAG," showError");
     }
 
     @Override

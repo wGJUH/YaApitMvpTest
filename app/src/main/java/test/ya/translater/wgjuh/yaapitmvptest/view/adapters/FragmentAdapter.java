@@ -8,8 +8,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.tabs.TranslateFragment;
-
 /**
  * Created by wGJUH on 19.03.2017.
  */
