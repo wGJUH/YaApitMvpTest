@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
@@ -76,6 +77,7 @@ public class TranslateListFragment extends BaseFragment implements TranslateList
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy: " + getClass().getName());
+        LeakCanaryApp.getRefWatcher(this.getContext()).watch(this);
     }
 
     @Override

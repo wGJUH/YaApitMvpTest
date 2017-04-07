@@ -13,6 +13,7 @@ import android.widget.FrameLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.TranslateFragmentContainerImpl;
@@ -108,6 +109,7 @@ public class TranslateFragment extends BaseFragment implements TransalteView {
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy: " + getClass().getName());
+        LeakCanaryApp.getRefWatcher(this.getContext()).watch(this);
     }
 
     @Override

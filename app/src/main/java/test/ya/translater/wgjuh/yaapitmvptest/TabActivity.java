@@ -6,6 +6,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.squareup.leakcanary.RefWatcher;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.FragmentAdapter;
@@ -18,6 +20,7 @@ public class TabActivity extends AppCompatActivity implements ActivityCallback {
     ViewPager viewPager;
     @BindView(R.id.bottom_tabLayout_app)
     TabLayout tabLayout;
+    RefWatcher refWatcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +29,7 @@ public class TabActivity extends AppCompatActivity implements ActivityCallback {
         ButterKnife.bind(this);
         ButterKnife.setDebug(true);
         inits();
+
     }
 
     @Override
@@ -57,6 +61,8 @@ public class TabActivity extends AppCompatActivity implements ActivityCallback {
         super.onDestroy();
         Log.d(TAG, "onDestroy: " + getClass().getName());
         Log.d(TAG, "onDestroy: getsupportFM: " + getSupportFragmentManager().getFragments().size());
+        refWatcher = LeakCanaryApp.getRefWatcher(this);
+        refWatcher.watch(this);
     }
 
     @Override

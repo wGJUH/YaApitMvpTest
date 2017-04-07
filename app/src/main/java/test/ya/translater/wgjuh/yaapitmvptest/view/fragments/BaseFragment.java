@@ -13,8 +13,8 @@ public abstract class BaseFragment extends Fragment {
     protected abstract BasePresenter getPresenter();
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onDestroyView() {
+        super.onDestroyView();
         if (getPresenter() != null) {
             getPresenter().onStop();
         }

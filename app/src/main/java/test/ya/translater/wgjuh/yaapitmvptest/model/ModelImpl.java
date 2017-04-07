@@ -27,8 +27,8 @@ public class ModelImpl implements Model {
     private final YandexTranslateApiInterface yandexTranslateApiInterface = YandexTranslateApiModule.getYandexTranslateApiInterface();
     private Observable<TranslatePojo> c;
     // TODO: 07.04.2017 Статичные переменные это плохо 
-    public static PublishSubject<TranslatePojo> translatePojoPublishSubject = PublishSubject.create();
-    public static PublishSubject<Event> eventBus = PublishSubject.create();
+    private static PublishSubject<TranslatePojo> translatePojoPublishSubject = PublishSubject.create();
+    private static PublishSubject<Event> eventBus = PublishSubject.create();
     // TODO: 07.04.2017 Узнать стоит ли так использовать наблюдатели
 
     public ModelImpl() {

@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.InputPresenterImpl;
@@ -31,6 +32,7 @@ public class InputTranslateFragment extends BaseFragment implements InputTransla
     ImageButton imageButton;
 
     private InputPresenterImpl inputPresenter;
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -54,6 +56,7 @@ public class InputTranslateFragment extends BaseFragment implements InputTransla
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy: " + getClass().getName());
+         LeakCanaryApp.getRefWatcher(this.getContext()).watch(this);
     }
 
     @Override
@@ -65,10 +68,10 @@ public class InputTranslateFragment extends BaseFragment implements InputTransla
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.edittext_translate_block,container,false);
-        ButterKnife.bind(this,view);
+        View view = inflater.inflate(R.layout.edittext_translate_block, container, false);
+        ButterKnife.bind(this, view);
         imageButton.setOnClickListener(btn -> inputPresenter.clearInput());
-        editText.setOnEditorActionListener((input,action,event) -> inputPresenter.onButtonTranslateClick());
+        editText.setOnEditorActionListener((input, action, event) -> inputPresenter.onButtonTranslateClick());
         return view;
     }
 
@@ -85,7 +88,7 @@ public class InputTranslateFragment extends BaseFragment implements InputTransla
 
     @Override
     public void showError() {
-        Log.e(TAG," showError");
+        Log.e(TAG, " showError");
     }
 
     @Override
