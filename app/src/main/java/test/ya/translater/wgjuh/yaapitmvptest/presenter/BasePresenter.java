@@ -17,37 +17,32 @@ import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
  * Created by wGJUH on 04.04.2017.
  */
 
-public abstract class BasePresenterForCompositeView implements Presenter {
+public abstract class BasePresenter implements Presenter {
 
-    private final SimpleArrayMap<String,View> views = new SimpleArrayMap<>();
     private final CompositeSubscription compositeSubscription = new CompositeSubscription();
     final Model model = new ModelImpl();
-
+    public View view;
 
 
     void addSubscription(Subscription subscription) {
         compositeSubscription.add(subscription);
     }
+
     @Override
-    public void onUnbindView(String tag) {
-        Log.d(TAG, "onUnbindView: " + tag);
-        views.remove(tag);
-        Log.d(TAG, "onUnBindView: " + views.toString() + " size = " + views.size());
+    public void onUnbindView() {
+        Log.d(TAG, "onUnbindView: " );
+        view = null;
     }
 
     @Override
-    public  void onBindView(View view, String tag) {
-        Log.d(TAG, "onBindView: "+ tag);
-        views.put(tag,view);
-        Log.d(TAG, "onBindView: " + views.toString() + " size = " + views.size());
-    }
-
-    View getViewByTag(String tag){
-       return views.get(tag);
+    public  void onBindView(View view) {
+        Log.d(TAG, "onBindView: "+ view.getClass().getName());
+        this.view = view;
     }
 
     @Override
     public void onStop() {
         compositeSubscription.clear();
+        onUnbindView();
     }
 }

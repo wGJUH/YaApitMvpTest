@@ -4,7 +4,9 @@ package test.ya.translater.wgjuh.yaapitmvptest.model;
 
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subjects.PublishSubject;
 import test.ya.translater.wgjuh.yaapitmvptest.DATA;
+import test.ya.translater.wgjuh.yaapitmvptest.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.data.LangsDirsModelPojo;
 import test.ya.translater.wgjuh.yaapitmvptest.model.data.TranslatePojo;
 import test.ya.translater.wgjuh.yaapitmvptest.model.network.YandexTranslateApiInterface;
@@ -50,6 +52,7 @@ public class LangsModelImpl implements Model {
     public Observable<TranslatePojo> getC() {
         return c;
     }
+
 
     @SuppressWarnings("unchecked")
     private <T> Observable.Transformer<T, T> applySchedulers() {

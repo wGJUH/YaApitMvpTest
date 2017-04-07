@@ -8,6 +8,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:name=".LeakCanaryApp"
         android:theme="@style/AppTheme.NoActionBar">
         <activity android:name=".TabActivity"
             android:windowSoftInputMode="adjustPan|adjustResize">

@@ -9,7 +9,7 @@ import android.util.Log;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.FragmentAdapter;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.TranslateFragment;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.tabs.TranslateFragment;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
@@ -33,7 +33,7 @@ public class TabActivity extends AppCompatActivity implements ActivityCallback {
         super.onStart();
         Log.d(TAG, "onStart: " + getClass().getName());
         if(getSupportFragmentManager().getFragments() != null)
-        Log.d(TAG, "onStart: getsupportFM: " + getSupportFragmentManager().getFragments().size());
+            Log.d(TAG, "onStart: getsupportFM: " + getSupportFragmentManager().getFragments().size());
     }
 
     @Override

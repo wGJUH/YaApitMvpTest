@@ -11,9 +11,10 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenterForCompositeView;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.TranslateFragmentContainerImpl;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.TranslatePresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
@@ -26,7 +27,14 @@ public class TranslateListFragment extends BaseFragment implements TranslateList
     @BindView(R.id.textview_common_translate)
         TextView translate;
 
-    private TranslateFragmentContainerImpl translateFragmentContainer;
+    private TranslatePresenter translatePresenter;
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        translatePresenter = new TranslatePresenter();
+        translatePresenter.onBindView(this);
+    }
 
     @Nullable
     @Override
@@ -40,8 +48,8 @@ public class TranslateListFragment extends BaseFragment implements TranslateList
     }
 
     @Override
-    protected BasePresenterForCompositeView getPresenter() {
-        return translateFragmentContainer;
+    protected BasePresenter getPresenter() {
+        return translatePresenter;
     }
 
     @Override
@@ -56,11 +64,7 @@ public class TranslateListFragment extends BaseFragment implements TranslateList
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString("TEST",translate.getText().toString());
-    }
-
-    public void setPresenter(Presenter pre){
-        translateFragmentContainer = (TranslateFragmentContainerImpl) pre;
+            outState.putString("TEST",translate.getText().toString());
     }
 
     @Override
@@ -83,6 +87,5 @@ public class TranslateListFragment extends BaseFragment implements TranslateList
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        translateFragmentContainer.onUnbindView(getClass().getName());
     }
 }

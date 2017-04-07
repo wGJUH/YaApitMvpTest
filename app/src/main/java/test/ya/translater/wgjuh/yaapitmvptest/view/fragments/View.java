@@ -8,5 +8,4 @@ import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
 
 public interface View {
     void showError();
-    void setPresenter(Presenter presenter);
 }

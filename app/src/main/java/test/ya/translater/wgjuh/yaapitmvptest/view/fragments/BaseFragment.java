@@ -2,7 +2,7 @@ package test.ya.translater.wgjuh.yaapitmvptest.view.fragments;
 
 import android.support.v4.app.Fragment;
 
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenterForCompositeView;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
 
 /**
  * Created by wGJUH on 04.04.2017.
@@ -10,7 +10,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenterForComposit
 
 public abstract class BaseFragment extends Fragment {
 
-    protected abstract BasePresenterForCompositeView getPresenter();
+    protected abstract BasePresenter getPresenter();
 
     @Override
     public void onStop() {

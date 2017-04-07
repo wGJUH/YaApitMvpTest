@@ -2,6 +2,8 @@ package test.ya.translater.wgjuh.yaapitmvptest.model;
 
 import rx.Observable;
 
+import rx.subjects.PublishSubject;
+import test.ya.translater.wgjuh.yaapitmvptest.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.data.LangsDirsModelPojo;
 import test.ya.translater.wgjuh.yaapitmvptest.model.data.TranslatePojo;
 

@@ -13,8 +13,8 @@ import android.widget.ImageButton;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenterForCompositeView;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.InputPresenterImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.TranslateFragmentContainerImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
 
@@ -30,22 +30,20 @@ public class InputTranslateFragment extends BaseFragment implements InputTransla
     @BindView(R.id.btn_clear_input)
     ImageButton imageButton;
 
-    private TranslateFragmentContainerImpl translateFragmentContainer;
+    private InputPresenterImpl inputPresenter;
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        inputPresenter = new InputPresenterImpl();
+        inputPresenter.onBindView(this);
+    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        try{
-        }catch (ClassCastException e){
-
-            Log.e(TAG," "+ e.getMessage());
-            throw new ClassCastException(context.toString()
-                    + " must implement activityCallback");
-        }
     }
-/*    public void setPresenter(Presenter presenter){
-        translateFragmentContainer = PresenterCache.getInstance().getPresenter(TranslateFragmentContainerImpl.class.getName(),);
-    }*/
+
     @Override
     public void onDetach() {
         super.onDetach();
@@ -69,8 +67,8 @@ public class InputTranslateFragment extends BaseFragment implements InputTransla
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.edittext_translate_block,container,false);
         ButterKnife.bind(this,view);
-        imageButton.setOnClickListener(btn -> translateFragmentContainer.onButtonClearClick());
-        editText.setOnEditorActionListener((input,action,event) -> translateFragmentContainer.onButtonTranslateClick());
+        imageButton.setOnClickListener(btn -> inputPresenter.clearInput());
+        editText.setOnEditorActionListener((input,action,event) -> inputPresenter.onButtonTranslateClick());
         return view;
     }
 
@@ -93,17 +91,11 @@ public class InputTranslateFragment extends BaseFragment implements InputTransla
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        translateFragmentContainer.onUnbindView(getClass().getName());
     }
 
     @Override
-    public void setPresenter(Presenter presenter) {
-        translateFragmentContainer = (TranslateFragmentContainerImpl) presenter;
-    }
-
-    @Override
-    protected BasePresenterForCompositeView getPresenter() {
-        return translateFragmentContainer;
+    protected BasePresenter getPresenter() {
+        return inputPresenter;
     }
 
 

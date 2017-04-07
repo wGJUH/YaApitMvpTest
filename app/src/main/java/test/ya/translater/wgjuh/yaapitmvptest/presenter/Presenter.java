@@ -9,6 +9,6 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 
 public interface Presenter {
     void onStop();
-    void onBindView(View view, String tag);
-    void onUnbindView(String tag);
+    void onBindView(View view);
+    void onUnbindView();
 }

@@ -1,4 +1,4 @@
-package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate;
+package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.tabs;
 
 import android.support.v4.app.FragmentManager;
 

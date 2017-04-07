@@ -1,4 +1,4 @@
-package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate;
+package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.tabs;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,13 +13,12 @@ import android.widget.FrameLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import test.ya.translater.wgjuh.yaapitmvptest.PresenterCache;
-import test.ya.translater.wgjuh.yaapitmvptest.PresenterFactory;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenterForCompositeView;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.TranslateFragmentContainerImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.InputTranslateFragment;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.TranslateListFragment;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
@@ -47,9 +46,6 @@ public class TranslateFragment extends BaseFragment implements TransalteView {
         fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
     }
 
-    public TranslateFragment newInstance() {
-        return new TranslateFragment();
-    }
 
     @Nullable
     @Override
@@ -63,28 +59,22 @@ public class TranslateFragment extends BaseFragment implements TransalteView {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        translatePresenter.onBindView(this, getClass().getName());
+        translatePresenter = new TranslateFragmentContainerImpl();
+        translatePresenter.onBindView(this);
         if (savedInstanceState == null)
             translatePresenter.addFragments(new InputTranslateFragment(), new TranslateListFragment());
-        else
-            translatePresenter.bindViewsToPresenter(((test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View) getTranslateFragmentManager().findFragmentByTag(InputTranslateFragment.class.getName())), ((test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View) getTranslateFragmentManager().findFragmentByTag(TranslateListFragment.class.getName())));
     }
 
 
     @Override
-    protected BasePresenterForCompositeView getPresenter() {
-        return null;
+    protected BasePresenter getPresenter() {
+        return translatePresenter;
     }
 
 
     @Override
     public void showError() {
 
-    }
-
-    @Override
-    public void setPresenter(Presenter presenter) {
-        translatePresenter = (TranslateFragmentContainerImpl) presenter;
     }
 
     @Override
@@ -111,7 +101,7 @@ public class TranslateFragment extends BaseFragment implements TransalteView {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        translatePresenter.onUnbindView(getClass().getName());
+        translatePresenter = null;
     }
 
     @Override
@@ -123,7 +113,7 @@ public class TranslateFragment extends BaseFragment implements TransalteView {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setPresenter(PresenterCache.getInstance().getPresenter(TranslateFragmentContainerImpl.class.getName(), presenterFactory));
+        Log.d(TAG, "onCreate: " + getClass().getName());
     }
 
     @Override
@@ -131,8 +121,4 @@ public class TranslateFragment extends BaseFragment implements TransalteView {
         super.onStop();
         Log.d(TAG, "onStop: " + getClass().getName());
     }
-
-    // TODO: 06.04.2017 дописать presenter factory срочно !!
-    private final PresenterFactory<TranslateFragmentContainerImpl> presenterFactory =
-            TranslateFragmentContainerImpl::new;
 }
