@@ -14,6 +14,7 @@
         android:text="@string/hello_blank_fragment" />
 
     <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_translate"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/textview_common_translate"

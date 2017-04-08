@@ -11,6 +11,9 @@ import test.ya.translater.wgjuh.yaapitmvptest.DATA;
 import test.ya.translater.wgjuh.yaapitmvptest.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.data.LangsDirsModelPojo;
 import test.ya.translater.wgjuh.yaapitmvptest.model.data.TranslatePojo;
+import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
+import test.ya.translater.wgjuh.yaapitmvptest.model.network.YandexDictionaryApiInterface;
+import test.ya.translater.wgjuh.yaapitmvptest.model.network.YandexDictionaryApiModule;
 import test.ya.translater.wgjuh.yaapitmvptest.model.network.YandexTranslateApiInterface;
 import test.ya.translater.wgjuh.yaapitmvptest.model.network.YandexTranslateApiModule;
 
@@ -25,9 +28,9 @@ public class ModelImpl implements Model {
 
     private final Observable.Transformer schedulersTransformer;
     private final YandexTranslateApiInterface yandexTranslateApiInterface = YandexTranslateApiModule.getYandexTranslateApiInterface();
+    private final YandexDictionaryApiInterface yandexDictionaryApiInterface = YandexDictionaryApiModule.getYandexDictionaryApiInterface();
     private Observable<TranslatePojo> c;
     // TODO: 07.04.2017 Статичные переменные это плохо 
-    private static PublishSubject<TranslatePojo> translatePojoPublishSubject = PublishSubject.create();
     private static PublishSubject<Event> eventBus = PublishSubject.create();
     // TODO: 07.04.2017 Узнать стоит ли так использовать наблюдатели
 
@@ -46,17 +49,20 @@ public class ModelImpl implements Model {
 
     @Override
     public Observable<TranslatePojo> getTranslateForLanguage(String target, String language) {
-        c = yandexTranslateApiInterface
+        return yandexTranslateApiInterface
                 .translateForLanguage(DATA.API_KEY, target, language)
                 //.delay(10000, TimeUnit.MILLISECONDS)
                 .compose(applySchedulers());
-        return c;
     }
 
     @Override
-    public Observable<TranslatePojo> getC() {
-        return c;
+    public Observable<DictDTO> getDicTionaryTranslateForLanguage(String target, String language) {
+        return yandexDictionaryApiInterface
+                .translateForLanguage(DATA.DICT_API_KEY, language, target)
+                //.delay(10000, TimeUnit.MILLISECONDS)
+                .compose(applySchedulers());
     }
+
 
     @SuppressWarnings("unchecked")
     private <T> Observable.Transformer<T, T> applySchedulers() {
@@ -67,7 +73,4 @@ public class ModelImpl implements Model {
         return eventBus;
     }
 
-    public static PublishSubject<TranslatePojo> getTranslatePojoPublishSubject() {
-        return translatePojoPublishSubject;
-    }
 }

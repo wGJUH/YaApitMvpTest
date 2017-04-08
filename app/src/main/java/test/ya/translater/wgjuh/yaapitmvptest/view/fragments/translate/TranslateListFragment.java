@@ -2,6 +2,7 @@ package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +28,8 @@ import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 public class TranslateListFragment extends BaseFragment implements TranslateListView {
     @BindView(R.id.textview_common_translate)
         TextView translate;
+    @BindView(R.id.recycler_translate)
+    RecyclerView recyclerView;
 
     private TranslatePresenter translatePresenter;
 

@@ -11,7 +11,6 @@ import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
 public abstract class BaseFragment extends Fragment {
 
     protected abstract BasePresenter getPresenter();
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();

@@ -102,6 +102,7 @@ public class TranslateFragment extends BaseFragment implements TransalteView {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        Log.d(TAG, "onDestroyView: " + getClass().getName());
         translatePresenter = null;
     }
 

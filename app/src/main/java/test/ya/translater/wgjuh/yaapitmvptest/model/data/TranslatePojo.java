@@ -1,6 +1,7 @@
 
 package test.ya.translater.wgjuh.yaapitmvptest.model.data;
 
+import java.util.ArrayList;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -33,12 +34,16 @@ public class TranslatePojo {
         this.lang = lang;
     }
 
-    public List<String> getText() {
-        return text;
+    public String getText() {
+        if(this.text==null)
+            return null;
+        return text.get(0);
     }
 
-    public void setText(List<String> text) {
-        this.text = text;
+    public void setText(String text) {
+        if(this.text==null)
+            this.text = new ArrayList<>();
+        this.text.add(text);
     }
 
 }
