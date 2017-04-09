@@ -26,7 +26,7 @@ public interface IModel {
 
     void updateLanguages();
 
-    void saveToDB(DictDTO dictDTO);
+    void saveToDBAndNotify(DictDTO dictDTO);
 
     String getCurrentLang();
 }

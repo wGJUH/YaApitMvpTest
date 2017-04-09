@@ -12,6 +12,7 @@ import rx.schedulers.Schedulers;
 import test.ya.translater.wgjuh.yaapitmvptest.DATA;
 import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.model.db.DbBackEnd;
+import test.ya.translater.wgjuh.yaapitmvptest.model.db.DbOpenHelper;
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.LangsDirsModelPojo;
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslatePojo;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
@@ -28,7 +29,7 @@ import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 /**
  * Created by wGJUH on 04.04.2017.
  */
-// TODO: 09.04.2017 модель можно реализовать как синглтон 
+// TODO: 09.04.2017 модель можно реализовать как синглтон
 public class ModelImpl implements IModel {
 
     private static ModelImpl model;
@@ -96,19 +97,29 @@ public class ModelImpl implements IModel {
      */
     @Override
     public void updateLanguages() {
+        DbBackEnd dbBackEnd = new DbBackEnd(context);
         yandexTranslateApiInterface
                 .getLangs(DATA.API_KEY, Locale.getDefault().getLanguage())
-                .compose(applySchedulers())
-                .subscribe(langsDirsModelPojo -> {
-                            new DbBackEnd(context).upateLangs(langsDirsModelPojo);
-                        },
-                        Throwable::printStackTrace);
+                .flatMap(langsDirsModelPojo -> {
+                    dbBackEnd.upateLangs(langsDirsModelPojo);
+                    return null;
+                }).compose(applySchedulers()).subscribe();
     }
 
     @Override
-    public void saveToDB(DictDTO dictDTO) {
+    public void saveToDBAndNotify(DictDTO dictDTO) {
         DbBackEnd dbBackEnd = new DbBackEnd(context);
-        dbBackEnd.insertHistoryTranslate(dictDTO);
+        Observable.just(dbBackEnd.insertHistoryTranslate(dictDTO))
+                .compose(applySchedulers())
+                .subscribe(t -> EventBus
+                        .getInstance()
+                        .getEventBus()
+                        .onNext(EventBus
+                                .getInstance()
+                                .createEvent(Event
+                                        .EventType
+                                        .WORD_TRANSLATED, dictDTO)));
+
     }
 
     @Override

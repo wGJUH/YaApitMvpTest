@@ -69,14 +69,11 @@ public class InputPresenterImpl extends BasePresenter<InputTranslateView> {
                         dictDTO.setCommonTranslate("BAD");
                         eventBus.getEventBus().onNext(eventBus.createEvent(Event.EventType.WORD_TRANSLATED, dictDTO));
                     }
-
                     @Override
                     public void onNext(DictDTO dictDTO) {
-                        IModel.saveToDB(dictDTO);
-                        eventBus.getEventBus().onNext(eventBus.createEvent(Event.EventType.WORD_TRANSLATED, dictDTO));
+                        IModel.saveToDBAndNotify(dictDTO);
                     }
                 });
-
         addSubscription(subscription);
     }
 
