@@ -26,8 +26,8 @@ public class TranslatePresenter extends BasePresenter {
                     clearTranslate();
                     break;
                 case WORD_TRANSLATED:
-                    updateTranslateView(((DictDTO)event.getEventObject()).getCommonTranslate());
-                    Log.d(TAG, "WORD_TRANSLATED: " + ((DictDTO)event.getEventObject()).toString());
+                    updateTranslateView(((DictDTO)event.getEventObject()[0]).getCommonTranslate());
+                   // Log.d(TAG, "WORD_TRANSLATED: " + ((DictDTO)event.getEventObject()[0]).toString());
 
                 default:
                     break;

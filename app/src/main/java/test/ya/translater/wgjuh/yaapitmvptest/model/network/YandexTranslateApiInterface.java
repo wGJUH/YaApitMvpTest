@@ -4,8 +4,8 @@ import rx.Observable;
 
 import retrofit2.http.GET;
 import retrofit2.http.Query;
-import test.ya.translater.wgjuh.yaapitmvptest.model.data.LangsDirsModelPojo;
-import test.ya.translater.wgjuh.yaapitmvptest.model.data.TranslatePojo;
+import test.ya.translater.wgjuh.yaapitmvptest.model.translate.LangsDirsModelPojo;
+import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslatePojo;
 
 /**
  * Created by wGJUH on 04.04.2017.

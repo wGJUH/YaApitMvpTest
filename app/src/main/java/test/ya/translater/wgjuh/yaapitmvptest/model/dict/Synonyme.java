@@ -28,16 +28,8 @@ public class Synonyme {
         return pos;
     }
 
-    public void setPos(String pos) {
-        this.pos = pos;
-    }
-
     public String getGen() {
         return gen;
-    }
-
-    public void setGen(String gen) {
-        this.gen = gen;
     }
 
 }

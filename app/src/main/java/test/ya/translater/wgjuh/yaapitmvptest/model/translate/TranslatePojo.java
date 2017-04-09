@@ -1,5 +1,5 @@
 
-package test.ya.translater.wgjuh.yaapitmvptest.model.data;
+package test.ya.translater.wgjuh.yaapitmvptest.model.translate;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,5 +1,5 @@
 
-package test.ya.translater.wgjuh.yaapitmvptest.model.data;
+package test.ya.translater.wgjuh.yaapitmvptest.model.translate;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

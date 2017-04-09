@@ -1,18 +1,14 @@
 package test.ya.translater.wgjuh.yaapitmvptest.presenter;
 
+import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 
-import rx.Observer;
-import rx.Subscription;
-import rx.subjects.PublishSubject;
-import test.ya.translater.wgjuh.yaapitmvptest.DATA;
-import test.ya.translater.wgjuh.yaapitmvptest.model.data.TranslatePojo;
+import test.ya.translater.wgjuh.yaapitmvptest.view.LanguageActivity;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.InputTranslateFragment;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.InputTranslateView;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.tabs.TranslateFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.TranslateListFragment;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.TranslateListView;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
@@ -43,6 +39,10 @@ public class TranslateFragmentContainerImpl extends BasePresenter {
         this.view = view;
     }
 
+
+    public void onChooseFromLanguage(){
+        ((Fragment)view).startActivity(new Intent(((Fragment) view).getContext(), LanguageActivity.class));
+    }
 
 
     @Override

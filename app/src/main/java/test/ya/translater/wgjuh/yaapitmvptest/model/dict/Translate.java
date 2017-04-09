@@ -29,9 +29,6 @@ public class Translate {
     @SerializedName("ex")
     @Expose
     private List<Example> example = null;
-    @SerializedName("asp")
-    @Expose
-    private String asp;
 
     public String getText() {
         return text;
@@ -45,49 +42,22 @@ public class Translate {
         return pos;
     }
 
-    public void setPos(String pos) {
-        this.pos = pos;
-    }
-
     public String getGen() {
         return gen;
-    }
-
-    public void setGen(String gen) {
-        this.gen = gen;
     }
 
     public List<Synonyme> getSynonyme() {
         return synonyme;
     }
 
-    public void setSynonyme(List<Synonyme> synonyme) {
-        this.synonyme = synonyme;
-    }
-
     public List<Mean> getMean() {
         return mean;
-    }
-
-    public void setMean(List<Mean> mean) {
-        this.mean = mean;
     }
 
     public List<Example> getExample() {
         return example;
     }
 
-    public void setExample(List<Example> example) {
-        this.example = example;
-    }
-
-    public String getAsp() {
-        return asp;
-    }
-
-    public void setAsp(String asp) {
-        this.asp = asp;
-    }
 
     @Override
     public String toString() {

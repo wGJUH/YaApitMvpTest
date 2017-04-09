@@ -1,4 +1,6 @@
-package test.ya.translater.wgjuh.yaapitmvptest;
+package test.ya.translater.wgjuh.yaapitmvptest.model;
+
+import java.util.List;
 
 /**
  * Created by wGJUH on 07.04.2017.
@@ -7,15 +9,16 @@ package test.ya.translater.wgjuh.yaapitmvptest;
 public class Event<T> {
     public enum EventType {
         BTN_CLEAR_CLICKED,
-        WORD_TRANSLATED
+        WORD_TRANSLATED,
+        ON_LANGUAGE_CHNAGED
     }
-    T content;
+    T[] content;
     EventType eventType;
-    public Event(EventType eventType, T content){
+    public Event(EventType eventType, T...content){
         this.eventType = eventType;
         this.content = content;
     }
-    public T getEventObject(){
+    public T[] getEventObject(){
         return content;
     }
     public EventType getEventType(){

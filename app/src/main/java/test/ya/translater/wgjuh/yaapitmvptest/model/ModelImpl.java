@@ -1,16 +1,24 @@
 package test.ya.translater.wgjuh.yaapitmvptest.model;
 
 
-import java.util.concurrent.TimeUnit;
+import android.content.Context;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import org.json.JSONObject;
 
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.converter.gson.GsonConverterFactory;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import test.ya.translater.wgjuh.yaapitmvptest.DATA;
-import test.ya.translater.wgjuh.yaapitmvptest.Event;
-import test.ya.translater.wgjuh.yaapitmvptest.model.data.LangsDirsModelPojo;
-import test.ya.translater.wgjuh.yaapitmvptest.model.data.TranslatePojo;
+import test.ya.translater.wgjuh.yaapitmvptest.model.db.DbBackEnd;
+import test.ya.translater.wgjuh.yaapitmvptest.model.translate.LangsDirsModelPojo;
+import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslatePojo;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.model.network.YandexDictionaryApiInterface;
 import test.ya.translater.wgjuh.yaapitmvptest.model.network.YandexDictionaryApiModule;
@@ -51,7 +59,6 @@ public class ModelImpl implements Model {
     public Observable<TranslatePojo> getTranslateForLanguage(String target, String language) {
         return yandexTranslateApiInterface
                 .translateForLanguage(DATA.API_KEY, target, language)
-                //.delay(10000, TimeUnit.MILLISECONDS)
                 .compose(applySchedulers());
     }
 
@@ -59,8 +66,14 @@ public class ModelImpl implements Model {
     public Observable<DictDTO> getDicTionaryTranslateForLanguage(String target, String language) {
         return yandexDictionaryApiInterface
                 .translateForLanguage(DATA.DICT_API_KEY, language, target)
-                //.delay(10000, TimeUnit.MILLISECONDS)
                 .compose(applySchedulers());
+    }
+
+
+    public void saveToDB(DictDTO dictDTO, Context context){
+        new Gson().toJson(dictDTO);
+        DbBackEnd dbBackEnd = new DbBackEnd(context);
+        dbBackEnd.insertHistoryTranslate(dictDTO);
     }
 
 
@@ -68,6 +81,8 @@ public class ModelImpl implements Model {
     private <T> Observable.Transformer<T, T> applySchedulers() {
         return (Observable.Transformer<T, T>) schedulersTransformer;
     }
+
+
 
     public static PublishSubject<Event> getEventBus() {
         return eventBus;

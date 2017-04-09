@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,7 +34,10 @@ public class TranslateFragment extends BaseFragment implements TransalteView {
     FrameLayout inputFrame;
     @BindView(R.id.list_translateblock)
     FrameLayout translateFrame;
-
+    @BindView(R.id.from_language)
+    TextView fromLanguageTextView;
+    @BindView(R.id.to_language)
+    TextView toLanguageTextView;
     private TranslateFragmentContainerImpl translatePresenter;
     private FragmentManager fragmentManager;
 
@@ -53,6 +57,7 @@ public class TranslateFragment extends BaseFragment implements TransalteView {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.translate_page_fragment, container, false);
         ButterKnife.bind(this, view);
+        fromLanguageTextView.setOnClickListener(text -> translatePresenter.onChooseFromLanguage());
         return view;
     }
 
