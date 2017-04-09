@@ -20,6 +20,7 @@ public class TabActivity extends AppCompatActivity implements ActivityCallback {
     ViewPager viewPager;
     @BindView(R.id.bottom_tabLayout_app)
     TabLayout tabLayout;
+
     RefWatcher refWatcher;
 
     @Override
@@ -29,29 +30,30 @@ public class TabActivity extends AppCompatActivity implements ActivityCallback {
         ButterKnife.bind(this);
         ButterKnife.setDebug(true);
         inits();
-
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart: " + getClass().getName());
-        if(getSupportFragmentManager().getFragments() != null)
+        if (getSupportFragmentManager().getFragments() != null) {
             Log.d(TAG, "onStart: getsupportFM: " + getSupportFragmentManager().getFragments().size());
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume: " + getClass().getName());
-        if(getSupportFragmentManager().getFragments() != null)
-        Log.d(TAG, "onResume: getsupportFM: " + getSupportFragmentManager().getFragments().size());
+        if (getSupportFragmentManager().getFragments() != null) {
+            Log.d(TAG, "onResume: getsupportFM: " + getSupportFragmentManager().getFragments().size());
+        }
 
     }
 
     private void inits() {
         FragmentAdapter fragmentPagerAdapter = new FragmentAdapter(getSupportFragmentManager());
-        fragmentPagerAdapter.addFragment(new TranslateFragment(),TranslateFragment.class.getName());
+        fragmentPagerAdapter.addFragment(new TranslateFragment(), TranslateFragment.class.getName());
         tabLayout.setupWithViewPager(viewPager);
         viewPager.setAdapter(fragmentPagerAdapter);
     }

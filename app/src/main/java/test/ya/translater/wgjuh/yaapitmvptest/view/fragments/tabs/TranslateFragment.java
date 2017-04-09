@@ -16,6 +16,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
+import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
+import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
+import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.TranslateFragmentContainerImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
@@ -65,7 +68,7 @@ public class TranslateFragment extends BaseFragment implements TransalteView {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        translatePresenter = new TranslateFragmentContainerImpl();
+        translatePresenter = new TranslateFragmentContainerImpl(ModelImpl.getInstance(), EventBus.getInstance());
         translatePresenter.onBindView(this);
         if (savedInstanceState == null)
             translatePresenter.addFragments(new InputTranslateFragment(), new TranslateListFragment());

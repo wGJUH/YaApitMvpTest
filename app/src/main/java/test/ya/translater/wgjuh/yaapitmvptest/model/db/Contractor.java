@@ -25,5 +25,6 @@ public interface Contractor {
         String TARGET = "target";
         String LANGS = "langs";
         String JSON = "json";
+        String DATE = "date";
     }
 }

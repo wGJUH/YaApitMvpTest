@@ -1,34 +1,40 @@
 package test.ya.translater.wgjuh.yaapitmvptest.presenter;
 
 
-import android.util.Log;
 
-import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
+import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
+import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.TranslateListView;
-
-import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
 
 /**
  * Created by wGJUH on 07.04.2017.
  */
 
-public class TranslatePresenter extends BasePresenter {
+public class TranslatePresenter extends BasePresenter<TranslateListView> {
+
+    private final IModel iModel;
+    private final IEventBus eventBus;
+
+    public TranslatePresenter(IModel iModel, IEventBus eventBus) {
+
+        this.iModel = iModel;
+        this.eventBus = eventBus;
+    }
 
     @Override
     public void onBindView(View view) {
         super.onBindView(view);
-        addSubscription(ModelImpl.getEventBus().subscribe(event -> {
-            switch (event.getEventType()){
+        addSubscription(eventBus.getEventBus().subscribe(event -> {
+            switch (event.eventType){
                 case BTN_CLEAR_CLICKED:
                     clearTranslate();
                     break;
                 case WORD_TRANSLATED:
-                    updateTranslateView(((DictDTO)event.getEventObject()[0]).getCommonTranslate());
-                   // Log.d(TAG, "WORD_TRANSLATED: " + ((DictDTO)event.getEventObject()[0]).toString());
-
+                    // TODO: 09.04.2017  как тут абстрагироваться от конкретной реализации ?
+                    updateTranslateView(((DictDTO)event.content[0]).getCommonTranslate());
                 default:
                     break;
             }
@@ -40,7 +46,7 @@ public class TranslatePresenter extends BasePresenter {
      * @param s - строка которую необходимо вывести
      */
     private void updateTranslateView(String s) {
-        ((TranslateListView) view).showTranslate(s);
+        view.showTranslate(s);
     }
 
 
@@ -48,6 +54,6 @@ public class TranslatePresenter extends BasePresenter {
      * Метода для очистки поля переведенного текста
      */
     private  void clearTranslate(){
-        ((TranslateListView) view).showTranslate("");
+        view.showTranslate("");
     }
 }

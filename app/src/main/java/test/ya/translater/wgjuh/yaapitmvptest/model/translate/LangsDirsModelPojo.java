@@ -2,6 +2,8 @@
 package test.ya.translater.wgjuh.yaapitmvptest.model.translate;
 
 import java.util.List;
+import java.util.Map;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -12,22 +14,13 @@ public class LangsDirsModelPojo {
     private List<String> dirs = null;
     @SerializedName("langs")
     @Expose
-    private LangsPojo langs;
+    private Map<String, String> langs;
 
     public List<String> getDirs() {
         return dirs;
     }
 
-    public void setDirs(List<String> dirs) {
-        this.dirs = dirs;
-    }
-
-    public LangsPojo getLangs() {
+    public Map<String, String> getLangs() {
         return langs;
     }
-
-    public void setLangs(LangsPojo langs) {
-        this.langs = langs;
-    }
-
 }

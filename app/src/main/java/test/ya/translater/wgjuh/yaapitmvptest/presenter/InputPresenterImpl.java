@@ -1,22 +1,17 @@
 package test.ya.translater.wgjuh.yaapitmvptest.presenter;
 
 
-import android.support.v4.app.Fragment;
 import android.util.Log;
-
-import com.google.gson.Gson;
 
 import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
-import rx.functions.Func1;
-import test.ya.translater.wgjuh.yaapitmvptest.DATA;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
-import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
+import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
+import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslatePojo;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.InputTranslateFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.InputTranslateView;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
@@ -25,31 +20,38 @@ import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
  * Created by wGJUH on 07.04.2017.
  */
 
-public class InputPresenterImpl extends BasePresenter {
-    private Throwable throwable;
-    private String lang = "en-en";
+public class InputPresenterImpl extends BasePresenter<InputTranslateView> {
+    private final IModel IModel;
+    private final IEventBus eventBus;
+
+    public InputPresenterImpl(IModel IModel,
+                              IEventBus eventBus) {
+        this.IModel = IModel;
+        this.eventBus = eventBus;
+    }
 
     public boolean onButtonTranslateClick() {
-        ModelImpl.getEventBus().onNext(new Event<>(Event.EventType.BTN_CLEAR_CLICKED, null));
+        eventBus.getEventBus().onNext(new Event<>(Event.EventType.BTN_CLEAR_CLICKED, null));
         startTranslate();
         return true;
     }
 
     private void startTranslate() {
+        DictDTO historyTranslate = IModel.getHistoryTranslate(view.getTargetText(), IModel.getCurrentLang());
+        if(historyTranslate != null){
+            eventBus.getEventBus().onNext(new Event<>(Event.EventType.WORD_TRANSLATED,historyTranslate));
+            return;
+        }
+        Observable<DictDTO> dictDTOObservable = IModel
+                .getDicTionaryTranslateForLanguage(view.getTargetText(), IModel.getCurrentLang());
 
-        // TODO: 06.04.2017 пока что оставил оба способа получения перевода
-        Observable<DictDTO> dictDTOObservable = model
-                .getDicTionaryTranslateForLanguage(((InputTranslateView) view).getTargetText(), lang);
-
-        Observable<TranslatePojo> translatePojoObservable = model
-                .getTranslateForLanguage(((InputTranslateView) view).getTargetText(), lang);
+        Observable<TranslatePojo> translatePojoObservable = IModel
+                .getTranslateForLanguage(view.getTargetText(), IModel.getCurrentLang());
 
         // TODO: 08.04.2017 спросить про проверку при зиппе
-        /**
-         * Получаем объект сохраняем его ввиде строки в бд
-         */
         Observable zipObservable = Observable.zip(dictDTOObservable, translatePojoObservable, (dictDTO, translatePojo) -> {
             dictDTO.setCommonTranslate(translatePojo.getText());
+            dictDTO.setTarget(view.getTargetText());
             dictDTO.setLangs(translatePojo.getLang());
             return dictDTO;
         });
@@ -65,15 +67,13 @@ public class InputPresenterImpl extends BasePresenter {
                         e.printStackTrace();
                         DictDTO dictDTO = new DictDTO();
                         dictDTO.setCommonTranslate("BAD");
-                        ModelImpl.getEventBus().onNext(new Event<>(Event.EventType.WORD_TRANSLATED, dictDTO));
+                        eventBus.getEventBus().onNext(eventBus.createEvent(Event.EventType.WORD_TRANSLATED, dictDTO));
                     }
 
                     @Override
                     public void onNext(DictDTO dictDTO) {
-                        ((ModelImpl) model).saveToDB(dictDTO, ((Fragment)view).getActivity().getBaseContext());
-                        ModelImpl.getEventBus().onNext(new Event<>(Event.EventType.WORD_TRANSLATED, dictDTO));
-
-
+                        IModel.saveToDB(dictDTO);
+                        eventBus.getEventBus().onNext(eventBus.createEvent(Event.EventType.WORD_TRANSLATED, dictDTO));
                     }
                 });
 
@@ -83,10 +83,9 @@ public class InputPresenterImpl extends BasePresenter {
     @Override
     public void onBindView(View view) {
         super.onBindView(view);
-        addSubscription(ModelImpl.getEventBus().subscribe(event -> {
-            switch (event.getEventType()) {
-                case ON_LANGUAGE_CHNAGED:
-                    lang = ((String) event.getEventObject()[0]);
+        addSubscription(eventBus.getEventBus().subscribe(event -> {
+            switch (event.eventType) {
+                case ON_LANGUAGE_CHANGED:
                     startTranslate();
                     break;
                 default:
@@ -99,8 +98,8 @@ public class InputPresenterImpl extends BasePresenter {
      * Метод для очистки поля ввода переводимого текста
      */
     public void clearInput() {
-        ((InputTranslateFragment) view).clearText();
-        ModelImpl.getEventBus().onNext(new Event(Event.EventType.BTN_CLEAR_CLICKED, null));
+        view.clearText();
+        eventBus.getEventBus().onNext(eventBus.createEvent(Event.EventType.BTN_CLEAR_CLICKED,null));
     }
 
     @Override

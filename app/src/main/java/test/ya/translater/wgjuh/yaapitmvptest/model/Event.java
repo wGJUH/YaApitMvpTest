@@ -10,18 +10,15 @@ public class Event<T> {
     public enum EventType {
         BTN_CLEAR_CLICKED,
         WORD_TRANSLATED,
-        ON_LANGUAGE_CHNAGED
+        ON_LANGUAGE_CHANGED
     }
-    T[] content;
-    EventType eventType;
+    public final T[] content;
+    public final EventType eventType;
+
     public Event(EventType eventType, T...content){
         this.eventType = eventType;
         this.content = content;
     }
-    public T[] getEventObject(){
-        return content;
-    }
-    public EventType getEventType(){
-        return eventType;
-    }
+
+    // TODO: 09.04.2017  выпилить методы, дергать поля на прямую
 }

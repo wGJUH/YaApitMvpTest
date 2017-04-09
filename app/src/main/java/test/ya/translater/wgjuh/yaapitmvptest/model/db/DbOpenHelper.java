@@ -30,7 +30,8 @@ public class DbOpenHelper extends SQLiteOpenHelper {
                 Translate.ID + " INTEGER PRIMARY KEY, " +
                 Translate.TARGET + " TEXT NOT NULL, "+
                 Translate.LANGS + " TEXT NOT NULL, "+
-                Translate.JSON + " TEXT UNIQUE NOT NULL " + ")");
+                Translate.JSON + " TEXT NOT NULL, " +
+                Translate.DATE + " INTEGER NOT NULL " + ")");
     }
 
     @Override

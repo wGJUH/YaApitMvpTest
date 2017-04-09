@@ -2,20 +2,15 @@ package test.ya.translater.wgjuh.yaapitmvptest.model;
 
 
 import android.content.Context;
+import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.util.Locale;
 
-import org.json.JSONObject;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import rx.subjects.PublishSubject;
 import test.ya.translater.wgjuh.yaapitmvptest.DATA;
+import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.model.db.DbBackEnd;
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.LangsDirsModelPojo;
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslatePojo;
@@ -28,31 +23,52 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.network.YandexTranslateApiMo
 
 import rx.Observable;
 
+import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
+
 /**
  * Created by wGJUH on 04.04.2017.
  */
+// TODO: 09.04.2017 модель можно реализовать как синглтон 
+public class ModelImpl implements IModel {
 
-public class ModelImpl implements Model {
-
+    private static ModelImpl model;
+    private final Context context = LeakCanaryApp.getAppContext();
     private final Observable.Transformer schedulersTransformer;
     private final YandexTranslateApiInterface yandexTranslateApiInterface = YandexTranslateApiModule.getYandexTranslateApiInterface();
     private final YandexDictionaryApiInterface yandexDictionaryApiInterface = YandexDictionaryApiModule.getYandexDictionaryApiInterface();
-    private Observable<TranslatePojo> c;
-    // TODO: 07.04.2017 Статичные переменные это плохо 
-    private static PublishSubject<Event> eventBus = PublishSubject.create();
-    // TODO: 07.04.2017 Узнать стоит ли так использовать наблюдатели
 
-    public ModelImpl() {
+
+    private ModelImpl() {
         schedulersTransformer = o -> ((Observable) o).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .unsubscribeOn(Schedulers.io());
+    }
 
+    public static IModel getInstance() {
+        if (model == null) {
+            model = new ModelImpl();
+        }
+        return model;
     }
 
     @Override
-    public Observable<LangsDirsModelPojo> getLangsDirsForLanguage(String language) {
-        return yandexTranslateApiInterface.getLangs(DATA.API_KEY, language)
-                .compose(applySchedulers());
+    public void getLangsDirsForLanguage(String language) {
+        Log.d(TAG, "getLangsDirsForLanguage: ");
+        yandexTranslateApiInterface.getLangs(DATA.API_KEY, Locale.getDefault().getLanguage()).compose(applySchedulers()).subscribe(new Observer<LangsDirsModelPojo>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(LangsDirsModelPojo langsDirsModelPojo) {
+            }
+        });
     }
 
     @Override
@@ -69,23 +85,40 @@ public class ModelImpl implements Model {
                 .compose(applySchedulers());
     }
 
+    @Override
+    public DictDTO getHistoryTranslate(String target, String langs) {
+        DbBackEnd dbBackEnd = new DbBackEnd(context);
+        return dbBackEnd.getHistoryTranslate(target, langs);
+    }
 
-    public void saveToDB(DictDTO dictDTO, Context context){
-        new Gson().toJson(dictDTO);
+    /**
+     * Обновляем языки в таблице языков для текущей локали
+     */
+    @Override
+    public void updateLanguages() {
+        yandexTranslateApiInterface
+                .getLangs(DATA.API_KEY, Locale.getDefault().getLanguage())
+                .compose(applySchedulers())
+                .subscribe(langsDirsModelPojo -> {
+                            new DbBackEnd(context).upateLangs(langsDirsModelPojo);
+                        },
+                        Throwable::printStackTrace);
+    }
+
+    @Override
+    public void saveToDB(DictDTO dictDTO) {
         DbBackEnd dbBackEnd = new DbBackEnd(context);
         dbBackEnd.insertHistoryTranslate(dictDTO);
     }
 
+    @Override
+    public String getCurrentLang() {
+        return context
+                .getSharedPreferences(DATA.APP_PREF, Context.MODE_PRIVATE)
+                .getString(DATA.LANG, "en-en");
+    }
 
-    @SuppressWarnings("unchecked")
     private <T> Observable.Transformer<T, T> applySchedulers() {
         return (Observable.Transformer<T, T>) schedulersTransformer;
     }
-
-
-
-    public static PublishSubject<Event> getEventBus() {
-        return eventBus;
-    }
-
 }

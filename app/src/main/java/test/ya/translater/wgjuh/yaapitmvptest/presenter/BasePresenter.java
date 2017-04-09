@@ -1,13 +1,10 @@
 package test.ya.translater.wgjuh.yaapitmvptest.presenter;
 
 
-import android.support.v4.util.SimpleArrayMap;
 import android.util.Log;
 
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
-import test.ya.translater.wgjuh.yaapitmvptest.model.Model;
-import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
@@ -17,11 +14,10 @@ import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
  * Created by wGJUH on 04.04.2017.
  */
 
-public abstract class BasePresenter implements Presenter {
+public abstract  class BasePresenter<T extends View> implements Presenter {
 
     private final CompositeSubscription compositeSubscription = new CompositeSubscription();
-    final Model model = new ModelImpl();
-    public View view;
+    public T view;
 
 
     void addSubscription(Subscription subscription) {
@@ -35,9 +31,9 @@ public abstract class BasePresenter implements Presenter {
     }
 
     @Override
-    public  void onBindView(View view) {
+    public void onBindView(View view) {
         Log.d(TAG, "onBindView: "+ view.getClass().getName());
-        this.view = view;
+        this.view = (T)view;
     }
 
     @Override

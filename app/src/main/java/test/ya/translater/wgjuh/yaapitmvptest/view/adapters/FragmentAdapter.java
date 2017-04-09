@@ -3,6 +3,7 @@ package test.ya.translater.wgjuh.yaapitmvptest.view.adapters;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.text.TextUtils;
 
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class FragmentAdapter extends FragmentPagerAdapter {
     }
 
     public void addFragment(Fragment fragment, String title) {
-        if (fragment != null && title != null && !title.equals("")) {
+        if (fragment != null && !TextUtils.isEmpty(title)) {
             mFragmentList.add(fragment);
         }
     }

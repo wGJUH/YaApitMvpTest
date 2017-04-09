@@ -12,15 +12,16 @@ import com.squareup.leakcanary.RefWatcher;
 
 public class LeakCanaryApp extends Application {
     RefWatcher refWatcher;
+    // TODO: 10.04.2017 ОТсюда запрашиваем статичный контекст для модели
+    private static Context context;
     @Override public void onCreate() {
         super.onCreate();
-/*        if (LeakCanary.isInAnalyzerProcess(this)) {
-            // This process is dedicated to LeakCanary for heap analysis.
-            // You should not init your app in this process.
-            return;
-        }*/
         refWatcher = LeakCanary.install(this);
-        // Normal app init code...
+        context = getApplicationContext();
+    }
+
+    public static Context getAppContext() {
+        return LeakCanaryApp.context;
     }
 
     public static RefWatcher getRefWatcher(Context context){

@@ -8,6 +8,5 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 
 public interface InputTranslateView extends View {
     void clearText();
-
     String getTargetText();
 }

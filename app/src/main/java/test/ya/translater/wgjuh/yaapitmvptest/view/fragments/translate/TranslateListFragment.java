@@ -13,6 +13,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
+import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
+import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
+import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
+import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.TranslateFragmentContainerImpl;
@@ -36,7 +40,7 @@ public class TranslateListFragment extends BaseFragment implements TranslateList
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        translatePresenter = new TranslatePresenter();
+        translatePresenter = new TranslatePresenter(ModelImpl.getInstance(), EventBus.getInstance());
         translatePresenter.onBindView(this);
     }
 
