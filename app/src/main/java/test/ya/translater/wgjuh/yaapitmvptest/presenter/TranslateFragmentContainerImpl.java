@@ -1,16 +1,15 @@
 package test.ya.translater.wgjuh.yaapitmvptest.presenter;
 
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 
+import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
+import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
-import test.ya.translater.wgjuh.yaapitmvptest.view.LanguageActivity;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.tabs.*;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.SettingLangsFragment;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.tabs.TransalteView;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.InputTranslateFragment;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.tabs.TranslateFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.TranslateListFragment;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
@@ -33,7 +32,7 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TransalteView>
     }
 
     public void addFragments(InputTranslateFragment inputTranslateFragment, TranslateListFragment translateListFragment) {
-        iModel.updateLanguages();
+        //iModel.updateLanguages();
         view.getTranslateFragmentManager()
                 .beginTransaction()
                 .add(view.getInputFrame().getId(), inputTranslateFragment, inputTranslateFragment.getClass().getName())
@@ -42,7 +41,12 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TransalteView>
     }
 
     public void onChooseFromLanguage(){
-        ((Fragment)view).startActivity(new Intent(((Fragment) view).getActivity().getBaseContext(), LanguageActivity.class));
+        view.getTranslateFragmentManager()
+                .beginTransaction()
+                .replace(android.R.id.content,new SettingLangsFragment())
+                .addToBackStack(InputTranslateFragment.class.getName())
+                .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                .commit();
     }
     @Override
     public void onStop() {

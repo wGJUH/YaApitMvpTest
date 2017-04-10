@@ -16,7 +16,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslatePojo;
  */
 
 public interface YandexTranslateApiInterface {
-    @POST("/api/v1.5/tr.json/getLangs")
+    @POST("/api/v1.5/tr.json/getStoredLangs")
     Observable<LangsDirsModelPojo> getLangs(@Query("key") String apiKey, @Query("ui") String lang);
 
     @GET("/api/v1.5/tr.json/translate")

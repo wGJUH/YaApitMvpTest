@@ -17,7 +17,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 
 public interface YandexDictionaryApiInterface {
 
-    @GET("/api/v1/dicservice/getLangs")
+    @GET("/api/v1/dicservice/getStoredLangs")
     Observable<LangsDirsModelPojo> getLangs(@Query("key") String apiKey);
 
     @GET("/api/v1/dicservice.json/lookup")

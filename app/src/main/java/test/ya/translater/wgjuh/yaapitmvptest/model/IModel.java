@@ -4,9 +4,12 @@ import android.content.Context;
 
 import org.json.JSONObject;
 
+import java.util.Map;
+
 import retrofit2.Call;
 import rx.Observable;
 
+import test.ya.translater.wgjuh.yaapitmvptest.model.db.LangModel;
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslatePojo;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 
@@ -16,8 +19,6 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 
 public interface IModel {
 
-    void getLangsDirsForLanguage(String language);
-
     Observable<TranslatePojo> getTranslateForLanguage(String target, String language);
 
     Observable<DictDTO> getDicTionaryTranslateForLanguage(String target, String language);
@@ -26,7 +27,10 @@ public interface IModel {
 
     void updateLanguages();
 
+    Observable<LangModel> getLangs();
+
     void saveToDBAndNotify(DictDTO dictDTO);
 
-    String getCurrentLang();
+    String getTranslateLang();
+    void setTranslateLang(String translateLang);
 }

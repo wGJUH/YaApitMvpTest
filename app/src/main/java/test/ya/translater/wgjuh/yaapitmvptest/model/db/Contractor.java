@@ -4,7 +4,7 @@ package test.ya.translater.wgjuh.yaapitmvptest.model.db;
  * Created by wGJUH on 25.03.2017.
  */
 
-public interface Contractor {
+public interface    Contractor {
     String DB_NAME = "YaApiTest.sqlite";
     String DB_TABLE_LANGS = "LANGS";
     String DB_TABLE_BOOKMARKS = "Bookmark";

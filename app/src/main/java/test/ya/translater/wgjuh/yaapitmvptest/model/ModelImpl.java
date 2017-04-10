@@ -2,18 +2,22 @@ package test.ya.translater.wgjuh.yaapitmvptest.model;
 
 
 import android.content.Context;
-import android.util.Log;
+import android.preference.PreferenceManager;
+import android.support.annotation.VisibleForTesting;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import test.ya.translater.wgjuh.yaapitmvptest.DATA;
 import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.model.db.DbBackEnd;
-import test.ya.translater.wgjuh.yaapitmvptest.model.db.DbOpenHelper;
-import test.ya.translater.wgjuh.yaapitmvptest.model.translate.LangsDirsModelPojo;
+import test.ya.translater.wgjuh.yaapitmvptest.model.db.LangModel;
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslatePojo;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.model.network.YandexDictionaryApiInterface;
@@ -23,8 +27,6 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.network.YandexTranslateApiMo
 
 
 import rx.Observable;
-
-import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
 /**
  * Created by wGJUH on 04.04.2017.
@@ -37,9 +39,19 @@ public class ModelImpl implements IModel {
     private final Observable.Transformer schedulersTransformer;
     private final YandexTranslateApiInterface yandexTranslateApiInterface = YandexTranslateApiModule.getYandexTranslateApiInterface();
     private final YandexDictionaryApiInterface yandexDictionaryApiInterface = YandexDictionaryApiModule.getYandexDictionaryApiInterface();
-
+    private final DbBackEnd dbBackEnd;
 
     private ModelImpl() {
+        dbBackEnd = new DbBackEnd(context);
+        schedulersTransformer = o -> ((Observable) o).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .unsubscribeOn(Schedulers.io());
+    }
+
+    // TODO: 10.04.2017 узнать про тестовые Конструкторы
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    ModelImpl(DbBackEnd dbBackend) {
+        this.dbBackEnd = dbBackend;
         schedulersTransformer = o -> ((Observable) o).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .unsubscribeOn(Schedulers.io());
@@ -52,25 +64,6 @@ public class ModelImpl implements IModel {
         return model;
     }
 
-    @Override
-    public void getLangsDirsForLanguage(String language) {
-        Log.d(TAG, "getLangsDirsForLanguage: ");
-        yandexTranslateApiInterface.getLangs(DATA.API_KEY, Locale.getDefault().getLanguage()).compose(applySchedulers()).subscribe(new Observer<LangsDirsModelPojo>() {
-            @Override
-            public void onCompleted() {
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onNext(LangsDirsModelPojo langsDirsModelPojo) {
-            }
-        });
-    }
 
     @Override
     public Observable<TranslatePojo> getTranslateForLanguage(String target, String language) {
@@ -88,7 +81,6 @@ public class ModelImpl implements IModel {
 
     @Override
     public DictDTO getHistoryTranslate(String target, String langs) {
-        DbBackEnd dbBackEnd = new DbBackEnd(context);
         return dbBackEnd.getHistoryTranslate(target, langs);
     }
 
@@ -97,18 +89,22 @@ public class ModelImpl implements IModel {
      */
     @Override
     public void updateLanguages() {
-        DbBackEnd dbBackEnd = new DbBackEnd(context);
         yandexTranslateApiInterface
                 .getLangs(DATA.API_KEY, Locale.getDefault().getLanguage())
-                .flatMap(langsDirsModelPojo -> {
+                .compose(applySchedulers())
+                .map(langsDirsModelPojo -> {
                     dbBackEnd.upateLangs(langsDirsModelPojo);
                     return null;
-                }).compose(applySchedulers()).subscribe();
+                }).subscribe();
+    }
+
+    @Override
+    public Observable<LangModel> getLangs() {
+        return Observable.just(dbBackEnd.getStoredLangs());
     }
 
     @Override
     public void saveToDBAndNotify(DictDTO dictDTO) {
-        DbBackEnd dbBackEnd = new DbBackEnd(context);
         Observable.just(dbBackEnd.insertHistoryTranslate(dictDTO))
                 .compose(applySchedulers())
                 .subscribe(t -> EventBus
@@ -123,12 +119,14 @@ public class ModelImpl implements IModel {
     }
 
     @Override
-    public String getCurrentLang() {
-        return context
-                .getSharedPreferences(DATA.APP_PREF, Context.MODE_PRIVATE)
-                .getString(DATA.LANG, "en-en");
+    public String getTranslateLang() {
+        return "en-"+PreferenceManager.getDefaultSharedPreferences(context).getString(DATA.LANG, "en");
     }
 
+    @Override
+    public void setTranslateLang(String translateLang) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(DATA.LANG,translateLang).apply();
+    }
     private <T> Observable.Transformer<T, T> applySchedulers() {
         return (Observable.Transformer<T, T>) schedulersTransformer;
     }

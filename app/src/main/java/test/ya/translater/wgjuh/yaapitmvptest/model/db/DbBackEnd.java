@@ -3,18 +3,22 @@ package test.ya.translater.wgjuh.yaapitmvptest.model.db;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.LangsDirsModelPojo;
-import test.ya.translater.wgjuh.yaapitmvptest.model.translate.LangsPojo;
 
+import static test.ya.translater.wgjuh.yaapitmvptest.DATA.LANG;
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
 /**
@@ -25,21 +29,21 @@ public class DbBackEnd implements Contractor {
     private final DbOpenHelper mDbOpenHelper;
     private SQLiteDatabase sqLiteDatabase;
 
+
+    // TODO: 10.04.2017 убрать один из конструкторов
     public DbBackEnd(Context context) {
         // TODO: 02.04.2017 в конструктор добавить проверку на наличие бд
         mDbOpenHelper = new DbOpenHelper(context);
     }
-
-    private void opendatabase() throws SQLException {
-        //Open the database
-        // TODO: 02.04.2017  проверить нужно ли написать path в виде
-        sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
-
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    public DbBackEnd(DbOpenHelper dbOpenHelper) {
+        // TODO: 02.04.2017 в конструктор добавить проверку на наличие бд
+        mDbOpenHelper = dbOpenHelper;
     }
 
     public long insertHistoryTranslate(DictDTO dictDTO) {
         Long inserted;
-        opendatabase();
+        sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
         sqLiteDatabase.beginTransaction();
         ContentValues contentValues = new ContentValues();
         contentValues.put(Translate.TARGET, dictDTO.getTarget());
@@ -55,7 +59,7 @@ public class DbBackEnd implements Contractor {
     }
 
     public DictDTO getHistoryTranslate(String target, String langs) {
-        opendatabase();
+        sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
         Log.d(TAG, "getHistoryTranslate");
         sqLiteDatabase.beginTransaction();
         Cursor c = sqLiteDatabase.query(
@@ -80,7 +84,7 @@ public class DbBackEnd implements Contractor {
     }
 
     public void upateLangs(LangsDirsModelPojo langsDirsModelPojo) {
-        opendatabase();
+        sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
         sqLiteDatabase.beginTransaction();
         sqLiteDatabase.delete(DB_TABLE_LANGS, null, null);
         ContentValues contentValues = new ContentValues();
@@ -90,7 +94,35 @@ public class DbBackEnd implements Contractor {
             contentValues.put(Langs.NAME, stringStringMap.getValue());
             sqLiteDatabase.insertOrThrow(DB_TABLE_LANGS, null, contentValues);
         }
-            sqLiteDatabase.setTransactionSuccessful();
+        sqLiteDatabase.setTransactionSuccessful();
         sqLiteDatabase.endTransaction();
+    }
+
+    public LangModel getStoredLangs() {
+
+        LangModel langModel = new LangModel(getCountForTable(DB_TABLE_LANGS));
+        sqLiteDatabase = mDbOpenHelper.getReadableDatabase();
+        sqLiteDatabase.beginTransaction();
+        Cursor cursor = sqLiteDatabase.query(DB_TABLE_LANGS,new String[]{Langs.CODE,Langs.NAME},null,null,null,null,Langs.NAME);
+        if(cursor.moveToFirst()){
+            do {
+                langModel.code.add(cursor.getString(cursor.getColumnIndex(Langs.CODE)));
+                langModel.lang.add(cursor.getString(cursor.getColumnIndex(Langs.NAME)));
+            }while (cursor.moveToNext());
+        }
+        cursor.close();
+        sqLiteDatabase.setTransactionSuccessful();
+        sqLiteDatabase.endTransaction();
+        return langModel;
+    }
+    private int getCountForTable(String tableName){
+        int count = 0;
+        sqLiteDatabase = mDbOpenHelper.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.query(tableName,new String[]{"COUNT(*)"},null,null,null,null,null);
+        if(cursor.moveToFirst()){
+            count = cursor.getInt(0);
+        }
+        cursor.close();
+        return count;
     }
 }

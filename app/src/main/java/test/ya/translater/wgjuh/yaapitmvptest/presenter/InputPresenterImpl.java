@@ -21,12 +21,12 @@ import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
  */
 
 public class InputPresenterImpl extends BasePresenter<InputTranslateView> {
-    private final IModel IModel;
+    private final IModel model;
     private final IEventBus eventBus;
 
-    public InputPresenterImpl(IModel IModel,
+    public InputPresenterImpl(IModel model,
                               IEventBus eventBus) {
-        this.IModel = IModel;
+        this.model = model;
         this.eventBus = eventBus;
     }
 
@@ -37,16 +37,20 @@ public class InputPresenterImpl extends BasePresenter<InputTranslateView> {
     }
 
     private void startTranslate() {
-        DictDTO historyTranslate = IModel.getHistoryTranslate(view.getTargetText(), IModel.getCurrentLang());
+
+
+        DictDTO historyTranslate = model.getHistoryTranslate(view.getTargetText(), model.getTranslateLang());
         if(historyTranslate != null){
             eventBus.getEventBus().onNext(new Event<>(Event.EventType.WORD_TRANSLATED,historyTranslate));
             return;
         }
-        Observable<DictDTO> dictDTOObservable = IModel
-                .getDicTionaryTranslateForLanguage(view.getTargetText(), IModel.getCurrentLang());
+        Observable<DictDTO> dictDTOObservable = model
+                .getDicTionaryTranslateForLanguage(view.getTargetText(), model.getTranslateLang())
+                .onErrorReturn(throwable -> {throwable.printStackTrace();
+                return new DictDTO();});
 
-        Observable<TranslatePojo> translatePojoObservable = IModel
-                .getTranslateForLanguage(view.getTargetText(), IModel.getCurrentLang());
+        Observable<TranslatePojo> translatePojoObservable = model
+                .getTranslateForLanguage(view.getTargetText(), model.getTranslateLang());
 
         // TODO: 08.04.2017 спросить про проверку при зиппе
         Observable zipObservable = Observable.zip(dictDTOObservable, translatePojoObservable, (dictDTO, translatePojo) -> {
@@ -71,7 +75,7 @@ public class InputPresenterImpl extends BasePresenter<InputTranslateView> {
                     }
                     @Override
                     public void onNext(DictDTO dictDTO) {
-                        IModel.saveToDBAndNotify(dictDTO);
+                        model.saveToDBAndNotify(dictDTO);
                     }
                 });
         addSubscription(subscription);
@@ -83,6 +87,7 @@ public class InputPresenterImpl extends BasePresenter<InputTranslateView> {
         addSubscription(eventBus.getEventBus().subscribe(event -> {
             switch (event.eventType) {
                 case ON_LANGUAGE_CHANGED:
+                    model.setTranslateLang((String)event.content[0]);
                     startTranslate();
                     break;
                 default:

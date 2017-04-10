@@ -1,11 +1,11 @@
 
 package test.ya.translater.wgjuh.yaapitmvptest.model.translate;
 
-import java.util.List;
-import java.util.Map;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
+import java.util.Map;
 
 public class LangsDirsModelPojo {
 
