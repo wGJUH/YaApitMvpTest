@@ -32,7 +32,7 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TransalteView>
     }
 
     public void addFragments(InputTranslateFragment inputTranslateFragment, TranslateListFragment translateListFragment) {
-        //iModel.updateLanguages();
+        iModel.updateLanguages();
         view.getTranslateFragmentManager()
                 .beginTransaction()
                 .add(view.getInputFrame().getId(), inputTranslateFragment, inputTranslateFragment.getClass().getName())
