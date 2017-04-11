@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import butterknife.BindView;
@@ -41,6 +42,8 @@ public class TranslateFragment extends BaseFragment implements TransalteView {
     TextView fromLanguageTextView;
     @BindView(R.id.to_language)
     TextView toLanguageTextView;
+    @BindView(R.id.btn_change_langs)
+    ImageButton imageButton;
     private TranslateFragmentContainerImpl translatePresenter;
     private FragmentManager fragmentManager;
 
@@ -60,8 +63,20 @@ public class TranslateFragment extends BaseFragment implements TransalteView {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.translate_page_fragment, container, false);
         ButterKnife.bind(this, view);
-        fromLanguageTextView.setOnClickListener(text -> translatePresenter.onChooseFromLanguage());
+        fromLanguageTextView.setOnClickListener(text -> translatePresenter.onChooseLanguage(Event.EventType.FROM_LANGUAGE));
+        toLanguageTextView.setOnClickListener(text -> translatePresenter.onChooseLanguage(Event.EventType.TARGET_LANGUAGE));
+        imageButton.setOnClickListener(btn -> translatePresenter.onChangeLanguages());
         return view;
+    }
+
+    public void setFromLanguageTextView(String s){
+        fromLanguageTextView.setText(s);
+        toLanguageTextView.invalidate();
+    }
+
+    public void setToLanguageTextView(String s){
+        toLanguageTextView.setText(s);
+        toLanguageTextView.invalidate();
     }
 
 
@@ -72,6 +87,7 @@ public class TranslateFragment extends BaseFragment implements TransalteView {
         translatePresenter.onBindView(this);
         if (savedInstanceState == null)
             translatePresenter.addFragments(new InputTranslateFragment(), new TranslateListFragment());
+        translatePresenter.updateToolbarLanguages(false);
     }
 
 

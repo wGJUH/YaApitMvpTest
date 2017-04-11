@@ -74,7 +74,6 @@ public class InputTranslateFragment extends BaseFragment implements InputTransla
         ButterKnife.bind(this, view);
         imageButton.setOnClickListener(btn -> inputPresenter.clearInput());
         editText.setOnEditorActionListener((input, action, event) -> inputPresenter.onButtonTranslateClick());
-
         return view;
     }
 

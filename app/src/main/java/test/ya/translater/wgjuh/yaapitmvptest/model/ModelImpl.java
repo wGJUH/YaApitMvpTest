@@ -119,14 +119,33 @@ public class ModelImpl implements IModel {
     }
 
     @Override
+    public String getTranslateLangPair() {
+        return getFromLang()+"-"+getTranslateLang();
+    }
+
+
+    @Override
     public String getTranslateLang() {
-        return "en-"+PreferenceManager.getDefaultSharedPreferences(context).getString(DATA.LANG, "en");
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(Event.EventType.TARGET_LANGUAGE.toString(), "ru");
     }
 
     @Override
     public void setTranslateLang(String translateLang) {
-        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(DATA.LANG,translateLang).apply();
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(Event.EventType.TARGET_LANGUAGE.toString(),translateLang).commit();
+        EventBus.getInstance().getEventBus().onNext(EventBus.getInstance().createEvent(Event.EventType.CHANGE_LANGUAGES));
     }
+
+    @Override
+    public String getFromLang() {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(Event.EventType.FROM_LANGUAGE.toString(), "ru");
+    }
+
+    @Override
+    public void setFromLang(String translateLang) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(Event.EventType.FROM_LANGUAGE.toString(),translateLang).commit();
+        EventBus.getInstance().getEventBus().onNext(EventBus.getInstance().createEvent(Event.EventType.CHANGE_LANGUAGES));
+    }
+
     private <T> Observable.Transformer<T, T> applySchedulers() {
         return (Observable.Transformer<T, T>) schedulersTransformer;
     }

@@ -14,4 +14,8 @@ public interface TransalteView extends View {
     android.view.View getInputFrame();
 
     android.view.View getTranslateFrame();
+
+    void setFromLanguageTextView(String s);
+
+    void setToLanguageTextView(String s);
 }

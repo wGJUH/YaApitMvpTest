@@ -12,7 +12,7 @@
         android:background="@color/colorPrimary">
     </android.support.v7.widget.Toolbar>
 <android.support.v7.widget.RecyclerView
-    android:id="@+id/list"
+    android:id="@+id/langs_recycler_view"
     android:layout_below="@+id/fragment_toolbar"
     android:layout_width="match_parent"
     android:layout_height="match_parent"

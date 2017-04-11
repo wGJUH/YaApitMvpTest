@@ -9,16 +9,11 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.LangsDirsModelPojo;
 
-import static test.ya.translater.wgjuh.yaapitmvptest.DATA.LANG;
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
 /**

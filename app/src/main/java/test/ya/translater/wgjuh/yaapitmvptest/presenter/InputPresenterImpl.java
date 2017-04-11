@@ -31,26 +31,29 @@ public class InputPresenterImpl extends BasePresenter<InputTranslateView> {
     }
 
     public boolean onButtonTranslateClick() {
-        eventBus.getEventBus().onNext(new Event<>(Event.EventType.BTN_CLEAR_CLICKED, null));
-        startTranslate();
+        if(!view.getTargetText().isEmpty()) {
+            eventBus.getEventBus().onNext(new Event<>(Event.EventType.BTN_CLEAR_CLICKED, null));
+            startTranslate();
+        }
         return true;
     }
 
     private void startTranslate() {
 
+        String translateDirection = model.getTranslateLangPair();
 
-        DictDTO historyTranslate = model.getHistoryTranslate(view.getTargetText(), model.getTranslateLang());
+        DictDTO historyTranslate = model.getHistoryTranslate(view.getTargetText(), translateDirection);
         if(historyTranslate != null){
             eventBus.getEventBus().onNext(new Event<>(Event.EventType.WORD_TRANSLATED,historyTranslate));
             return;
         }
         Observable<DictDTO> dictDTOObservable = model
-                .getDicTionaryTranslateForLanguage(view.getTargetText(), model.getTranslateLang())
+                .getDicTionaryTranslateForLanguage(view.getTargetText(), translateDirection)
                 .onErrorReturn(throwable -> {throwable.printStackTrace();
                 return new DictDTO();});
 
         Observable<TranslatePojo> translatePojoObservable = model
-                .getTranslateForLanguage(view.getTargetText(), model.getTranslateLang());
+                .getTranslateForLanguage(view.getTargetText(), translateDirection);
 
         // TODO: 08.04.2017 спросить про проверку при зиппе
         Observable zipObservable = Observable.zip(dictDTOObservable, translatePojoObservable, (dictDTO, translatePojo) -> {
@@ -86,8 +89,15 @@ public class InputPresenterImpl extends BasePresenter<InputTranslateView> {
         super.onBindView(view);
         addSubscription(eventBus.getEventBus().subscribe(event -> {
             switch (event.eventType) {
-                case ON_LANGUAGE_CHANGED:
+                case TARGET_LANGUAGE:
                     model.setTranslateLang((String)event.content[0]);
+                    startTranslate();
+                    break;
+                case FROM_LANGUAGE:
+                    model.setFromLang((String)event.content[0]);
+                    startTranslate();
+                    break;
+                case CHANGE_LANGUAGES:
                     startTranslate();
                     break;
                 default:

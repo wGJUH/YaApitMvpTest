@@ -1,16 +1,19 @@
 package test.ya.translater.wgjuh.yaapitmvptest.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by wGJUH on 07.04.2017.
  */
 
-public class Event<T> {
+public class Event<T> implements Serializable {
     public enum EventType {
         BTN_CLEAR_CLICKED,
         WORD_TRANSLATED,
-        ON_LANGUAGE_CHANGED
+        TARGET_LANGUAGE,
+        FROM_LANGUAGE,
+        CHANGE_LANGUAGES
     }
     public final T[] content;
     public final EventType eventType;

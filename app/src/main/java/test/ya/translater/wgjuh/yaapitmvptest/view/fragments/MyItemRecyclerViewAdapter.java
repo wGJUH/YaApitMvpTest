@@ -13,17 +13,20 @@ import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.db.LangModel;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.SettingsPresenter;
 
 public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
 
     private final List<String> codes;
     private final List<String> names;
-    private final OnLanguageChossen onLanguageChossen;
+    private final SettingsPresenter settingsPresenter;
+    private final Event.EventType eventType;
 
-    public MyItemRecyclerViewAdapter(LangModel langModel, OnLanguageChossen onLanguageChossen) {
+    public MyItemRecyclerViewAdapter(LangModel langModel, SettingsPresenter settingsPresenter, Event.EventType eventType) {
         codes = langModel.code;
         names = langModel.lang;
-        this.onLanguageChossen = onLanguageChossen;
+        this.settingsPresenter = settingsPresenter;
+        this.eventType = eventType;
     }
 
     @Override
@@ -38,8 +41,9 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         holder.code = codes.get(position);
         holder.mIdView.setText(names.get(position));
         holder.mView.setOnClickListener(v -> {
-            onLanguageChossen.onLanguageChoosen();
-            EventBus.getInstance().getEventBus().onNext(EventBus.getInstance().createEvent(Event.EventType.ON_LANGUAGE_CHANGED,holder.code));
+            settingsPresenter.popBackStack();
+            settingsPresenter.sentLanguageChangedEvent(eventType, holder.code);
+
         });
     }
 
@@ -55,7 +59,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
 
         public ViewHolder(View view) {
             super(view);
-            mView = (LinearLayout)view.findViewById(R.id.item_container);
+            mView = (LinearLayout) view.findViewById(R.id.item_container);
             mIdView = (TextView) view.findViewById(R.id.id);
         }
 
@@ -64,7 +68,4 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
             return super.toString() + " '";
         }
     }
-}
-interface OnLanguageChossen{
-    void onLanguageChoosen();
 }
