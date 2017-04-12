@@ -22,16 +22,35 @@ public class DbOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + DB_TABLE_LANGS + "(" +
-                Contractor.Langs.ID + " INTEGER PRIMARY KEY, " +
+                Contractor.Langs.ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, " +
                 Contractor.Langs.CODE + " TEXT UNIQUE NOT NULL, " +
                 Contractor.Langs.NAME + " TEXT UNIQUE NOT NULL" +
                 ")");
         db.execSQL("CREATE TABLE " + DB_TABLE_HISTORY + "(" +
-                Translate.ID + " INTEGER PRIMARY KEY, " +
-                Translate.TARGET + " TEXT NOT NULL, "+
-                Translate.LANGS + " TEXT NOT NULL, "+
-                Translate.JSON + " TEXT NOT NULL, " +
-                Translate.DATE + " INTEGER NOT NULL " + ")");
+                Translate.ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, " +
+                Translate.TARGET + " TEXT NOT NULL, " +
+                Translate.LANGS + " TEXT NOT NULL, " +
+                Translate.JSON + " TEXT UNIQUE NOT NULL, " +
+                Translate.DATE + " INTEGER NOT NULL, " +
+                Translate.FAVORITE + " INTEGER , " +
+                "FOREIGN KEY(" + Translate.FAVORITE + ") REFERENCES " + DB_TABLE_FAVORITES + "(" + Favorite.ID + ")" +
+                " ON DELETE SET DEFAULT "+
+                ")");
+
+        db.execSQL("CREATE TABLE " + DB_TABLE_FAVORITES + "(" +
+                Translate.ID + " INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, " +
+                Translate.TARGET + " TEXT NOT NULL, " +
+                Translate.LANGS + " TEXT NOT NULL, " +
+                Translate.JSON + " TEXT UNIQUE NOT NULL, " +
+                Translate.DATE + " INTEGER NOT NULL " +
+                ")");
+    }
+
+    @Override
+    public void onConfigure(SQLiteDatabase db) {
+        super.onConfigure(db);
+        db.setForeignKeyConstraintsEnabled(true);
+
     }
 
     @Override

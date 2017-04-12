@@ -7,4 +7,5 @@
     <color name="colorBlack">#000000</color>
     <color name="transparent">#00000000</color>
     <color name="colorYellow"> #FFFFA0</color>
+    <color name="colorDarkYellow"> #FFFF00</color>
 </resources>

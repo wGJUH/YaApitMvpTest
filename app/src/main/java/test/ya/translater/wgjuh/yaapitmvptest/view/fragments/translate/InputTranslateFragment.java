@@ -89,8 +89,9 @@ public class InputTranslateFragment extends BaseFragment implements InputTransla
 
 
     @Override
-    public void showError() {
-        Log.e(TAG, " showError");
+    public void showError(String e) {
+        editText.setText(e);
+        Log.e(TAG, "Error: " + e);
     }
 
     @Override

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,10 +50,12 @@ public class TranslateFragment extends BaseFragment implements TransalteView {
 
     }
 
+
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
+        fragmentManager = getActivity().getSupportFragmentManager();
     }
 
 
@@ -63,9 +64,6 @@ public class TranslateFragment extends BaseFragment implements TransalteView {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.translate_page_fragment, container, false);
         ButterKnife.bind(this, view);
-        fromLanguageTextView.setOnClickListener(text -> translatePresenter.onChooseLanguage(Event.EventType.FROM_LANGUAGE));
-        toLanguageTextView.setOnClickListener(text -> translatePresenter.onChooseLanguage(Event.EventType.TARGET_LANGUAGE));
-        imageButton.setOnClickListener(btn -> translatePresenter.onChangeLanguages());
         return view;
     }
 
@@ -79,15 +77,24 @@ public class TranslateFragment extends BaseFragment implements TransalteView {
         toLanguageTextView.invalidate();
     }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+       translatePresenter = new TranslateFragmentContainerImpl(ModelImpl.getInstance(), EventBus.getInstance());
+        translatePresenter.onBindView(this);
+        new InputTranslateFragment();
+       if (savedInstanceState == null)
+            translatePresenter.addFragments(new InputTranslateFragment(), new TranslateListFragment());
+        translatePresenter.updateToolbarLanguages(false);
+        fromLanguageTextView.setOnClickListener(text -> translatePresenter.onChooseLanguage(Event.EventType.FROM_LANGUAGE));
+        toLanguageTextView.setOnClickListener(text -> translatePresenter.onChooseLanguage(Event.EventType.TARGET_LANGUAGE));
+        imageButton.setOnClickListener(btn -> translatePresenter.onChangeLanguages());
+    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        translatePresenter = new TranslateFragmentContainerImpl(ModelImpl.getInstance(), EventBus.getInstance());
-        translatePresenter.onBindView(this);
-        if (savedInstanceState == null)
-            translatePresenter.addFragments(new InputTranslateFragment(), new TranslateListFragment());
-        translatePresenter.updateToolbarLanguages(false);
+
     }
 
 
@@ -98,7 +105,7 @@ public class TranslateFragment extends BaseFragment implements TransalteView {
 
 
     @Override
-    public void showError() {
+    public void showError(String error) {
 
     }
 

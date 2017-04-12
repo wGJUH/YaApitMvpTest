@@ -52,23 +52,85 @@ public class DbBackEnd implements Contractor {
         Log.d(TAG, "insertHistoryTranslate: " + inserted);
         return inserted;
     }
+    public void insertFavoriteFromHistory(String id){
+        long inserted;
+        ContentValues contentValues = new ContentValues();
+        sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
+        sqLiteDatabase.beginTransaction();
+        Cursor cursor = sqLiteDatabase.query(DB_TABLE_HISTORY,new String[]{Translate.TARGET,Translate.LANGS,Translate.JSON},"id =?",new String[]{id},null,null,null);
+        if(cursor.moveToFirst()){
+            contentValues.put(Favorite.TARGET,cursor.getString(cursor.getColumnIndex(Translate.TARGET)));
+            contentValues.put(Favorite.LANGS,cursor.getString(cursor.getColumnIndex(Translate.LANGS)));
+            contentValues.put(Favorite.JSON,cursor.getString(cursor.getColumnIndex(Translate.JSON)));
+            contentValues.put(Favorite.DATE,System.currentTimeMillis());
+        }
+        cursor.close();
+        inserted = sqLiteDatabase.insert(DB_TABLE_FAVORITES,null,contentValues);
+        if( inserted != -1) {
+            sqLiteDatabase.setTransactionSuccessful();
+            sqLiteDatabase.endTransaction();
+            setHistoryItemFavorite(id,inserted);
+        }
+    }
 
+    private void setHistoryItemFavorite(String historyId, long favoriteId){
+        ContentValues contentValues = new ContentValues();
+        sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
+        sqLiteDatabase.beginTransaction();
+        contentValues.put(Translate.FAVORITE,favoriteId);
+        if( sqLiteDatabase.update(DB_TABLE_HISTORY,contentValues,"id=?",new String[]{historyId}) != -1) {
+            sqLiteDatabase.setTransactionSuccessful();
+        }
+        sqLiteDatabase.endTransaction();
+    }
+
+    /**
+     * Метод позволяет получать сохраненный перевод из бд.
+     * При получении в объекта типа DictDTO ему присваевается id записи в бд.
+     * @see DictDTO
+     * @param target текст который переводили
+     * @param langs группа языков с-на который переводили
+     * @return DictDTO объект перевода
+     */
     public DictDTO getHistoryTranslate(String target, String langs) {
         sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
         Log.d(TAG, "getHistoryTranslate");
         sqLiteDatabase.beginTransaction();
         Cursor c = sqLiteDatabase.query(
-                DB_TABLE_HISTORY, new String[]{Translate.JSON},  // => SELECT page_id FROM pages
+                DB_TABLE_HISTORY, new String[]{Translate.ID,Translate.JSON},  // => SELECT page_id FROM pages
                 Translate.TARGET + "=? AND " + Translate.LANGS + " =?", new String[]{target, langs},  // => WHERE page_url='url'
                 null, null, null);
         Log.d(TAG, "getHistoryTranslate: cursor: " + c);
         if (c.moveToFirst()) {
             String json = c.getString(c.getColumnIndex(Translate.JSON));
             Log.d(TAG, "getHistoryTranslate: " + json);
+            DictDTO dictDTO = new Gson().fromJson(json, DictDTO.class);
+            dictDTO.setId(""+c.getInt(c.getColumnIndex(Translate.ID)));
             c.close();
             sqLiteDatabase.setTransactionSuccessful();
             sqLiteDatabase.endTransaction();
-            return new Gson().fromJson(json, DictDTO.class);
+            return dictDTO;
+        }
+        sqLiteDatabase.endTransaction();
+        return null;
+    }
+    public DictDTO getHistoryTranslate(long id) {
+        sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
+        Log.d(TAG, "getHistoryTranslate");
+        sqLiteDatabase.beginTransaction();
+        Cursor c = sqLiteDatabase.query(
+                DB_TABLE_HISTORY, new String[]{Translate.ID,Translate.JSON}, Translate.ID + " =?", new String[]{""+id},  // => WHERE page_url='url'
+                null, null, null);
+        Log.d(TAG, "getHistoryTranslate: cursor: " + c);
+        if (c.moveToFirst()) {
+            String json = c.getString(c.getColumnIndex(Translate.JSON));
+            Log.d(TAG, "getHistoryTranslate: " + json);
+            DictDTO dictDTO = new Gson().fromJson(json, DictDTO.class);
+            dictDTO.setId(""+c.getInt(c.getColumnIndex(Translate.ID)));
+            c.close();
+            sqLiteDatabase.setTransactionSuccessful();
+            sqLiteDatabase.endTransaction();
+            return dictDTO;
         }
         sqLiteDatabase.endTransaction();
         return null;

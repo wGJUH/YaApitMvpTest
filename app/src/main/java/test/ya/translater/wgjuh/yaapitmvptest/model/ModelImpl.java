@@ -4,6 +4,7 @@ package test.ya.translater.wgjuh.yaapitmvptest.model;
 import android.content.Context;
 import android.preference.PreferenceManager;
 import android.support.annotation.VisibleForTesting;
+import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -18,6 +19,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.DATA;
 import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.model.db.DbBackEnd;
 import test.ya.translater.wgjuh.yaapitmvptest.model.db.LangModel;
+import test.ya.translater.wgjuh.yaapitmvptest.model.translate.LangsDirsModelPojo;
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslatePojo;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.model.network.YandexDictionaryApiInterface;
@@ -92,9 +94,12 @@ public class ModelImpl implements IModel {
         yandexTranslateApiInterface
                 .getLangs(DATA.API_KEY, Locale.getDefault().getLanguage())
                 .compose(applySchedulers())
+                .onErrorReturn(er->null)
                 .map(langsDirsModelPojo -> {
-                    dbBackEnd.upateLangs(langsDirsModelPojo);
-                    return null;
+                    if(langsDirsModelPojo != null) {
+                        dbBackEnd.upateLangs(langsDirsModelPojo);
+                    }
+                    return langsDirsModelPojo;
                 }).subscribe();
     }
 
@@ -105,17 +110,24 @@ public class ModelImpl implements IModel {
 
     @Override
     public void saveToDBAndNotify(DictDTO dictDTO) {
-        Observable.just(dbBackEnd.insertHistoryTranslate(dictDTO))
+        Observable
+                .just(dbBackEnd.insertHistoryTranslate(dictDTO))
                 .compose(applySchedulers())
-                .subscribe(t -> EventBus
+                .flatMap(aLong -> Observable.just(dbBackEnd.getHistoryTranslate(aLong)))
+                .subscribe(dictDTOFromDB -> EventBus
                         .getInstance()
                         .getEventBus()
                         .onNext(EventBus
                                 .getInstance()
                                 .createEvent(Event
                                         .EventType
-                                        .WORD_TRANSLATED, dictDTO)));
+                                        .WORD_TRANSLATED, dictDTOFromDB)));
 
+    }
+
+    @Override
+    public void addToFavorites(DictDTO dictDTO) {
+        dbBackEnd.insertFavoriteFromHistory(dictDTO.getId());
     }
 
     @Override

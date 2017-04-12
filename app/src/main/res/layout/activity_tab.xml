@@ -21,8 +21,11 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:background="@drawable/input_word_frame"
+        app:tabMaxWidth="0dp"
         app:tabGravity="fill"
-        app:tabIndicatorColor="@color/colorYellow"
-        app:tabMode="fixed">
+        app:tabMode="fixed"
+        app:tabIndicatorHeight="4dp"
+        app:tabIndicatorColor="@color/colorDarkYellow"
+        >
     </android.support.design.widget.TabLayout>
 </RelativeLayout>

@@ -31,6 +31,8 @@ public interface IModel {
 
     void saveToDBAndNotify(DictDTO dictDTO);
 
+    void addToFavorites(DictDTO dictDTO);
+
     String getTranslateLangPair();
 
     String getTranslateLang();

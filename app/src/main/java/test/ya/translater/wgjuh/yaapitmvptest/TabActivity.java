@@ -11,6 +11,7 @@ import com.squareup.leakcanary.RefWatcher;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.FragmentAdapter;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.tabs.HistoryFavoriteFragmentContainer;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.tabs.TranslateFragment;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
@@ -51,9 +52,19 @@ public class TabActivity extends AppCompatActivity implements ActivityCallback {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        if(viewPager.getCurrentItem() != 0){
+            viewPager.setCurrentItem(0);
+        }else {
+            super.onBackPressed();
+        }
+    }
+
     private void inits() {
         FragmentAdapter fragmentPagerAdapter = new FragmentAdapter(getSupportFragmentManager());
-        fragmentPagerAdapter.addFragment(new TranslateFragment(), TranslateFragment.class.getName());
+      fragmentPagerAdapter.addFragment(new TranslateFragment(), TranslateFragment.class.getName());
+       fragmentPagerAdapter.addFragment(new HistoryFavoriteFragmentContainer(), HistoryFavoriteFragmentContainer.class.getName());
         tabLayout.setupWithViewPager(viewPager);
         viewPager.setAdapter(fragmentPagerAdapter);
     }

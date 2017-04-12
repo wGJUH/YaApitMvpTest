@@ -47,7 +47,7 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TransalteView>
         iModel.updateLanguages();
         view.getTranslateFragmentManager()
                 .beginTransaction()
-                .add(view.getInputFrame().getId(), inputTranslateFragment, inputTranslateFragment.getClass().getName())
+               .add(view.getInputFrame().getId(), inputTranslateFragment, inputTranslateFragment.getClass().getName())
                 .add(view.getTranslateFrame().getId(), translateListFragment, translateListFragment.getClass().getName())
                 .commit();
     }

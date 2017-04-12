@@ -17,6 +17,7 @@ public class TranslatePresenter extends BasePresenter<TranslateListView> {
 
     private final IModel iModel;
     private final IEventBus eventBus;
+    private DictDTO lastTranslate;
 
     public TranslatePresenter(IModel iModel, IEventBus eventBus) {
 
@@ -34,7 +35,8 @@ public class TranslatePresenter extends BasePresenter<TranslateListView> {
                     break;
                 case WORD_TRANSLATED:
                     // TODO: 09.04.2017  как тут абстрагироваться от конкретной реализации ?
-                    updateTranslateView(((DictDTO)event.content[0]).getCommonTranslate());
+                    lastTranslate = (DictDTO)event.content[0];
+                    updateTranslateView(lastTranslate.getCommonTranslate());
                 default:
                     break;
             }
@@ -49,11 +51,17 @@ public class TranslatePresenter extends BasePresenter<TranslateListView> {
         view.showTranslate(s);
     }
 
-
     /**
-     * Метода для очистки поля переведенного текста
+     * Метод для очистки поля переведенного текста
      */
     private  void clearTranslate(){
         view.showTranslate("");
+    }
+
+    public void addToFavorites(){
+        if(lastTranslate != null) {
+            view.setBtnFavoriteSelected(true);
+            iModel.addToFavorites(lastTranslate);
+        }
     }
 }

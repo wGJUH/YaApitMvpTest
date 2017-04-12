@@ -7,19 +7,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
-import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
-import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.TranslateFragmentContainerImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.TranslatePresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
 
@@ -34,6 +31,9 @@ public class TranslateListFragment extends BaseFragment implements TranslateList
         TextView translate;
     @BindView(R.id.recycler_translate)
     RecyclerView recyclerView;
+    @BindView(R.id.btn_add_favorite)
+    ImageButton btnFavorite;
+
 
     private TranslatePresenter translatePresenter;
 
@@ -42,6 +42,7 @@ public class TranslateListFragment extends BaseFragment implements TranslateList
         super.onViewCreated(view, savedInstanceState);
         translatePresenter = new TranslatePresenter(ModelImpl.getInstance(), EventBus.getInstance());
         translatePresenter.onBindView(this);
+        btnFavorite.setOnClickListener(btn -> translatePresenter.addToFavorites());
     }
 
     @Nullable
@@ -66,7 +67,12 @@ public class TranslateListFragment extends BaseFragment implements TranslateList
     }
 
     @Override
-    public void showError() {
+    public void setBtnFavoriteSelected(Boolean selected) {
+        btnFavorite.setEnabled(selected);
+    }
+
+    @Override
+    public void showError(String error) {
 
     }
     @Override

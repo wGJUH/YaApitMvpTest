@@ -1,13 +1,10 @@
 package test.ya.translater.wgjuh.yaapitmvptest.presenter;
 
-import android.support.v7.widget.DividerItemDecoration;
-
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
-import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.MyItemRecyclerViewAdapter;
+import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.MyItemRecyclerViewAdapter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.SettingLangsFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 

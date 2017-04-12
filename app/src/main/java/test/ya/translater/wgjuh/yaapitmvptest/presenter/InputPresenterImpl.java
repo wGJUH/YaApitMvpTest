@@ -23,6 +23,7 @@ import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 public class InputPresenterImpl extends BasePresenter<InputTranslateView> {
     private final IModel model;
     private final IEventBus eventBus;
+    private  Subscription subscription;
 
     public InputPresenterImpl(IModel model,
                               IEventBus eventBus) {
@@ -39,6 +40,9 @@ public class InputPresenterImpl extends BasePresenter<InputTranslateView> {
     }
 
     private void startTranslate() {
+        if(subscription!= null && !subscription.isUnsubscribed()){
+            subscription.isUnsubscribed();
+        }
 
         String translateDirection = model.getTranslateLangPair();
 
@@ -62,26 +66,23 @@ public class InputPresenterImpl extends BasePresenter<InputTranslateView> {
             dictDTO.setLangs(translatePojo.getLang());
             return dictDTO;
         });
-
-        Subscription subscription = zipObservable
+        subscription = zipObservable
                 .subscribe(new Observer<DictDTO>() {
                     @Override
                     public void onCompleted() {
+                        subscription.unsubscribe();
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        DictDTO dictDTO = new DictDTO();
-                        dictDTO.setCommonTranslate("BAD");
-                        eventBus.getEventBus().onNext(eventBus.createEvent(Event.EventType.WORD_TRANSLATED, dictDTO));
+                        view.showError(e.getMessage());
                     }
                     @Override
                     public void onNext(DictDTO dictDTO) {
                         model.saveToDBAndNotify(dictDTO);
                     }
                 });
-        addSubscription(subscription);
     }
 
     @Override
