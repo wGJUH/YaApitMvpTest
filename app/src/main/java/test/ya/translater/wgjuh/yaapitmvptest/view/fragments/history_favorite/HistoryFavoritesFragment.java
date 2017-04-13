@@ -19,16 +19,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.DATA;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
-import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
-import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.HistoryFavoritePresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.dummy.DummyContent;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.dummy.DummyContent.DummyItem;
 
 
 public class HistoryFavoritesFragment extends BaseFragment implements IHistoryFavoriteFragment {
@@ -38,7 +34,6 @@ public class HistoryFavoritesFragment extends BaseFragment implements IHistoryFa
 
     private static final String IS_HISTORY = "is_history";
     private boolean isHistory;
-    private OnListFragmentInteractionListener mListener;
     private HistoryFavoritePresenter historyFavoritePresenter;
     private MyhistoryfavoriteitemRecyclerViewAdapter viewAdapter;
     private List<DictDTO> dictDTOs = new ArrayList<>();
@@ -101,7 +96,6 @@ public class HistoryFavoritesFragment extends BaseFragment implements IHistoryFa
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
     @Override
@@ -145,8 +139,4 @@ public class HistoryFavoritesFragment extends BaseFragment implements IHistoryFa
         recyclerView.scrollToPosition(0);
     }
 
-    public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
-    }
 }
