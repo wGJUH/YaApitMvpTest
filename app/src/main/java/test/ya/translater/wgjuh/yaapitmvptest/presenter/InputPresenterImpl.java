@@ -48,7 +48,7 @@ public class InputPresenterImpl extends BasePresenter<InputTranslateView> {
 
         DictDTO historyTranslate = model.getHistoryTranslate(view.getTargetText(), translateDirection);
         if(historyTranslate != null){
-            eventBus.getEventBus().onNext(new Event<>(Event.EventType.WORD_TRANSLATED,historyTranslate));
+            eventBus.getEventBus().onNext(eventBus.createEvent(Event.EventType.WORD_TRANSLATED,historyTranslate));
             return;
         }
         Observable<DictDTO> dictDTOObservable = model
@@ -62,7 +62,8 @@ public class InputPresenterImpl extends BasePresenter<InputTranslateView> {
         // TODO: 08.04.2017 спросить про проверку при зиппе
         Observable zipObservable = Observable.zip(dictDTOObservable, translatePojoObservable, (dictDTO, translatePojo) -> {
             dictDTO.setCommonTranslate(translatePojo.getText());
-            dictDTO.setTarget(view.getTargetText());
+                dictDTO.setTarget(view.getTargetText());
+
             dictDTO.setLangs(translatePojo.getLang());
             return dictDTO;
         });
@@ -83,6 +84,7 @@ public class InputPresenterImpl extends BasePresenter<InputTranslateView> {
                         model.saveToDBAndNotify(dictDTO);
                     }
                 });
+        addSubscription(subscription);
     }
 
     @Override
