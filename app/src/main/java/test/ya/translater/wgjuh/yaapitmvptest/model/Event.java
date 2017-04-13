@@ -11,6 +11,7 @@ public class Event<T> implements Serializable {
     public enum EventType {
         BTN_CLEAR_CLICKED,
         WORD_TRANSLATED,
+        WORD_UPDATED,
         TARGET_LANGUAGE,
         FROM_LANGUAGE,
         CHANGE_LANGUAGES

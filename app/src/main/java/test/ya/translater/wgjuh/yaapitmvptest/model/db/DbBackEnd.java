@@ -9,10 +9,13 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.LangsDirsModelPojo;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.HistoryFavoritePresenter;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
@@ -95,7 +98,6 @@ public class DbBackEnd implements Contractor {
     public DictDTO getHistoryTranslate(String target, String langs) {
         sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
         Log.d(TAG, "getHistoryTranslate");
-        sqLiteDatabase.beginTransaction();
         Cursor c = sqLiteDatabase.query(
                 DB_TABLE_HISTORY, new String[]{Translate.ID,Translate.JSON},  // => SELECT page_id FROM pages
                 Translate.TARGET + "=? AND " + Translate.LANGS + " =?", new String[]{target, langs},  // => WHERE page_url='url'
@@ -107,17 +109,13 @@ public class DbBackEnd implements Contractor {
             DictDTO dictDTO = new Gson().fromJson(json, DictDTO.class);
             dictDTO.setId(""+c.getInt(c.getColumnIndex(Translate.ID)));
             c.close();
-            sqLiteDatabase.setTransactionSuccessful();
-            sqLiteDatabase.endTransaction();
             return dictDTO;
         }
-        sqLiteDatabase.endTransaction();
         return null;
     }
     public DictDTO getHistoryTranslate(long id) {
         sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
         Log.d(TAG, "getHistoryTranslate");
-        sqLiteDatabase.beginTransaction();
         Cursor c = sqLiteDatabase.query(
                 DB_TABLE_HISTORY, new String[]{Translate.ID,Translate.JSON}, Translate.ID + " =?", new String[]{""+id},  // => WHERE page_url='url'
                 null, null, null);
@@ -128,11 +126,8 @@ public class DbBackEnd implements Contractor {
             DictDTO dictDTO = new Gson().fromJson(json, DictDTO.class);
             dictDTO.setId(""+c.getInt(c.getColumnIndex(Translate.ID)));
             c.close();
-            sqLiteDatabase.setTransactionSuccessful();
-            sqLiteDatabase.endTransaction();
             return dictDTO;
         }
-        sqLiteDatabase.endTransaction();
         return null;
     }
 
@@ -141,6 +136,7 @@ public class DbBackEnd implements Contractor {
     }
 
     public void upateLangs(LangsDirsModelPojo langsDirsModelPojo) {
+        long inserted = -1;
         sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
         sqLiteDatabase.beginTransaction();
         sqLiteDatabase.delete(DB_TABLE_LANGS, null, null);
@@ -149,17 +145,17 @@ public class DbBackEnd implements Contractor {
                 : langsDirsModelPojo.getLangs().entrySet()) {
             contentValues.put(Langs.CODE, stringStringMap.getKey());
             contentValues.put(Langs.NAME, stringStringMap.getValue());
-            sqLiteDatabase.insertOrThrow(DB_TABLE_LANGS, null, contentValues);
+            inserted = sqLiteDatabase.insert(DB_TABLE_LANGS, null, contentValues);
         }
+        if(inserted != -1){
         sqLiteDatabase.setTransactionSuccessful();
+        }
         sqLiteDatabase.endTransaction();
     }
 
     public LangModel getStoredLangs() {
-
         LangModel langModel = new LangModel(getCountForTable(DB_TABLE_LANGS));
         sqLiteDatabase = mDbOpenHelper.getReadableDatabase();
-        sqLiteDatabase.beginTransaction();
         Cursor cursor = sqLiteDatabase.query(DB_TABLE_LANGS,new String[]{Langs.CODE,Langs.NAME},null,null,null,null,Langs.NAME);
         if(cursor.moveToFirst()){
             do {
@@ -168,8 +164,6 @@ public class DbBackEnd implements Contractor {
             }while (cursor.moveToNext());
         }
         cursor.close();
-        sqLiteDatabase.setTransactionSuccessful();
-        sqLiteDatabase.endTransaction();
         return langModel;
     }
     private int getCountForTable(String tableName){
@@ -181,5 +175,50 @@ public class DbBackEnd implements Contractor {
         }
         cursor.close();
         return count;
+    }
+
+    public List<DictDTO> getHistoryListTranslate() {
+        ArrayList<DictDTO> dictDTOs = new ArrayList<>(getCountForTable(DB_TABLE_HISTORY));
+        DictDTO dictDTO;
+        Gson gson = new Gson();
+        sqLiteDatabase = mDbOpenHelper.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.query(DB_TABLE_HISTORY,null,null,null,null,null,Translate.DATE + " DESC");
+        if(cursor.moveToFirst()){
+            do {
+                dictDTO = gson.fromJson(cursor.getString(cursor.getColumnIndex(Translate.JSON)), DictDTO.class);
+                dictDTO.setFavorite(Integer.toString(isFavorite(cursor.getInt(cursor.getColumnIndex(Translate.ID)))));
+                dictDTOs.add(dictDTO);
+            }while (cursor.moveToNext());
+        }
+        cursor.close();
+        return dictDTOs;
+    }
+
+    public int isFavorite(int id){
+        int favoriteId = -1;
+        sqLiteDatabase = mDbOpenHelper.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.query(DB_TABLE_HISTORY,new String[]{Translate.FAVORITE},Translate.FAVORITE+" IS NOT NULL AND " + Translate.ID + " =? ",new String[]{""+id},null,null,null);
+        if(cursor.moveToFirst()){
+            favoriteId = cursor.getInt(cursor.getColumnIndex(Translate.FAVORITE));
+            cursor.close();
+            return favoriteId;
+        }
+        cursor.close();
+        return favoriteId;
+    }
+
+
+    public long updateHistoryDate(String id) {
+        long update;
+        ContentValues contentValues = new ContentValues();
+        sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
+        sqLiteDatabase.beginTransaction();
+        contentValues.put(Translate.DATE,System.currentTimeMillis());
+        update = sqLiteDatabase.update(DB_TABLE_HISTORY,contentValues,"id=?",new String[]{id});
+        if( update != 0) {
+            sqLiteDatabase.setTransactionSuccessful();
+        }
+        sqLiteDatabase.endTransaction();
+        return update;
     }
 }

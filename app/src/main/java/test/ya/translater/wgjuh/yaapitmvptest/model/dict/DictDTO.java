@@ -14,6 +14,7 @@ public class DictDTO {
     private String langs;
     private String target;
     private String id;
+    private String favorite;
 
     public List<Def> getDef() {
         return def;
@@ -58,5 +59,23 @@ public class DictDTO {
 
     public String getId() {
         return id;
+    }
+
+    public void setFavorite(String favorite) {
+        this.favorite = favorite;
+    }
+
+    public String getFavorite() {
+        return favorite;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        DictDTO dictDTO = (DictDTO)obj;
+        if(dictDTO.target.equals(target) && dictDTO.langs.equals(langs)) {
+            return true;
+        }else {
+            return false;
+        }
     }
 }

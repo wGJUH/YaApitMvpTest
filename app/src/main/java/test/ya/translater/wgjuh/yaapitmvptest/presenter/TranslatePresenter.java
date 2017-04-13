@@ -37,6 +37,9 @@ public class TranslatePresenter extends BasePresenter<TranslateListView> {
                     // TODO: 09.04.2017  как тут абстрагироваться от конкретной реализации ?
                     lastTranslate = (DictDTO)event.content[0];
                     updateTranslateView(lastTranslate.getCommonTranslate());
+                case WORD_UPDATED:
+                    lastTranslate = (DictDTO)event.content[0];
+                    updateTranslateView(lastTranslate.getCommonTranslate());
                 default:
                     break;
             }

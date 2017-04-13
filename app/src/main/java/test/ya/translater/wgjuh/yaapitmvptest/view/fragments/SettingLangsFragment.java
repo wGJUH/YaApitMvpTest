@@ -61,8 +61,9 @@ public class SettingLangsFragment extends BaseFragment implements test.ya.transl
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 linearLayoutManager.getOrientation());
-        recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.addItemDecoration(dividerItemDecoration);
+        recyclerView.setLayoutManager(linearLayoutManager);
+
 
 
         return view;

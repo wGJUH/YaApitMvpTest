@@ -6,20 +6,14 @@ import android.preference.PreferenceManager;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
-import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import test.ya.translater.wgjuh.yaapitmvptest.DATA;
 import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.model.db.DbBackEnd;
 import test.ya.translater.wgjuh.yaapitmvptest.model.db.LangModel;
-import test.ya.translater.wgjuh.yaapitmvptest.model.translate.LangsDirsModelPojo;
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslatePojo;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.model.network.YandexDictionaryApiInterface;
@@ -114,6 +108,7 @@ public class ModelImpl implements IModel {
                 .just(dbBackEnd.insertHistoryTranslate(dictDTO))
                 .compose(applySchedulers())
                 .flatMap(aLong -> Observable.just(dbBackEnd.getHistoryTranslate(aLong)))
+                .doAfterTerminate(() -> Log.d(DATA.TAG,"Terminated"))
                 .subscribe(dictDTOFromDB -> EventBus
                         .getInstance()
                         .getEventBus()
@@ -121,13 +116,22 @@ public class ModelImpl implements IModel {
                                 .getInstance()
                                 .createEvent(Event
                                         .EventType
-                                        .WORD_TRANSLATED, dictDTOFromDB)));
-
+                                        .WORD_TRANSLATED, dictDTOFromDB)),throwable -> Log.e(DATA.TAG,throwable.getMessage()));
     }
 
     @Override
     public void addToFavorites(DictDTO dictDTO) {
         dbBackEnd.insertFavoriteFromHistory(dictDTO.getId());
+    }
+
+    @Override
+    public void updateHistoryDate(String id) {
+        dbBackEnd.updateHistoryDate(id);
+    }
+
+    @Override
+    public Observable<DictDTO> getHistoryListTranslate() {
+            return  Observable.from(dbBackEnd.getHistoryListTranslate());
     }
 
     @Override
@@ -144,7 +148,7 @@ public class ModelImpl implements IModel {
     @Override
     public void setTranslateLang(String translateLang) {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(Event.EventType.TARGET_LANGUAGE.toString(),translateLang).commit();
-        EventBus.getInstance().getEventBus().onNext(EventBus.getInstance().createEvent(Event.EventType.CHANGE_LANGUAGES));
+        //EventBus.getInstance().getEventBus().onNext(EventBus.getInstance().createEvent(Event.EventType.TARGET_LANGUAGE_CHANGED));
     }
 
     @Override
@@ -155,7 +159,7 @@ public class ModelImpl implements IModel {
     @Override
     public void setFromLang(String translateLang) {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(Event.EventType.FROM_LANGUAGE.toString(),translateLang).commit();
-        EventBus.getInstance().getEventBus().onNext(EventBus.getInstance().createEvent(Event.EventType.CHANGE_LANGUAGES));
+        //EventBus.getInstance().getEventBus().onNext(EventBus.getInstance().createEvent(Event.EventType.FROM_LANGUAGE_CHANGED));
     }
 
     private <T> Observable.Transformer<T, T> applySchedulers() {

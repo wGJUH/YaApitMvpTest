@@ -1,17 +1,11 @@
 package test.ya.translater.wgjuh.yaapitmvptest.model;
 
-import android.content.Context;
+import java.util.List;
 
-import org.json.JSONObject;
-
-import java.util.Map;
-
-import retrofit2.Call;
 import rx.Observable;
-
 import test.ya.translater.wgjuh.yaapitmvptest.model.db.LangModel;
-import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslatePojo;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
+import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslatePojo;
 
 /**
  * Created by wGJUH on 04.04.2017.
@@ -23,23 +17,27 @@ public interface IModel {
 
     Observable<DictDTO> getDicTionaryTranslateForLanguage(String target, String language);
 
-    DictDTO getHistoryTranslate(String target, String langs);
-
-    void updateLanguages();
+    Observable<DictDTO> getHistoryListTranslate();
 
     Observable<LangModel> getLangs();
 
-    void saveToDBAndNotify(DictDTO dictDTO);
-
-    void addToFavorites(DictDTO dictDTO);
+    DictDTO getHistoryTranslate(String target, String langs);
 
     String getTranslateLangPair();
 
     String getTranslateLang();
 
-    void setTranslateLang(String translateLang);
-
     String getFromLang();
 
+    void setTranslateLang(String translateLang);
+
     void setFromLang(String translateLang);
+
+    void updateLanguages();
+
+    void saveToDBAndNotify(DictDTO dictDTO);
+
+    void addToFavorites(DictDTO dictDTO);
+
+    void updateHistoryDate(String id);
 }

@@ -16,6 +16,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.FragmentAdapter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.SettingLangsFragment;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.HistoryFavoritesFragment;
 
 /**
  * Created by wGJUH on 11.04.2017.
@@ -51,8 +52,8 @@ public class HistoryFavoriteFragmentContainer extends BaseFragment {
 
     private void inits() {
         FragmentAdapter fragmentPagerAdapter = new FragmentAdapter(getFragmentManager());
-        fragmentPagerAdapter.addFragment(new SettingLangsFragment(), SettingLangsFragment.class.getName()+1);
-        fragmentPagerAdapter.addFragment(new SettingLangsFragment(), SettingLangsFragment.class.getName()+2);
+        fragmentPagerAdapter.addFragment(new HistoryFavoritesFragment(), HistoryFavoritesFragment.class.getName()+1);
+        //fragmentPagerAdapter.addFragment(new SettingLangsFragment(), SettingLangsFragment.class.getName()+2);
         viewPager.setAdapter(fragmentPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
     }

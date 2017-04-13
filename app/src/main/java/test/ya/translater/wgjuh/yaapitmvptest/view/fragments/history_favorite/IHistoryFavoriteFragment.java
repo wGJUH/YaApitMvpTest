@@ -7,4 +7,5 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
  */
 
 public interface IHistoryFavoriteFragment extends View {
+    void updateRecyclerView();
 }

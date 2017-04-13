@@ -67,6 +67,7 @@ public class TabActivity extends AppCompatActivity implements ActivityCallback {
        fragmentPagerAdapter.addFragment(new HistoryFavoriteFragmentContainer(), HistoryFavoriteFragmentContainer.class.getName());
         tabLayout.setupWithViewPager(viewPager);
         viewPager.setAdapter(fragmentPagerAdapter);
+        viewPager.setCurrentItem(1);
     }
 
     @Override

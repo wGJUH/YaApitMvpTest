@@ -1,11 +1,7 @@
 package test.ya.translater.wgjuh.yaapitmvptest.presenter;
 
-import android.content.Intent;
-import android.util.EventLog;
 import android.util.Log;
 
-import rx.functions.Action;
-import rx.functions.Action1;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
@@ -82,6 +78,24 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TransalteView>
                         case CHANGE_LANGUAGES:
                             view.setToLanguageTextView(iModel.getTranslateLang());
                             view.setFromLanguageTextView(iModel.getFromLang());
+                            break;
+                        case TARGET_LANGUAGE:
+                            iModel.setTranslateLang((String) event.content[0]);
+                            EventBus.getInstance()
+                                    .getEventBus()
+                                    .onNext(iEventBus
+                                            .createEvent(Event
+                                                    .EventType
+                                                    .CHANGE_LANGUAGES));
+                            break;
+                        case FROM_LANGUAGE:
+                            iModel.setFromLang((String) event.content[0]);
+                            EventBus.getInstance()
+                                    .getEventBus()
+                                    .onNext(iEventBus
+                                            .createEvent(Event
+                                                    .EventType
+                                                    .CHANGE_LANGUAGES));
                             break;
                         default:
                             break;

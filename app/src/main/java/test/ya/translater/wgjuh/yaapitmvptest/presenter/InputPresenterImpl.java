@@ -47,31 +47,38 @@ public class InputPresenterImpl extends BasePresenter<InputTranslateView> {
         String translateDirection = model.getTranslateLangPair();
 
         DictDTO historyTranslate = model.getHistoryTranslate(view.getTargetText(), translateDirection);
+
         if(historyTranslate != null){
-            eventBus.getEventBus().onNext(eventBus.createEvent(Event.EventType.WORD_TRANSLATED,historyTranslate));
+            model.updateHistoryDate(historyTranslate.getId());
+            eventBus.getEventBus().onNext(eventBus.createEvent(Event.EventType.WORD_UPDATED,historyTranslate));
             return;
         }
         Observable<DictDTO> dictDTOObservable = model
                 .getDicTionaryTranslateForLanguage(view.getTargetText(), translateDirection)
-                .onErrorReturn(throwable -> {throwable.printStackTrace();
+                .onErrorReturn(throwable -> {
+                    Log.e(TAG, "dictDTOObservable: Сервис недоступен или запрос неверен",throwable);
                 return new DictDTO();});
 
         Observable<TranslatePojo> translatePojoObservable = model
-                .getTranslateForLanguage(view.getTargetText(), translateDirection);
+                .getTranslateForLanguage(view.getTargetText(), translateDirection)
+                .doOnError(throwable ->
+                    Log.e(TAG, "translatePojoObservable: Сервис недоступен или запрос неверен",throwable )
+                );
 
         // TODO: 08.04.2017 спросить про проверку при зиппе
         Observable zipObservable = Observable.zip(dictDTOObservable, translatePojoObservable, (dictDTO, translatePojo) -> {
-            dictDTO.setCommonTranslate(translatePojo.getText());
-                dictDTO.setTarget(view.getTargetText());
 
+            dictDTO.setCommonTranslate(translatePojo.getText());
+            dictDTO.setTarget(view.getTargetText());
             dictDTO.setLangs(translatePojo.getLang());
+
             return dictDTO;
         });
         subscription = zipObservable
                 .subscribe(new Observer<DictDTO>() {
                     @Override
                     public void onCompleted() {
-                        subscription.unsubscribe();
+
                     }
 
                     @Override
@@ -92,14 +99,6 @@ public class InputPresenterImpl extends BasePresenter<InputTranslateView> {
         super.onBindView(view);
         addSubscription(eventBus.getEventBus().subscribe(event -> {
             switch (event.eventType) {
-                case TARGET_LANGUAGE:
-                    model.setTranslateLang((String)event.content[0]);
-                    startTranslate();
-                    break;
-                case FROM_LANGUAGE:
-                    model.setFromLang((String)event.content[0]);
-                    startTranslate();
-                    break;
                 case CHANGE_LANGUAGES:
                     startTranslate();
                     break;
