@@ -32,6 +32,7 @@ public class TranslatePresenter extends BasePresenter<TranslateListView> {
             switch (event.eventType){
                 case BTN_CLEAR_CLICKED:
                     clearTranslate();
+                    lastTranslate = null;
                     break;
                 case WORD_TRANSLATED:
                     // TODO: 09.04.2017  как тут абстрагироваться от конкретной реализации ?

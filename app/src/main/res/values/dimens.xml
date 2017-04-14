@@ -3,4 +3,7 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
+    <dimen name="text_top_margin">10dp</dimen>
+    <dimen name="fragment_historyfavoriteitem_high_padding">6dp</dimen>
+    <dimen name="textview_translate_textsize">20sp</dimen>
 </resources>

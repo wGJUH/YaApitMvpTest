@@ -114,10 +114,12 @@ public class HistoryFavoritesFragment extends BaseFragment implements IHistoryFa
         viewAdapter.notifyItemInserted(dictDTOs.size()-1);
     }
     public void updateFirstItemInAdapterData(DictDTO dictDTO){
-        this.dictDTOs.add(0,dictDTO);
-        viewAdapter.notifyItemInserted(dictDTOs.size()-1);
-        viewAdapter.notifyItemRangeChanged(0,dictDTOs.size());
-        recyclerView.invalidate();
+        if(dictDTO != null) {
+            this.dictDTOs.add(0, dictDTO);
+            viewAdapter.notifyItemInserted(dictDTOs.size() - 1);
+            viewAdapter.notifyItemRangeChanged(0, dictDTOs.size());
+            recyclerView.invalidate();
+        }
     }
 
 

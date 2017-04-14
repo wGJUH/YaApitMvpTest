@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/input_word_frame"
     android:orientation="vertical">
 
     <TextView
@@ -10,7 +9,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@+id/btn_add_favorite"
-        android:background="@drawable/input_word_frame"
+        android:layout_toStartOf="@+id/btn_add_favorite"
+        android:textSize="@dimen/textview_translate_textsize"
+        android:textColor="@color/colorBlack"
+        android:layout_marginTop="@dimen/text_margin"
         android:text="@string/hello_blank_fragment" />
 
     <android.support.v7.widget.RecyclerView
@@ -19,7 +21,7 @@
         android:layout_height="match_parent"
         android:layout_below="@id/textview_common_translate"
         android:layout_toLeftOf="@+id/btn_add_favorite"
-        android:background="@drawable/input_word_frame">
+        android:layout_toStartOf="@+id/btn_add_favorite">
     </android.support.v7.widget.RecyclerView>
 
     <ImageButton
@@ -27,6 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:background="@color/transparent"
         android:src="@android:drawable/btn_star" />
 </RelativeLayout>

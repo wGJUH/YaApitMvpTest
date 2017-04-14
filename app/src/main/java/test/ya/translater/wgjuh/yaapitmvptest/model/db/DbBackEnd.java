@@ -108,6 +108,7 @@ public class DbBackEnd implements Contractor {
             Log.d(TAG, "getHistoryTranslate: " + json);
             DictDTO dictDTO = new Gson().fromJson(json, DictDTO.class);
             dictDTO.setId(""+c.getInt(c.getColumnIndex(Translate.ID)));
+            dictDTO.setFavorite(Integer.toString(isFavorite(c.getInt(c.getColumnIndex(Translate.ID)))));
             c.close();
             return dictDTO;
         }
@@ -117,7 +118,7 @@ public class DbBackEnd implements Contractor {
         sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
         Log.d(TAG, "getHistoryTranslate");
         Cursor c = sqLiteDatabase.query(
-                DB_TABLE_HISTORY, new String[]{Translate.ID,Translate.JSON}, Translate.ID + " =?", new String[]{""+id},  // => WHERE page_url='url'
+                DB_TABLE_HISTORY, new String[]{Translate.ID,Translate.JSON,Translate.FAVORITE}, Translate.ID + " =?", new String[]{""+id},  // => WHERE page_url='url'
                 null, null, null);
         Log.d(TAG, "getHistoryTranslate: cursor: " + c);
         if (c.moveToFirst()) {
@@ -125,6 +126,7 @@ public class DbBackEnd implements Contractor {
             Log.d(TAG, "getHistoryTranslate: " + json);
             DictDTO dictDTO = new Gson().fromJson(json, DictDTO.class);
             dictDTO.setId(""+c.getInt(c.getColumnIndex(Translate.ID)));
+            dictDTO.setFavorite(Integer.toString(isFavorite(c.getInt(c.getColumnIndex(Translate.ID)))));
             c.close();
             return dictDTO;
         }

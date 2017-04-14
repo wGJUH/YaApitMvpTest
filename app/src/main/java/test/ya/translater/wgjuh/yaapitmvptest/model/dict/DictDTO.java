@@ -32,11 +32,6 @@ public class DictDTO {
         return commonTranslate;
     }
 
-    @Override
-    public String toString() {
-        return getDef().get(0).toString();
-    }
-
     public void setLangs(String langs) {
         this.langs = langs;
     }
