@@ -3,4 +3,6 @@
     <string name="hello_blank_fragment">hello blank</string>
     <string name="translate">Переводчик</string>
     <string name="choose_language">Выберите язык</string>
+    <string name="tab_history">История</string>
+    <string name="tab_favorite">Избранное</string>
 </resources>

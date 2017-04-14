@@ -33,7 +33,7 @@ public class InputPresenterImpl extends BasePresenter<InputTranslateView> {
 
     public boolean onButtonTranslateClick() {
         if(!view.getTargetText().isEmpty()) {
-            eventBus.getEventBus().onNext(new Event<>(Event.EventType.BTN_CLEAR_CLICKED, null));
+            eventBus.getEventBus().onNext(new Event<>(Event.EventType.BTN_CLEAR_CLICKED));
             startTranslate();
         }
         return true;
@@ -46,7 +46,7 @@ public class InputPresenterImpl extends BasePresenter<InputTranslateView> {
 
         String translateDirection = model.getTranslateLangPair();
 
-        DictDTO historyTranslate = model.getHistoryTranslate(view.getTargetText(), translateDirection);
+        DictDTO historyTranslate = model.getHistoryTranslate(view.getTargetText().trim(), translateDirection);
 
         if(historyTranslate != null){
             model.updateHistoryDate(historyTranslate.getId());
@@ -113,7 +113,7 @@ public class InputPresenterImpl extends BasePresenter<InputTranslateView> {
      */
     public void clearInput() {
         view.clearText();
-        eventBus.getEventBus().onNext(eventBus.createEvent(Event.EventType.BTN_CLEAR_CLICKED,null));
+        eventBus.getEventBus().onNext(eventBus.createEvent(Event.EventType.BTN_CLEAR_CLICKED));
     }
 
     @Override

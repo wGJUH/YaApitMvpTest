@@ -12,8 +12,17 @@
         android:layout_toStartOf="@+id/btn_add_favorite"
         android:textSize="@dimen/textview_translate_textsize"
         android:textColor="@color/colorBlack"
-        android:layout_marginTop="@dimen/text_margin"
+        android:layout_marginTop="@dimen/text_top_margin"
         android:text="@string/hello_blank_fragment" />
+    <ImageButton
+        android:id="@+id/btn_add_favorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/text_top_margin"
+        android:background="@color/transparent"
+        android:src="@android:drawable/btn_star" />
 
     <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_translate"
@@ -24,12 +33,5 @@
         android:layout_toStartOf="@+id/btn_add_favorite">
     </android.support.v7.widget.RecyclerView>
 
-    <ImageButton
-        android:id="@+id/btn_add_favorite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:background="@color/transparent"
-        android:src="@android:drawable/btn_star" />
+
 </RelativeLayout>

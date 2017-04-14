@@ -19,6 +19,8 @@ public interface IModel {
 
     Observable<DictDTO> getHistoryListTranslate();
 
+    Observable<DictDTO> getFavoriteListTranslate();
+
     Observable<LangModel> getLangs();
 
     DictDTO getHistoryTranslate(String target, String langs);
@@ -37,7 +39,9 @@ public interface IModel {
 
     void saveToDBAndNotify(DictDTO dictDTO);
 
-    void addToFavorites(DictDTO dictDTO);
+    long addToFavorites(DictDTO dictDTO);
 
     void updateHistoryDate(String id);
+
+    String getLangByCode(String code);
 }

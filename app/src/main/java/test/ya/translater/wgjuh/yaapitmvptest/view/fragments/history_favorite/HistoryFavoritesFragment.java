@@ -24,6 +24,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.HistoryFavoritePresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.MyhistoryfavoriteitemRecyclerViewAdapter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
 
 
@@ -77,7 +78,7 @@ public class HistoryFavoritesFragment extends BaseFragment implements IHistoryFa
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewAdapter = new MyhistoryfavoriteitemRecyclerViewAdapter(dictDTOs);
-        historyFavoritePresenter = new HistoryFavoritePresenter(ModelImpl.getInstance(), EventBus.getInstance());
+        historyFavoritePresenter = new HistoryFavoritePresenter(ModelImpl.getInstance(), EventBus.getInstance(),isHistory);
         historyFavoritePresenter.onBindView(this);
         Context context = view.getContext();
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
@@ -139,6 +140,14 @@ public class HistoryFavoritesFragment extends BaseFragment implements IHistoryFa
         dictDTOs.add(0,dictDTO);
         viewAdapter.notifyItemMoved(oldPosition,0);
         recyclerView.scrollToPosition(0);
+    }
+
+    public void updateFavoriteBox(DictDTO dictDTO) {
+        int position = dictDTOs.indexOf(dictDTO);
+        dictDTOs.set(position,dictDTO);
+        viewAdapter.notifyItemChanged(position);
+        recyclerView.scrollToPosition(position);
+
     }
 
 }

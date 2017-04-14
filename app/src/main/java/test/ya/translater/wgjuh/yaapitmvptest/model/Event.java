@@ -14,7 +14,7 @@ public class Event<T> implements Serializable {
         WORD_UPDATED,
         TARGET_LANGUAGE,
         FROM_LANGUAGE,
-        CHANGE_LANGUAGES
+        ADD_FAVORITE, CHANGE_LANGUAGES
     }
     public final T[] content;
     public final EventType eventType;

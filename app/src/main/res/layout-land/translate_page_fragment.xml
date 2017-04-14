@@ -56,10 +56,11 @@
                 />
             <ImageButton
                 android:id="@+id/btn_change_langs"
-                android:src="@android:drawable/arrow_up_float"
+                android:src="@drawable/ic_action_change_langs"
+                android:background="@color/transparent"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent" />
             <TextView
                 android:id="@+id/to_language"
                 android:gravity="center"

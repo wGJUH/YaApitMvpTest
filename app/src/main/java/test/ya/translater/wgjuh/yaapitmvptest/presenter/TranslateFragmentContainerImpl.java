@@ -76,8 +76,8 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TransalteView>
                 addSubscription(iEventBus.getEventBus().subscribe(event -> {
                     switch (event.eventType) {
                         case CHANGE_LANGUAGES:
-                            view.setToLanguageTextView(iModel.getTranslateLang());
-                            view.setFromLanguageTextView(iModel.getFromLang());
+                            view.setToLanguageTextView(iModel.getLangByCode(iModel.getTranslateLang()));
+                            view.setFromLanguageTextView(iModel.getLangByCode(iModel.getFromLang()));
                             break;
                         case TARGET_LANGUAGE:
                             iModel.setTranslateLang((String) event.content[0]);
@@ -103,8 +103,8 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TransalteView>
                 }));
             }
         }else {
-            view.setToLanguageTextView(iModel.getTranslateLang());
-            view.setFromLanguageTextView(iModel.getFromLang());
+            view.setToLanguageTextView(iModel.getLangByCode(iModel.getTranslateLang()));
+            view.setFromLanguageTextView(iModel.getLangByCode(iModel.getFromLang()));
         }
     }
 

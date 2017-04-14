@@ -120,8 +120,8 @@ public class ModelImpl implements IModel {
     }
 
     @Override
-    public void addToFavorites(DictDTO dictDTO) {
-        dbBackEnd.insertFavoriteFromHistory(dictDTO.getId());
+    public long addToFavorites(DictDTO dictDTO) {
+        return dbBackEnd.insertFavoriteFromHistory(dictDTO.getId());
     }
 
     @Override
@@ -130,8 +130,18 @@ public class ModelImpl implements IModel {
     }
 
     @Override
+    public String getLangByCode(String code) {
+        return dbBackEnd.getLangByCode(code);
+    }
+
+    @Override
     public Observable<DictDTO> getHistoryListTranslate() {
             return  Observable.from(dbBackEnd.getHistoryListTranslate());
+    }
+
+    @Override
+    public Observable<DictDTO> getFavoriteListTranslate() {
+        return Observable.from(dbBackEnd.getFavoriteListTranslate());
     }
 
     @Override

@@ -22,7 +22,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.Hi
  * Created by wGJUH on 11.04.2017.
  */
 
-public class HistoryFavoriteFragmentContainer extends BaseFragment {
+public class    HistoryFavoriteFragmentContainer extends BaseFragment {
     @BindView(R.id.fragment_toolbar)
     Toolbar toolbar;
     @BindView(R.id.bottom_tabLayout_app)
@@ -52,9 +52,12 @@ public class HistoryFavoriteFragmentContainer extends BaseFragment {
 
     private void inits() {
         FragmentAdapter fragmentPagerAdapter = new FragmentAdapter(getFragmentManager());
-        fragmentPagerAdapter.addFragment(new HistoryFavoritesFragment(), HistoryFavoritesFragment.class.getName()+1);
-        //fragmentPagerAdapter.addFragment(new SettingLangsFragment(), SettingLangsFragment.class.getName()+2);
+        fragmentPagerAdapter.addFragment(HistoryFavoritesFragment.newInstance(true), HistoryFavoritesFragment.class.getName()+1);
+        fragmentPagerAdapter.addFragment(HistoryFavoritesFragment.newInstance(false), HistoryFavoritesFragment.class.getName()+2);
         viewPager.setAdapter(fragmentPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
+        // TODO: 14.04.2017 Как можно избежать подобного именования вкладок ?
+        tabLayout.getTabAt(0).setText(R.string.tab_history);
+        tabLayout.getTabAt(1).setText(R.string.tab_favorite);
     }
 }

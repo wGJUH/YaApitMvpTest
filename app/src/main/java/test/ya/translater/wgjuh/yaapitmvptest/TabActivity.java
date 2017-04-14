@@ -1,7 +1,9 @@
 package test.ya.translater.wgjuh.yaapitmvptest;
 
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -16,7 +18,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.tabs.TranslateFragm
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
-public class TabActivity extends AppCompatActivity implements ActivityCallback {
+public class TabActivity extends AppCompatActivity implements ActivityCallback, TabLayout.OnTabSelectedListener {
     @BindView(R.id.viewpager)
     ViewPager viewPager;
     @BindView(R.id.bottom_tabLayout_app)
@@ -54,20 +56,28 @@ public class TabActivity extends AppCompatActivity implements ActivityCallback {
 
     @Override
     public void onBackPressed() {
-        if(viewPager.getCurrentItem() != 0){
+        if (viewPager.getCurrentItem() != 0) {
             viewPager.setCurrentItem(0);
-        }else {
+        } else {
             super.onBackPressed();
         }
     }
 
     private void inits() {
         FragmentAdapter fragmentPagerAdapter = new FragmentAdapter(getSupportFragmentManager());
-      fragmentPagerAdapter.addFragment(new TranslateFragment(), TranslateFragment.class.getName());
-       fragmentPagerAdapter.addFragment(new HistoryFavoriteFragmentContainer(), HistoryFavoriteFragmentContainer.class.getName());
+        fragmentPagerAdapter.addFragment(new TranslateFragment(), TranslateFragment.class.getName());
+        fragmentPagerAdapter.addFragment(new HistoryFavoriteFragmentContainer(), HistoryFavoriteFragmentContainer.class.getName());
         tabLayout.setupWithViewPager(viewPager);
         viewPager.setAdapter(fragmentPagerAdapter);
         viewPager.setCurrentItem(1);
+        tabLayout.addOnTabSelectedListener(this);
+        if(viewPager.getCurrentItem() == 0) {
+            tabLayout.getTabAt(0).setIcon(R.drawable.ic_translate_ya);
+            tabLayout.getTabAt(1).setIcon(R.drawable.ic_bookmark);
+        }else {
+            tabLayout.getTabAt(0).setIcon(R.drawable.ic_translate);
+            tabLayout.getTabAt(1).setIcon(R.drawable.ic_bookmark_ya);
+        }
     }
 
     @Override
@@ -75,6 +85,7 @@ public class TabActivity extends AppCompatActivity implements ActivityCallback {
         super.onDestroy();
         Log.d(TAG, "onDestroy: " + getClass().getName());
         Log.d(TAG, "onDestroy: getsupportFM: " + getSupportFragmentManager().getFragments().size());
+        tabLayout.removeOnTabSelectedListener(this);
         refWatcher = LeakCanaryApp.getRefWatcher(this);
         refWatcher.watch(this);
     }
@@ -84,5 +95,27 @@ public class TabActivity extends AppCompatActivity implements ActivityCallback {
         super.onStop();
         Log.d(TAG, "onStop: " + getClass().getName());
         Log.d(TAG, "onStop: getsupportFM: " + getSupportFragmentManager().getFragments().size());
+    }
+
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+        if(tab.getPosition() == 0) {
+            tab.setIcon(R.drawable.ic_translate_ya);
+        }else {
+            tab.setIcon(R.drawable.ic_bookmark_ya);
+        }
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+        if(tab.getPosition() == 0) {
+            tab.setIcon(R.drawable.ic_translate);
+        }else {
+            tab.setIcon(R.drawable.ic_bookmark);
+        }
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
     }
 }

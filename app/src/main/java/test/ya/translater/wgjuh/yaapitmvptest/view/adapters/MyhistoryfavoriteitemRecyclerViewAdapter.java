@@ -1,4 +1,4 @@
-package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite;
+package test.ya.translater.wgjuh.yaapitmvptest.view.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,6 +8,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.Locale;
 
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
@@ -37,17 +38,8 @@ public class MyhistoryfavoriteitemRecyclerViewAdapter extends RecyclerView.Adapt
             holder.mIdView.setText(mValues.get(position).getTarget());
             holder.mContentView.setText(mValues.get(position).getCommonTranslate());
             holder.checkBox.setChecked(!mValues.get(position).getFavorite().equals("-1"));
-            holder.langs.setText(mValues.get(position).getLangs());
+            holder.langs.setText(mValues.get(position).getLangs().toUpperCase(Locale.getDefault()));
         }
-/*
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    mListener.onListFragmentInteraction(holder.mItem);
-                }
-            }
-        });*/
     }
 
     @Override

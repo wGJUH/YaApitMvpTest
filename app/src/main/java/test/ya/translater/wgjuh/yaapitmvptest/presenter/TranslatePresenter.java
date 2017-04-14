@@ -2,6 +2,8 @@ package test.ya.translater.wgjuh.yaapitmvptest.presenter;
 
 
 
+import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
+import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
@@ -65,7 +67,10 @@ public class TranslatePresenter extends BasePresenter<TranslateListView> {
     public void addToFavorites(){
         if(lastTranslate != null) {
             view.setBtnFavoriteSelected(true);
-            iModel.addToFavorites(lastTranslate);
+            lastTranslate.setFavorite(Long.toString(iModel.addToFavorites(lastTranslate)));
+            eventBus
+                    .getEventBus()
+                    .onNext(eventBus.createEvent(Event.EventType.ADD_FAVORITE,lastTranslate));
         }
     }
 }
