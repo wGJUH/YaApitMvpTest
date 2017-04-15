@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import java.util.List;
@@ -12,13 +13,18 @@ import java.util.Locale;
 
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.HistoryFavoritePresenter;
 
 public class MyhistoryfavoriteitemRecyclerViewAdapter extends RecyclerView.Adapter<MyhistoryfavoriteitemRecyclerViewAdapter.ViewHolder> {
 
     private final List<DictDTO> mValues;
+    private boolean isHistory;
+    private HistoryFavoritePresenter historyFavoritePresenter;
 
-    public MyhistoryfavoriteitemRecyclerViewAdapter(List<DictDTO> items) {
+    public MyhistoryfavoriteitemRecyclerViewAdapter(List<DictDTO> items, boolean isHistory, HistoryFavoritePresenter historyFavoritePresenter) {
         mValues = items;
+        this.isHistory = isHistory;
+        this.historyFavoritePresenter = historyFavoritePresenter;
     }
 
 
@@ -33,12 +39,14 @@ public class MyhistoryfavoriteitemRecyclerViewAdapter extends RecyclerView.Adapt
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        if(mValues.size() != 0) {
+        if(mValues.size() != position) {
             holder.mItem = mValues.get(position);
             holder.mIdView.setText(mValues.get(position).getTarget());
             holder.mContentView.setText(mValues.get(position).getCommonTranslate());
             holder.checkBox.setChecked(!mValues.get(position).getFavorite().equals("-1"));
             holder.langs.setText(mValues.get(position).getLangs().toUpperCase(Locale.getDefault()));
+            holder.checkBox.setOnClickListener(view ->
+                    historyFavoritePresenter.updateFavorites(mValues.get(position)));
         }
     }
 

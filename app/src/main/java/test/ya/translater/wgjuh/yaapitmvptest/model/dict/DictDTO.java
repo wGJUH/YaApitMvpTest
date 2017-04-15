@@ -1,11 +1,12 @@
 
 package test.ya.translater.wgjuh.yaapitmvptest.model.dict;
 
+import java.io.Serializable;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class DictDTO {
+public class DictDTO implements Serializable{
 
     @SerializedName("def")
     @Expose

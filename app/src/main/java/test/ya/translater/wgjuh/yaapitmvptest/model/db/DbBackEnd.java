@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
@@ -12,10 +13,10 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.LangsDirsModelPojo;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.HistoryFavoritePresenter;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
@@ -60,8 +61,12 @@ public class DbBackEnd implements Contractor {
 
     // TODO: 14.04.2017 доделать логику добавления в избранное!!!!
     public long insertFavoriteFromHistory(String id){
-        long inserted;
+        long inserted = getFavoriteId(Integer.parseInt(id));
         ContentValues contentValues = new ContentValues();
+        if(inserted != -1){
+                removeHistoryItemFavorite(Long.toString(inserted));
+                return -1;
+        }
         sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
         sqLiteDatabase.beginTransaction();
         Cursor cursor = sqLiteDatabase.query(DB_TABLE_HISTORY,new String[]{Translate.TARGET,Translate.LANGS,Translate.JSON},"id =?",new String[]{id},null,null,null);
@@ -74,19 +79,41 @@ public class DbBackEnd implements Contractor {
         cursor.close();
         inserted = sqLiteDatabase.insert(DB_TABLE_FAVORITES,null,contentValues);
         if( inserted != -1) {
+            sqLiteDatabase.setTransactionSuccessful();
+            sqLiteDatabase.endTransaction();
+            sqLiteDatabase.close();
             setHistoryItemFavorite(id,inserted);
+        }else {
+            sqLiteDatabase.endTransaction();
+            sqLiteDatabase.close();
         }
-        sqLiteDatabase.endTransaction();
-        sqLiteDatabase.close();
+
         return inserted;
     }
 
     private void setHistoryItemFavorite(String historyId, long favoriteId){
         ContentValues contentValues = new ContentValues();
         contentValues.put(Translate.FAVORITE,favoriteId);
+        sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
+        sqLiteDatabase.beginTransaction();
         if( sqLiteDatabase.update(DB_TABLE_HISTORY,contentValues,"id=?",new String[]{historyId}) != -1) {
             sqLiteDatabase.setTransactionSuccessful();
         }
+        sqLiteDatabase.endTransaction();
+        sqLiteDatabase.close();
+    }
+
+    private void removeHistoryItemFavorite(String favoriteId){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Translate.FAVORITE,"-1");
+        sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
+        sqLiteDatabase.beginTransaction();
+        if( sqLiteDatabase.delete(DB_TABLE_FAVORITES,"id=?",new String[]{favoriteId}) != 0 &&
+                sqLiteDatabase.update(DB_TABLE_HISTORY,contentValues,Translate.FAVORITE+"=?",new String[]{favoriteId}) != 0) {
+            sqLiteDatabase.setTransactionSuccessful();
+        }
+        sqLiteDatabase.endTransaction();
+        sqLiteDatabase.close();
     }
 
     /**
@@ -101,16 +128,14 @@ public class DbBackEnd implements Contractor {
         sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
         Log.d(TAG, "getHistoryTranslate");
         Cursor c = sqLiteDatabase.query(
-                DB_TABLE_HISTORY, new String[]{Translate.ID,Translate.JSON},  // => SELECT page_id FROM pages
+                DB_TABLE_HISTORY, new String[]{Translate.ID,Translate.JSON,Translate.FAVORITE},  // => SELECT page_id FROM pages
                 Translate.TARGET + "=? AND " + Translate.LANGS + " =?", new String[]{target, langs},  // => WHERE page_url='url'
                 null, null, null);
         Log.d(TAG, "getHistoryTranslate: cursor: " + c);
         if (c.moveToFirst()) {
             String json = c.getString(c.getColumnIndex(Translate.JSON));
             Log.d(TAG, "getHistoryTranslate: " + json);
-            DictDTO dictDTO = new Gson().fromJson(json, DictDTO.class);
-            dictDTO.setId(""+c.getInt(c.getColumnIndex(Translate.ID)));
-            dictDTO.setFavorite(Integer.toString(isFavorite(c.getInt(c.getColumnIndex(Translate.ID)))));
+            DictDTO dictDTO = getDictDTO(new Gson(),c);
             c.close();
             sqLiteDatabase.close();
             return dictDTO;
@@ -118,6 +143,7 @@ public class DbBackEnd implements Contractor {
         sqLiteDatabase.close();
         return null;
     }
+
     public DictDTO getHistoryTranslate(long id) {
         sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
         Log.d(TAG, "getHistoryTranslate");
@@ -128,9 +154,7 @@ public class DbBackEnd implements Contractor {
         if (c.moveToFirst()) {
             String json = c.getString(c.getColumnIndex(Translate.JSON));
             Log.d(TAG, "getHistoryTranslate: " + json);
-            DictDTO dictDTO = new Gson().fromJson(json, DictDTO.class);
-            dictDTO.setId(""+c.getInt(c.getColumnIndex(Translate.ID)));
-            dictDTO.setFavorite(Integer.toString(isFavorite(c.getInt(c.getColumnIndex(Translate.ID)))));
+            DictDTO dictDTO = getDictDTO(new Gson(),c);
             c.close();
             sqLiteDatabase.close();
             return dictDTO;
@@ -176,6 +200,7 @@ public class DbBackEnd implements Contractor {
         sqLiteDatabase.close();
         return langModel;
     }
+
     private int getCountForTable(String tableName){
         int count = 0;
         sqLiteDatabase = mDbOpenHelper.getReadableDatabase();
@@ -196,9 +221,7 @@ public class DbBackEnd implements Contractor {
         Cursor cursor = sqLiteDatabase.query(DB_TABLE_HISTORY,null,null,null,null,null,Translate.DATE + " DESC");
         if(cursor.moveToFirst()){
             do {
-                dictDTO = gson.fromJson(cursor.getString(cursor.getColumnIndex(Translate.JSON)), DictDTO.class);
-                dictDTO.setId(Integer.toString(cursor.getInt(cursor.getColumnIndex(Translate.ID))));
-                dictDTO.setFavorite(Integer.toString(isFavorite(cursor.getInt(cursor.getColumnIndex(Translate.ID)))));
+                dictDTO = getDictDTO(gson,cursor);
                 dictDTOs.add(dictDTO);
             }while (cursor.moveToNext());
         }
@@ -207,7 +230,24 @@ public class DbBackEnd implements Contractor {
         return dictDTOs;
     }
 
-    public int isFavorite(int id){
+    public List<DictDTO> getFavoriteListTranslate() {
+        ArrayList<DictDTO> dictDTOs = new ArrayList<>(getCountForTable(DB_TABLE_HISTORY));
+        DictDTO dictDTO;
+        Gson gson = new Gson();
+        sqLiteDatabase = mDbOpenHelper.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.query(DB_TABLE_FAVORITES,null,null,null,null,null,Translate.DATE + " DESC");
+        if(cursor.moveToFirst()){
+            do {
+                dictDTO = getDictDTO(gson, cursor);
+                dictDTOs.add(dictDTO);
+            }while (cursor.moveToNext());
+        }
+        cursor.close();
+        sqLiteDatabase.close();
+        return dictDTOs;
+    }
+
+    private int getFavoriteId(int id){
         int favoriteId = -1;
         sqLiteDatabase = mDbOpenHelper.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.query(DB_TABLE_HISTORY,new String[]{Translate.FAVORITE},Translate.FAVORITE+" IS NOT NULL AND " + Translate.ID + " =? ",new String[]{""+id},null,null,null);
@@ -221,6 +261,19 @@ public class DbBackEnd implements Contractor {
         return favoriteId;
     }
 
+    private String getHistoryIdByFavoriteId(String id){
+        String historyId = "-1";
+        sqLiteDatabase = mDbOpenHelper.getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.query(DB_TABLE_HISTORY,new String[]{Translate.ID},Translate.FAVORITE+" IS NOT NULL AND " + Translate.FAVORITE + " =? ",new String[]{id},null,null,null);
+        if(cursor.moveToFirst()){
+            historyId = cursor.getString(cursor.getColumnIndex(Translate.ID));
+            cursor.close();
+            return historyId;
+        }
+        cursor.close();
+        sqLiteDatabase.close();
+        return historyId;
+    }
 
     public long updateHistoryDate(String id) {
         long update;
@@ -237,23 +290,19 @@ public class DbBackEnd implements Contractor {
         return update;
     }
 
-    public List<DictDTO> getFavoriteListTranslate() {
-        ArrayList<DictDTO> dictDTOs = new ArrayList<>(getCountForTable(DB_TABLE_HISTORY));
+    @NonNull
+    private DictDTO getDictDTO(Gson gson, Cursor cursor) {
         DictDTO dictDTO;
-        Gson gson = new Gson();
-        sqLiteDatabase = mDbOpenHelper.getReadableDatabase();
-        Cursor cursor = sqLiteDatabase.query(DB_TABLE_FAVORITES,null,null,null,null,null,Translate.DATE + " DESC");
-        if(cursor.moveToFirst()){
-            do {
-                dictDTO = gson.fromJson(cursor.getString(cursor.getColumnIndex(Translate.JSON)), DictDTO.class);
-                dictDTO.setId(Integer.toString(cursor.getInt(cursor.getColumnIndex(Favorite.ID))));
-                dictDTO.setFavorite(Integer.toString(cursor.getInt(cursor.getColumnIndex(Favorite.ID))));
-                dictDTOs.add(dictDTO);
-            }while (cursor.moveToNext());
+        dictDTO = gson.fromJson(cursor.getString(cursor.getColumnIndex(Translate.JSON)), DictDTO.class);
+
+        if(cursor.getColumnIndex(Translate.FAVORITE) != -1) {
+            dictDTO.setId(cursor.getString(cursor.getColumnIndex(Translate.ID)));
+            dictDTO.setFavorite(cursor.getString(cursor.getColumnIndex(Translate.FAVORITE)));
+        }else{
+            dictDTO.setId(getHistoryIdByFavoriteId(cursor.getString(cursor.getColumnIndex(Favorite.ID))));
+            dictDTO.setFavorite(cursor.getString(cursor.getColumnIndex(Favorite.ID)));
         }
-        cursor.close();
-        sqLiteDatabase.close();
-        return dictDTOs;
+        return dictDTO;
     }
 
     public String getLangByCode(String code) {

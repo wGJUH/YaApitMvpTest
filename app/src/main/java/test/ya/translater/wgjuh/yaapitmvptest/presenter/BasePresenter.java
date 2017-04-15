@@ -41,4 +41,6 @@ public abstract  class BasePresenter<T extends View> implements Presenter {
         compositeSubscription.clear();
         onUnbindView();
     }
+
+
 }

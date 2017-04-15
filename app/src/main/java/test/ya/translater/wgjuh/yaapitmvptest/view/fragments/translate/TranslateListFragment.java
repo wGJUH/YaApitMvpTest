@@ -3,19 +3,23 @@ package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import test.ya.translater.wgjuh.yaapitmvptest.DATA;
 import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
+import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.TranslatePresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
@@ -28,11 +32,11 @@ import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
 public class TranslateListFragment extends BaseFragment implements TranslateListView {
     @BindView(R.id.textview_common_translate)
-        TextView translate;
+    TextView translate;
     @BindView(R.id.recycler_translate)
     RecyclerView recyclerView;
     @BindView(R.id.btn_add_favorite)
-    ImageButton btnFavorite;
+    CheckBox btnFavorite;
 
 
     private TranslatePresenter translatePresenter;
@@ -42,6 +46,12 @@ public class TranslateListFragment extends BaseFragment implements TranslateList
         super.onViewCreated(view, savedInstanceState);
         translatePresenter = new TranslatePresenter(ModelImpl.getInstance(), EventBus.getInstance());
         translatePresenter.onBindView(this);
+        if(savedInstanceState != null) {
+            DictDTO dictDTO  = (DictDTO)savedInstanceState.getSerializable(DATA.OUT_STATE);
+            if(dictDTO != null) {
+                translatePresenter.restoreState(dictDTO);
+            }
+        }
         btnFavorite.setOnClickListener(btn -> translatePresenter.addToFavorites());
     }
 
@@ -50,9 +60,7 @@ public class TranslateListFragment extends BaseFragment implements TranslateList
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.list_translate_block,container,false);
         ButterKnife.bind(this,view);
-        // TODO: 06.04.2017 Необходимо создать Serializable для сохранения состояния фрагмента перевода 
-        if(savedInstanceState != null)
-            translate.setText(savedInstanceState.getString("TEST"));
+
         return view;
     }
 
@@ -68,7 +76,7 @@ public class TranslateListFragment extends BaseFragment implements TranslateList
 
     @Override
     public void setBtnFavoriteSelected(Boolean selected) {
-        btnFavorite.setEnabled(selected);
+        btnFavorite.setChecked(selected);
     }
 
     @Override
@@ -78,7 +86,7 @@ public class TranslateListFragment extends BaseFragment implements TranslateList
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-            outState.putString("TEST",translate.getText().toString());
+        translatePresenter.saveOutState(outState);
     }
 
     @Override

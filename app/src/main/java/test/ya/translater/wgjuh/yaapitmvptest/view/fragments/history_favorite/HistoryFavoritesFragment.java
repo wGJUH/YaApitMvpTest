@@ -18,6 +18,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.DATA;
+import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
@@ -37,7 +38,7 @@ public class HistoryFavoritesFragment extends BaseFragment implements IHistoryFa
     private boolean isHistory;
     private HistoryFavoritePresenter historyFavoritePresenter;
     private MyhistoryfavoriteitemRecyclerViewAdapter viewAdapter;
-    private List<DictDTO> dictDTOs = new ArrayList<>();
+
 
     public HistoryFavoritesFragment() {
     }
@@ -77,15 +78,25 @@ public class HistoryFavoritesFragment extends BaseFragment implements IHistoryFa
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        viewAdapter = new MyhistoryfavoriteitemRecyclerViewAdapter(dictDTOs);
-        historyFavoritePresenter = new HistoryFavoritePresenter(ModelImpl.getInstance(), EventBus.getInstance(),isHistory);
+
+        historyFavoritePresenter = new HistoryFavoritePresenter(ModelImpl.getInstance(), EventBus.getInstance(), isHistory);
+        viewAdapter = new MyhistoryfavoriteitemRecyclerViewAdapter(historyFavoritePresenter.getDictDTOs(),isHistory, historyFavoritePresenter);
         historyFavoritePresenter.onBindView(this);
+
         Context context = view.getContext();
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(viewAdapter);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 LinearLayout.VERTICAL);
         recyclerView.addItemDecoration(dividerItemDecoration);
+    }
+
+    public MyhistoryfavoriteitemRecyclerViewAdapter getViewAdapter() {
+        return viewAdapter;
+    }
+
+    public RecyclerView getRecyclerView() {
+        return recyclerView;
     }
 
     @Override
@@ -110,18 +121,6 @@ public class HistoryFavoritesFragment extends BaseFragment implements IHistoryFa
         Log.d(DATA.TAG, "onDestroyView: " + getClass().getName());
     }
 
-    public void updateAdapterData(DictDTO dictDTO){
-        this.dictDTOs.add(dictDTO);
-        viewAdapter.notifyItemInserted(dictDTOs.size()-1);
-    }
-    public void updateFirstItemInAdapterData(DictDTO dictDTO){
-        if(dictDTO != null) {
-            this.dictDTOs.add(0, dictDTO);
-            viewAdapter.notifyItemInserted(dictDTOs.size() - 1);
-            viewAdapter.notifyItemRangeChanged(0, dictDTOs.size());
-            recyclerView.invalidate();
-        }
-    }
 
 
     @Override
@@ -134,20 +133,12 @@ public class HistoryFavoritesFragment extends BaseFragment implements IHistoryFa
 
     }
 
-    public void updateLastTranslatedInRow(DictDTO dictDTO) {
-        int oldPosition = dictDTOs.indexOf(dictDTO);
-        dictDTOs.remove(dictDTO);
-        dictDTOs.add(0,dictDTO);
-        viewAdapter.notifyItemMoved(oldPosition,0);
-        recyclerView.scrollToPosition(0);
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LeakCanaryApp.getRefWatcher(this.getContext()).watch(this);
     }
 
-    public void updateFavoriteBox(DictDTO dictDTO) {
-        int position = dictDTOs.indexOf(dictDTO);
-        dictDTOs.set(position,dictDTO);
-        viewAdapter.notifyItemChanged(position);
-        recyclerView.scrollToPosition(position);
 
-    }
 
 }

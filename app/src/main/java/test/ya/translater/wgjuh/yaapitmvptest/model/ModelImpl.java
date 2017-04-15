@@ -120,7 +120,7 @@ public class ModelImpl implements IModel {
     }
 
     @Override
-    public long addToFavorites(DictDTO dictDTO) {
+    public long setFavorites(DictDTO dictDTO) {
         return dbBackEnd.insertFavoriteFromHistory(dictDTO.getId());
     }
 

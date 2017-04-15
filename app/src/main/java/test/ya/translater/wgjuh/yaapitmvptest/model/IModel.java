@@ -39,7 +39,7 @@ public interface IModel {
 
     void saveToDBAndNotify(DictDTO dictDTO);
 
-    long addToFavorites(DictDTO dictDTO);
+    long setFavorites(DictDTO dictDTO);
 
     void updateHistoryDate(String id);
 

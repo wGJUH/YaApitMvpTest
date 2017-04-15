@@ -32,9 +32,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
                 Translate.LANGS + " TEXT NOT NULL, " +
                 Translate.JSON + " TEXT UNIQUE NOT NULL, " +
                 Translate.DATE + " INTEGER NOT NULL, " +
-                Translate.FAVORITE + " INTEGER , " +
-                "FOREIGN KEY(" + Translate.FAVORITE + ") REFERENCES " + DB_TABLE_FAVORITES + "(" + Favorite.ID + ")" +
-                " ON DELETE SET DEFAULT "+
+                Translate.FAVORITE + " INTEGER DEFAULT -1 " +
                 ")");
 
         db.execSQL("CREATE TABLE " + DB_TABLE_FAVORITES + "(" +

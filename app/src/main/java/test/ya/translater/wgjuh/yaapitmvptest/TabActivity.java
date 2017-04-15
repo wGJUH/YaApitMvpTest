@@ -69,7 +69,6 @@ public class TabActivity extends AppCompatActivity implements ActivityCallback, 
         fragmentPagerAdapter.addFragment(new HistoryFavoriteFragmentContainer(), HistoryFavoriteFragmentContainer.class.getName());
         tabLayout.setupWithViewPager(viewPager);
         viewPager.setAdapter(fragmentPagerAdapter);
-        viewPager.setCurrentItem(1);
         tabLayout.addOnTabSelectedListener(this);
         if(viewPager.getCurrentItem() == 0) {
             tabLayout.getTabAt(0).setIcon(R.drawable.ic_translate_ya);
