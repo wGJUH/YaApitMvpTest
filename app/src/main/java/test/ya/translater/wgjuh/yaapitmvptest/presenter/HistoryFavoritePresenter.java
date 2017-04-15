@@ -84,6 +84,9 @@ public class HistoryFavoritePresenter extends BasePresenter<HistoryFavoritesFrag
                     case ADD_FAVORITE:
                         updateItemInFavoriteAdapterData((DictDTO) event.content[0]);
                         break;
+                    case UPDATE_FAVORITE:
+                        view.getViewAdapter().removeAllNotFavorite();
+                        break;
                     default:
                         break;
                 }
@@ -108,14 +111,15 @@ public class HistoryFavoritePresenter extends BasePresenter<HistoryFavoritesFrag
     public void updateItemInFavoriteAdapterData(DictDTO dictDTO) {
         int position = dictDTOs.indexOf(dictDTO);
         if (position != -1) {
+            updateFavoriteBox(dictDTO);
+            //dictDTOs.remove(position);
+            //view.getViewAdapter().notifyItemRemoved(position);
+            //view.getViewAdapter().notifyItemRangeChanged(0, dictDTOs.size()-1);
+            //view.getRecyclerView().invalidate();
 
-            view.getViewAdapter().notifyItemRemoved(position);
-            view.getViewAdapter().notifyItemRangeChanged(0, dictDTOs.size()-1);
-            view.getRecyclerView().invalidate();
-            dictDTOs.remove(position);
         } else {
             updateFirstItemInAdapterData(dictDTO);
-            updateFavoriteBox(dictDTO);
+
         }
     }
 

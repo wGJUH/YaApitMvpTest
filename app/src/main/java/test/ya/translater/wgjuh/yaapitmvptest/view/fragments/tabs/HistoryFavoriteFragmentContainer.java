@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
+import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
+import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.FragmentAdapter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
@@ -59,5 +61,23 @@ public class    HistoryFavoriteFragmentContainer extends BaseFragment {
         // TODO: 14.04.2017 Как можно избежать подобного именования вкладок ?
         tabLayout.getTabAt(0).setText(R.string.tab_history);
         tabLayout.getTabAt(1).setText(R.string.tab_favorite);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                if(tab.getPosition() == 1){
+                    EventBus.getInstance().getEventBus().onNext(EventBus.getInstance().createEvent(Event.EventType.UPDATE_FAVORITE));
+                }
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 }
