@@ -26,7 +26,7 @@ public abstract  class BasePresenter<T extends View> implements Presenter {
 
     @Override
     public void onUnbindView() {
-        Log.d(TAG, "onUnbindView: " );
+        Log.d(TAG, "onUnbindView: " + view.getClass().getName());
         view = null;
     }
 

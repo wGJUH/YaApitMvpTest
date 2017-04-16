@@ -1,6 +1,7 @@
 package test.ya.translater.wgjuh.yaapitmvptest.presenter;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
@@ -34,10 +35,14 @@ public class FavoritePresenterImpl extends BasePresenter<IHistoryFavoriteFragmen
 
     @Override
     public void deleteFavorite(DictDTO dictDTO) {
-        int oldPosition = dictDTOs.indexOf(dictDTO);
+        dictDTO.setFavorite(Long.toString(iModel.setFavorites(dictDTO)));
+        eventBus.getEventBus().onNext(eventBus.createEvent(Event.EventType.UPDATE_FAVORITE,dictDTO));
+
+/*        int oldPosition = dictDTOs.indexOf(dictDTO);
         dictDTOs.set(oldPosition,dictDTO);
-        view.getViewAdapter().notifyItemChanged(oldPosition);
-        eventBus.getEventBus().onNext(eventBus.createEvent(Event.EventType.DELETE_FAVORITE,dictDTO));
+        view.getViewAdapter().notifyItemChanged(oldPosition);*/
+        //
+
     }
 
     @Override
@@ -50,6 +55,7 @@ public class FavoritePresenterImpl extends BasePresenter<IHistoryFavoriteFragmen
     public void insertItemInNoseOfAdapterDataAndNotify(DictDTO dictDTO) {
         dictDTOs.add(0,dictDTO);
         view.getViewAdapter().notifyItemInserted(0);
+        view.getRecyclerView().scrollToPosition(0);
     }
 
     @Override
@@ -70,8 +76,8 @@ public class FavoritePresenterImpl extends BasePresenter<IHistoryFavoriteFragmen
     @Override
     public void updateFavorite(DictDTO dictDTO) {
         int oldPosition = dictDTOs.indexOf(dictDTO);
-        dictDTOs.remove(oldPosition);
-        view.getViewAdapter().notifyItemRemoved(oldPosition);
+        dictDTOs.set(oldPosition,dictDTO);
+        view.getViewAdapter().notifyItemChanged(oldPosition);
     }
 
     @Override
@@ -88,7 +94,7 @@ public class FavoritePresenterImpl extends BasePresenter<IHistoryFavoriteFragmen
 
     @Override
     public void subscribeToBusEvents() {
-        eventBus.getEventBus().subscribe(this::onEvent);
+       addSubscription( eventBus.getEventBus().subscribe(this::onEvent));
     }
 
     @Override
@@ -99,6 +105,15 @@ public class FavoritePresenterImpl extends BasePresenter<IHistoryFavoriteFragmen
         // TODO: 16.04.2017  баг с необновлением индексов в списке
     }
 
+    public void removeAllNotFavorite(){
+        for (Iterator<DictDTO> it = dictDTOs.iterator(); it.hasNext();) {
+            if (it.next().getFavorite().equals("-1")) {
+                it.remove();
+            }
+        }
+        view.getViewAdapter().notifyDataSetChanged();
+    }
+
     @Override
     public void onEvent(Event event) {
         switch (event.eventType){
@@ -107,12 +122,15 @@ public class FavoritePresenterImpl extends BasePresenter<IHistoryFavoriteFragmen
                 break;
             case UPDATE_FAVORITE:
                 DictDTO dictDTO = (DictDTO)event.content[0];
-                if(!dictDTO.getFavorite().equals("-1")){
-                    addItem((DictDTO)event.content[0]);
-                }else{
+                if(dictDTO.getFavorite().equals("-1")){
                     updateFavorite(dictDTO);
+                }else{
+                    addItem((DictDTO)event.content[0]);
+
                 }
-                //view.getViewAdapter().notifyDataSetChanged();
+                break;
+            case DELETE_FAVORITE:
+                removeAllNotFavorite();
                 break;
             default:
                 break;

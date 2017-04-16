@@ -41,8 +41,6 @@ public class HistoryPresenterImpl extends BasePresenter<IHistoryFavoriteFragment
     @Override
     public void deleteFavorite(DictDTO dictDTO) {
         dictDTO.setFavorite(Long.toString(iModel.setFavorites(dictDTO)));
-        dictDTOs.set(dictDTOs.indexOf(dictDTO),dictDTO);
-        view.getViewAdapter().notifyItemChanged(dictDTOs.indexOf(dictDTO));
         eventBus.getEventBus().onNext(eventBus.createEvent(Event.EventType.UPDATE_FAVORITE,dictDTO));
     }
 
@@ -69,7 +67,9 @@ public class HistoryPresenterImpl extends BasePresenter<IHistoryFavoriteFragment
 
     @Override
     public void updateFavorite(DictDTO dictDTO) {
-
+        int position = dictDTOs.indexOf(dictDTO);
+        dictDTOs.set(position,dictDTO);
+        view.getViewAdapter().notifyItemChanged(position);
     }
 
     @Override
@@ -82,7 +82,7 @@ public class HistoryPresenterImpl extends BasePresenter<IHistoryFavoriteFragment
 
     @Override
     public void subscribeToBusEvents() {
-        eventBus.getEventBus().subscribe(this::onEvent);
+        addSubscription(eventBus.getEventBus().subscribe(this::onEvent));
     }
 
     @Override
@@ -111,7 +111,8 @@ public class HistoryPresenterImpl extends BasePresenter<IHistoryFavoriteFragment
                 break;
             case ADD_FAVORITE:
                 break;
-            case DELETE_FAVORITE:
+            case UPDATE_FAVORITE:
+                updateFavorite((DictDTO)event.content[0]);
                 break;
             default:
                 break;

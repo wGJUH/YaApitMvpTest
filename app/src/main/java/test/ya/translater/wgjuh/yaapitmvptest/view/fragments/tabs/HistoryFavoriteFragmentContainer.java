@@ -23,7 +23,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.Hi
  * Created by wGJUH on 11.04.2017.
  */
 
-public class    HistoryFavoriteFragmentContainer extends BaseFragment {
+public class  HistoryFavoriteFragmentContainer extends BaseFragment {
     @BindView(R.id.fragment_toolbar)
     Toolbar toolbar;
     @BindView(R.id.bottom_tabLayout_app)
@@ -69,7 +69,7 @@ public class    HistoryFavoriteFragmentContainer extends BaseFragment {
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
                 // TODO: 15.04.2017  НЕОБХОДИМО СРОЧНО ПОПРАВИТЬ  УДАЛЕНИЕ ИЗ ИЗБРАННОГО ЧЕРЕЗ ИСТОРИЮ !
-                   // EventBus.getInstance().getEventBus().onNext(EventBus.getInstance().createEvent(Event.EventType.UPDATE_FAVORITE));
+                    EventBus.getInstance().getEventBus().onNext(EventBus.getInstance().createEvent(Event.EventType.DELETE_FAVORITE));
 
             }
 

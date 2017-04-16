@@ -60,14 +60,7 @@ public class MyhistoryfavoriteitemRecyclerViewAdapter extends RecyclerView.Adapt
         return mValues.size();
     }
 
-    public void removeAllNotFavorite(){
-        for (Iterator<DictDTO> it = mValues.iterator(); it.hasNext();) {
-            if (it.next().getFavorite().equals("-1")) {
-                it.remove();
-            }
-        }
-        notifyDataSetChanged();
-    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mIdView;

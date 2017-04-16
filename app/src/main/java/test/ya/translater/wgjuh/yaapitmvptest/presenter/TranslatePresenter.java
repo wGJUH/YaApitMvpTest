@@ -46,6 +46,9 @@ public class TranslatePresenter extends BasePresenter<TranslateListView> {
                     restoreState((DictDTO) event.content[0]);
                     break;
                 case ADD_FAVORITE:
+
+                    break;
+                case UPDATE_FAVORITE:
                     if(lastTranslate != null && lastTranslate.equals(event.content[0])){
                         setFavorite(!((DictDTO) event.content[0]).getFavorite().equals("-1"));
                     }
@@ -85,7 +88,7 @@ public class TranslatePresenter extends BasePresenter<TranslateListView> {
             lastTranslate.setFavorite(Long.toString(iModel.setFavorites(lastTranslate)));
             eventBus
                     .getEventBus()
-                    .onNext(eventBus.createEvent(Event.EventType.ADD_FAVORITE, lastTranslate));
+                    .onNext(eventBus.createEvent(Event.EventType.UPDATE_FAVORITE, lastTranslate));
         }
     }
 
