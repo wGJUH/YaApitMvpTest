@@ -3,6 +3,8 @@ package test.ya.translater.wgjuh.yaapitmvptest.presenter.impl;
 
 import android.util.Log;
 
+import java.util.Locale;
+
 import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
@@ -24,7 +26,7 @@ import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 public class InputPresenterImpl extends BasePresenter<InputView> implements IInputPresenter {
     private final IModel model;
     private final IEventBus eventBus;
-    private  Subscription subscription;
+
 
     public InputPresenterImpl(IModel model,
                               IEventBus eventBus) {
@@ -34,7 +36,7 @@ public class InputPresenterImpl extends BasePresenter<InputView> implements IInp
 
     @Override
     public boolean onButtonTranslateClick() {
-        if(!view.getTargetText().isEmpty()) {
+        if (!view.getTargetText().isEmpty()) {
             eventBus.getEventBusForPost().onNext(new Event<>(Event.EventType.BTN_CLEAR_CLICKED));
             startTranslate();
         }
@@ -43,58 +45,9 @@ public class InputPresenterImpl extends BasePresenter<InputView> implements IInp
 
     @Override
     public void startTranslate() {
-        if(subscription!= null && !subscription.isUnsubscribed()){
-            subscription.isUnsubscribed();
-        }
+        eventBus.getEventBusForPost().onNext(eventBus.createEvent(Event.EventType.BTN_CLEAR_CLICKED));
+        eventBus.getEventBusForPost().onNext(eventBus.createEvent(Event.EventType.START_TRANSLATE, view.getTargetText().toLowerCase(Locale.getDefault())));
 
-        String translateDirection = model.getTranslateLangPair();
-
-        DictDTO historyTranslate = model.getHistoryTranslate(view.getTargetText().trim(), translateDirection);
-
-        if(historyTranslate != null){
-            model.updateHistoryDate(historyTranslate.getId());
-            eventBus.getEventBusForPost().onNext(eventBus.createEvent(Event.EventType.WORD_UPDATED,historyTranslate));
-            return;
-        }
-        Observable<DictDTO> dictDTOObservable = model
-                .getDicTionaryTranslateForLanguage(view.getTargetText(), translateDirection)
-                .onErrorReturn(throwable -> {
-                    Log.e(TAG, "dictDTOObservable: Сервис недоступен или запрос неверен",throwable);
-                return new DictDTO();});
-
-        Observable<TranslateDTO> translatePojoObservable = model
-                .getTranslateForLanguage(view.getTargetText(), translateDirection)
-                .doOnError(throwable ->
-                    Log.e(TAG, "translatePojoObservable: Сервис недоступен или запрос неверен",throwable )
-                );
-
-        // TODO: 08.04.2017 спросить про проверку при зиппе
-        Observable zipObservable = Observable.zip(dictDTOObservable, translatePojoObservable, (dictDTO, translatePojo) -> {
-
-            dictDTO.setCommonTranslate(translatePojo.getText());
-            dictDTO.setTarget(view.getTargetText());
-            dictDTO.setLangs(translatePojo.getLang());
-
-            return dictDTO;
-        });
-        subscription = zipObservable
-                .subscribe(new Observer<DictDTO>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        view.showError(e.getMessage());
-                    }
-                    @Override
-                    public void onNext(DictDTO dictDTO) {
-                        model.saveToDBAndNotify(dictDTO);
-                    }
-                });
-        addSubscription(subscription);
     }
 
     @Override

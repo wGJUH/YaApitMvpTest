@@ -2,6 +2,7 @@ package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import butterknife.BindView;
@@ -41,6 +43,8 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
     RecyclerView recyclerView;
     @BindView(R.id.btn_add_favorite)
     CheckBox btnFavorite;
+    @BindView(R.id.progressBar)
+    ContentLoadingProgressBar progressBar;
     private DictionaryTranslateRecyclerViewAdapter viewAdapter;
 
     private ITranslatePrsenter translatePresenterImpl;
@@ -92,6 +96,16 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
     @Override
     public RecyclerView.Adapter getViewAdapter() {
         return viewAdapter;
+    }
+
+    @Override
+    public void showProgressBar(Boolean show) {
+       if(show) {
+           progressBar.show();
+       }else {
+           progressBar.hide();
+       }
+        //progressBar.invalidate();
     }
 
     @Override

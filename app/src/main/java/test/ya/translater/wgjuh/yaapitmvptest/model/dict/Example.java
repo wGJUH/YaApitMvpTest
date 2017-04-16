@@ -1,11 +1,12 @@
 
 package test.ya.translater.wgjuh.yaapitmvptest.model.dict;
 
+import java.io.Serializable;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Example {
+public class Example implements Serializable{
 
     @SerializedName("text")
     @Expose
@@ -32,10 +33,10 @@ public class Example {
 
     @Override
     public String toString() {
-        return text + "-" + getTr().getText();
+        return text + " — " + getTr().getText();
     }
 }
-class EmbeddedTranslate {
+class EmbeddedTranslate implements Serializable{
 
     @SerializedName("text")
     @Expose

@@ -3,11 +3,16 @@ package test.ya.translater.wgjuh.yaapitmvptest.model.dict;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
+// TODO: 16.04.2017 поменять на parcelable
 public class DictDTO implements Serializable{
 
     @SerializedName("def")
@@ -20,7 +25,11 @@ public class DictDTO implements Serializable{
     private String favorite;
 
     public Observable<Def> getDef() {
-        return Observable.from(def);
+        if(def != null) {
+            return Observable.from(def).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .unsubscribeOn(Schedulers.io());
+        }return Observable.never();
     }
 
     public void setCommonTranslate(String commonTranslate) {

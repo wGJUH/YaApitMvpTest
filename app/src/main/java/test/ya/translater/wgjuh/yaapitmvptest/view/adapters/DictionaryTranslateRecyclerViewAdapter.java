@@ -3,6 +3,7 @@ package test.ya.translater.wgjuh.yaapitmvptest.view.adapters;
 import android.graphics.Color;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,11 +14,13 @@ import com.squareup.leakcanary.LeakTraceElement;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DefRecyclerItem;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DefTranslateItem;
+import test.ya.translater.wgjuh.yaapitmvptest.model.dict.Mean;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.Synonyme;
 
 /**
@@ -43,27 +46,35 @@ public class DictionaryTranslateRecyclerViewAdapter extends RecyclerView.Adapter
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+
         if(defRecyclerItems.size() != 0) {
-            TextView textView;
-            for (DefRecyclerItem defRecyclerItem :
-                    defRecyclerItems) {
-
-
-                for (DefTranslateItem defTranslateItem :
-                        defRecyclerItem.getDefTranslateItems()) {
-
-                        textView = new TextView(LeakCanaryApp.getAppContext());
-                        textView.setTextColor(Color.BLACK);
-                        StringBuilder stringBuilder = new StringBuilder();
-                    for (String synonyme :
-                            defTranslateItem.getTextAndSyn()) {
-                        stringBuilder.append(synonyme+",");
+            for (DefRecyclerItem defRecyclerItem : defRecyclerItems) {
+                for (int i = 0; i < defRecyclerItem.getDefTranslateItems().size(); i++) {
+                    View view = LayoutInflater.from(LeakCanaryApp.getAppContext()).inflate(R.layout.synonimes,null);
+                    if(i == 0) {
+                        ((TextView) view.findViewById(R.id.def_text)).setText(defRecyclerItem.getText());
+                        ((TextView) view.findViewById(R.id.pos)).setText(defRecyclerItem.getPos());
+                    }else {
+                        view.findViewById(R.id.def_text).setVisibility(View.GONE);
+                        view.findViewById(R.id.pos).setVisibility(View.GONE);
                     }
-                        textView.setText(stringBuilder.toString());
-                        textView.setLayoutParams(new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                        holder.linearLayout.addView(textView);
-
+                        DefTranslateItem defTranslateItem = defRecyclerItem.getDefTranslateItems().get(i);
+                        ((TextView)view.findViewById(R.id.row_number)).setText(Integer.toString(i+1));
+                        ((TextView)view.findViewById(R.id.synonyms)).setText(TextUtils.join(", ",defTranslateItem.getTextAndSyn()));
+                        if(defTranslateItem.getMeans().size() != 0) {
+                            ((TextView) view.findViewById(R.id.means)).setText("(" + TextUtils.join(", ", defTranslateItem.getMeans()) + ")");
+                        }else {
+                            view.findViewById(R.id.means).setVisibility(View.GONE);
+                        }
+                    if(defTranslateItem.getExamples().size() != 0) {
+                        ((TextView) view.findViewById(R.id.examples)).setText(TextUtils.join("\n", defTranslateItem.getExamples()));
+                    }else {
+                        view.findViewById(R.id.examples).setVisibility(View.GONE);
+                    }
+                        //view.setLayoutParams(new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                    holder.linearLayout.addView(view);
                 }
+
             }
         }
     }

@@ -16,7 +16,7 @@ public class Event<T> implements Serializable {
         FROM_LANGUAGE,
         ADD_FAVORITE,
         UPDATE_FAVORITE,
-        DELETE_FAVORITE, CHANGE_LANGUAGES
+        DELETE_FAVORITE, START_TRANSLATE, CHANGE_LANGUAGES
     }
     public final T[] content;
     public final EventType eventType;

@@ -12,5 +12,6 @@ public interface TranslateView extends View {
     void showTranslate(String s);
     RecyclerView getRecyclerView();
     RecyclerView.Adapter getViewAdapter();
+    void showProgressBar(Boolean show);
     void setBtnFavoriteSelected(Boolean selected);
 }

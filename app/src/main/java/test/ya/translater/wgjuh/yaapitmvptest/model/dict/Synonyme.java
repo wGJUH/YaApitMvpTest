@@ -4,7 +4,9 @@ package test.ya.translater.wgjuh.yaapitmvptest.model.dict;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Synonyme {
+import java.io.Serializable;
+
+public class Synonyme implements Serializable {
 
     @SerializedName("text")
     @Expose

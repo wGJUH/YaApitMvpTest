@@ -27,30 +27,33 @@ public class HistoryFavoriteRecyclerViewAdapter extends RecyclerView.Adapter<His
     }
 
 
-
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_historyfavoriteitem, parent, false);
-        return new ViewHolder(view);
+        ViewHolder holder = new ViewHolder(view);
+        holder.checkBox.setOnClickListener(v -> {
+            int position = holder.getAdapterPosition();
+            if (position != RecyclerView.NO_POSITION) {
+                if (!holder.checkBox.isChecked()) {
+                    historyFavoritePresenter.deleteFavorite(mValues.get(position));
+                } else {
+                    historyFavoritePresenter.addFavorite(mValues.get(position));
+                }
+            }
+        });
+        return holder;
     }
 
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        if(mValues.size() != position) {
+        if (mValues.size() != position) {
             holder.mItem = mValues.get(position);
             holder.mIdView.setText(mValues.get(position).getTarget());
             holder.mContentView.setText(mValues.get(position).getCommonTranslate());
             holder.checkBox.setChecked(!mValues.get(position).getFavorite().equals("-1"));
             holder.langs.setText(mValues.get(position).getLangs().toUpperCase(Locale.getDefault()));
-            holder.checkBox.setOnClickListener(view ->{
-                if(!holder.checkBox.isChecked()) {
-                    historyFavoritePresenter.deleteFavorite(mValues.get(position));
-                }else {
-                    historyFavoritePresenter.addFavorite(mValues.get(position));
-                }
-            });
         }
     }
 
@@ -73,8 +76,8 @@ public class HistoryFavoriteRecyclerViewAdapter extends RecyclerView.Adapter<His
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.id);
             mContentView = (TextView) view.findViewById(R.id.content);
-            checkBox = (CheckBox)view.findViewById(R.id.isfavorite);
-            langs = (TextView)view.findViewById(R.id.textview_langs);
+            checkBox = (CheckBox) view.findViewById(R.id.isfavorite);
+            langs = (TextView) view.findViewById(R.id.textview_langs);
         }
 
         @Override

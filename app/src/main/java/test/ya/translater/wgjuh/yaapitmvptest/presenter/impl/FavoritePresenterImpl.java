@@ -77,7 +77,8 @@ public class FavoritePresenterImpl extends BasePresenter<IHistoryFavoriteFragmen
 
     @Override
     public void addFavorite(DictDTO dictDTO) {
-
+        dictDTO.setFavorite(Long.toString(iModel.setFavorites(dictDTO)));
+        eventBusImpl.getEventBusForPost().onNext(eventBusImpl.createEvent(Event.EventType.UPDATE_FAVORITE,dictDTO));
     }
 
     @Override
@@ -119,9 +120,8 @@ public class FavoritePresenterImpl extends BasePresenter<IHistoryFavoriteFragmen
                 DictDTO dictDTO = (DictDTO)event.content[0];
                 if(dictDTO.getFavorite().equals("-1")){
                     updateFavorite(dictDTO);
-                }else{
+                }else if(!dictDTOs.contains(dictDTO)){
                     addItem((DictDTO)event.content[0]);
-
                 }
                 break;
             case DELETE_FAVORITE:

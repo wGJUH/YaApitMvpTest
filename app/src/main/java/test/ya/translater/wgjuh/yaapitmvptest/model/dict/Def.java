@@ -1,13 +1,14 @@
 
 package test.ya.translater.wgjuh.yaapitmvptest.model.dict;
 
+import java.io.Serializable;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import rx.Observable;
 
-public class Def {
+public class Def implements Serializable{
 
     @SerializedName("text")
     @Expose

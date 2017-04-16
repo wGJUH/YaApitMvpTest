@@ -85,9 +85,6 @@ public class HistoryFavoritesFragment extends BaseFragment implements IHistoryFa
         Context context = view.getContext();
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(viewAdapter);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                LinearLayout.VERTICAL);
-        recyclerView.addItemDecoration(dividerItemDecoration);
     }
 
     public HistoryFavoriteRecyclerViewAdapter getViewAdapter() {

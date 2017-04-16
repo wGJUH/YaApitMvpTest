@@ -4,7 +4,9 @@ package test.ya.translater.wgjuh.yaapitmvptest.model.dict;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Mean {
+import java.io.Serializable;
+
+public class Mean implements Serializable {
 
     @SerializedName("text")
     @Expose

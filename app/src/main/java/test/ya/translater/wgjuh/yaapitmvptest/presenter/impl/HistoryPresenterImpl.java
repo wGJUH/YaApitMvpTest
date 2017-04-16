@@ -76,8 +76,6 @@ public class HistoryPresenterImpl extends BasePresenter<IHistoryFavoriteFragment
     @Override
     public void addFavorite(DictDTO dictDTO) {
         dictDTO.setFavorite(Long.toString(iModel.setFavorites(dictDTO)));
-        dictDTOs.set(dictDTOs.indexOf(dictDTO),dictDTO);
-        view.getViewAdapter().notifyItemChanged(dictDTOs.indexOf(dictDTO));
         eventBusImpl.getEventBusForPost().onNext(eventBusImpl.createEvent(Event.EventType.UPDATE_FAVORITE,dictDTO));
     }
 
@@ -92,7 +90,7 @@ public class HistoryPresenterImpl extends BasePresenter<IHistoryFavoriteFragment
         dictDTOs.add(0, dictDTO);
         view.getViewAdapter().notifyItemMoved(oldPosition,0);
         // TODO: 16.04.2017  баг с необновлением индексов в списке
-        view.getViewAdapter().notifyDataSetChanged();
+        //view.getViewAdapter().notifyDataSetChanged();
     }
 
     @Override

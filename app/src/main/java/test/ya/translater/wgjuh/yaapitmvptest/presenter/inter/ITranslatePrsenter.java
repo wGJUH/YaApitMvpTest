@@ -16,7 +16,6 @@ public interface ITranslatePrsenter extends Presenter {
     void setFavorite(boolean isFavorite);
     /**
      * Метод вызывает у View метод вывода переведенного текста на экран
-     *
      * @param translate - строка которую необходимо вывести
      */
     void updateTranslateView(String translate);
