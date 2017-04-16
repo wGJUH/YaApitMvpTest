@@ -1,4 +1,4 @@
-package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.tabs;
+package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.activity_tabs.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,11 +13,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
-import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
+import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.FragmentAdapter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.HistoryFavoritesFragment;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.fragment.HistoryFavoritesFragment;
 
 /**
  * Created by wGJUH on 11.04.2017.
@@ -69,7 +69,7 @@ public class  HistoryFavoriteFragmentContainer extends BaseFragment {
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
                 // TODO: 15.04.2017  НЕОБХОДИМО СРОЧНО ПОПРАВИТЬ  УДАЛЕНИЕ ИЗ ИЗБРАННОГО ЧЕРЕЗ ИСТОРИЮ !
-                    EventBus.getInstance().getEventBus().onNext(EventBus.getInstance().createEvent(Event.EventType.DELETE_FAVORITE));
+                    EventBusImpl.getInstance().getEventBusForPost().onNext(EventBusImpl.getInstance().createEvent(Event.EventType.DELETE_FAVORITE));
 
             }
 

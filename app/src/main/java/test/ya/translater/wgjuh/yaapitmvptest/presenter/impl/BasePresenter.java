@@ -1,10 +1,11 @@
-package test.ya.translater.wgjuh.yaapitmvptest.presenter;
+package test.ya.translater.wgjuh.yaapitmvptest.presenter.impl;
 
 
 import android.util.Log;
 
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;

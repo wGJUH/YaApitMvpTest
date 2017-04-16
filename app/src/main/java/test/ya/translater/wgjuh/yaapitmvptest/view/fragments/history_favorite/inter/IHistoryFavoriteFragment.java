@@ -1,4 +1,4 @@
-package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite;
+package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.inter;
 
 import android.support.v7.widget.RecyclerView;
 

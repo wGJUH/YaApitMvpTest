@@ -1,16 +1,16 @@
-package test.ya.translater.wgjuh.yaapitmvptest.presenter;
+package test.ya.translater.wgjuh.yaapitmvptest.presenter.impl;
 
 import android.util.Log;
 
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
-import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
+import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.SettingLangsFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.tabs.TransalteView;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.InputTranslateFragment;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.TranslateListFragment;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.activity_tabs.inter.TransalteView;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment.InputFragment;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment.TranslateFragment;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
@@ -38,13 +38,13 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TransalteView>
 
     }
 
-    public void addFragments(InputTranslateFragment inputTranslateFragment, TranslateListFragment translateListFragment) {
+    public void addFragments(InputFragment inputFragment, TranslateFragment translateFragment) {
         // TODO: 11.04.2017 Ипсравить баг с падением приложения при недоступности сети
         iModel.updateLanguages();
         view.getTranslateFragmentManager()
                 .beginTransaction()
-               .add(view.getInputFrame().getId(), inputTranslateFragment, inputTranslateFragment.getClass().getName())
-                .add(view.getTranslateFrame().getId(), translateListFragment, translateListFragment.getClass().getName())
+               .add(view.getInputFrame().getId(), inputFragment, inputFragment.getClass().getName())
+                .add(view.getTranslateFrame().getId(), translateFragment, translateFragment.getClass().getName())
                 .commit();
     }
 
@@ -52,7 +52,7 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TransalteView>
         view.getTranslateFragmentManager()
                 .beginTransaction()
                 .replace(android.R.id.content, SettingLangsFragment.newInstance(eventType))
-                .addToBackStack(InputTranslateFragment.class.getName())
+                .addToBackStack(InputFragment.class.getName())
                 .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right)
                 .commit();
     }
@@ -61,8 +61,8 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TransalteView>
         String from = iModel.getFromLang();
         iModel.setFromLang(iModel.getTranslateLang());
         iModel.setTranslateLang(from);
-        EventBus.getInstance()
-                .getEventBus()
+        EventBusImpl.getInstance()
+                .getEventBusForPost()
                 .onNext(iEventBus
                         .createEvent(Event
                                 .EventType
@@ -81,8 +81,8 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TransalteView>
                             break;
                         case TARGET_LANGUAGE:
                             iModel.setTranslateLang((String) event.content[0]);
-                            EventBus.getInstance()
-                                    .getEventBus()
+                            EventBusImpl.getInstance()
+                                    .getEventBusForPost()
                                     .onNext(iEventBus
                                             .createEvent(Event
                                                     .EventType
@@ -90,8 +90,8 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TransalteView>
                             break;
                         case FROM_LANGUAGE:
                             iModel.setFromLang((String) event.content[0]);
-                            EventBus.getInstance()
-                                    .getEventBus()
+                            EventBusImpl.getInstance()
+                                    .getEventBusForPost()
                                     .onNext(iEventBus
                                             .createEvent(Event
                                                     .EventType

@@ -30,6 +30,7 @@
         android:id="@+id/recycler_translate"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/input_word_frame"
         android:layout_below="@id/textview_common_translate_scroll"
         android:layout_toLeftOf="@+id/btn_add_favorite"
         android:layout_toStartOf="@+id/btn_add_favorite">

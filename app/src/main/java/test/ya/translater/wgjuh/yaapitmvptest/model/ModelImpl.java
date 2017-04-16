@@ -14,7 +14,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.DATA;
 import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.model.db.DbBackEnd;
 import test.ya.translater.wgjuh.yaapitmvptest.model.db.LangModel;
-import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslatePojo;
+import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslateDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.model.network.YandexDictionaryApiInterface;
 import test.ya.translater.wgjuh.yaapitmvptest.model.network.YandexDictionaryApiModule;
@@ -62,7 +62,7 @@ public class ModelImpl implements IModel {
 
 
     @Override
-    public Observable<TranslatePojo> getTranslateForLanguage(String target, String language) {
+    public Observable<TranslateDTO> getTranslateForLanguage(String target, String language) {
         return yandexTranslateApiInterface
                 .translateForLanguage(DATA.API_KEY, target, language)
                 .compose(applySchedulers());
@@ -109,10 +109,10 @@ public class ModelImpl implements IModel {
                 .compose(applySchedulers())
                 .flatMap(aLong -> Observable.just(dbBackEnd.getHistoryTranslate(aLong)))
                 .doAfterTerminate(() -> Log.d(DATA.TAG,"Terminated"))
-                .subscribe(dictDTOFromDB -> EventBus
+                .subscribe(dictDTOFromDB -> EventBusImpl
                         .getInstance()
-                        .getEventBus()
-                        .onNext(EventBus
+                        .getEventBusForPost()
+                        .onNext(EventBusImpl
                                 .getInstance()
                                 .createEvent(Event
                                         .EventType
@@ -121,7 +121,17 @@ public class ModelImpl implements IModel {
 
     @Override
     public long setFavorites(DictDTO dictDTO) {
-        return dbBackEnd.insertFavoriteFromHistory(dictDTO.getId());
+        long result = dbBackEnd.getFavoriteId(Integer.parseInt(dictDTO.getId()));
+        if(result != -1){
+            dbBackEnd.removeHistoryItemFavorite(Long.toString(result));
+            result = -1;
+        }else{
+            result = dbBackEnd.insertFavoriteFromHistory(dictDTO.getId());
+            if(result != -1){
+                dbBackEnd.setHistoryItemFavorite(dictDTO.getId(),result);
+            }
+        }
+        return result;
     }
 
     @Override
@@ -158,7 +168,7 @@ public class ModelImpl implements IModel {
     @Override
     public void setTranslateLang(String translateLang) {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(Event.EventType.TARGET_LANGUAGE.toString(),translateLang).commit();
-        //EventBus.getInstance().getEventBus().onNext(EventBus.getInstance().createEvent(Event.EventType.TARGET_LANGUAGE_CHANGED));
+        //EventBusImpl.getInstance().getEventBus().onNext(EventBusImpl.getInstance().createEvent(Event.EventType.TARGET_LANGUAGE_CHANGED));
     }
 
     @Override
@@ -169,7 +179,7 @@ public class ModelImpl implements IModel {
     @Override
     public void setFromLang(String translateLang) {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(Event.EventType.FROM_LANGUAGE.toString(),translateLang).commit();
-        //EventBus.getInstance().getEventBus().onNext(EventBus.getInstance().createEvent(Event.EventType.FROM_LANGUAGE_CHANGED));
+        //EventBusImpl.getInstance().getEventBus().onNext(EventBusImpl.getInstance().createEvent(Event.EventType.FROM_LANGUAGE_CHANGED));
     }
 
     private <T> Observable.Transformer<T, T> applySchedulers() {

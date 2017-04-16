@@ -1,14 +1,15 @@
-package test.ya.translater.wgjuh.yaapitmvptest.presenter;
+package test.ya.translater.wgjuh.yaapitmvptest.presenter.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
-import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
+import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.IHistoryFavoritePresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.IHistoryFavoriteFragment;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.inter.IHistoryFavoriteFragment;
 
 /**
  * Created by wGJUH on 16.04.2017.
@@ -17,13 +18,13 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.IH
 public class HistoryPresenterImpl extends BasePresenter<IHistoryFavoriteFragment> implements IHistoryFavoritePresenter {
 
     private final IModel iModel;
-    private final EventBus eventBus;
+    private final EventBusImpl eventBusImpl;
     private final List<DictDTO> dictDTOs = new ArrayList<>();
 
 
-    public HistoryPresenterImpl(IModel iModel, EventBus eventBus) {
+    public HistoryPresenterImpl(IModel iModel, EventBusImpl eventBusImpl) {
         this.iModel = iModel;
-        this.eventBus = eventBus;
+        this.eventBusImpl = eventBusImpl;
     }
 
     @Override
@@ -41,7 +42,7 @@ public class HistoryPresenterImpl extends BasePresenter<IHistoryFavoriteFragment
     @Override
     public void deleteFavorite(DictDTO dictDTO) {
         dictDTO.setFavorite(Long.toString(iModel.setFavorites(dictDTO)));
-        eventBus.getEventBus().onNext(eventBus.createEvent(Event.EventType.UPDATE_FAVORITE,dictDTO));
+        eventBusImpl.getEventBusForPost().onNext(eventBusImpl.createEvent(Event.EventType.UPDATE_FAVORITE,dictDTO));
     }
 
     @Override
@@ -77,12 +78,12 @@ public class HistoryPresenterImpl extends BasePresenter<IHistoryFavoriteFragment
         dictDTO.setFavorite(Long.toString(iModel.setFavorites(dictDTO)));
         dictDTOs.set(dictDTOs.indexOf(dictDTO),dictDTO);
         view.getViewAdapter().notifyItemChanged(dictDTOs.indexOf(dictDTO));
-        eventBus.getEventBus().onNext(eventBus.createEvent(Event.EventType.UPDATE_FAVORITE,dictDTO));
+        eventBusImpl.getEventBusForPost().onNext(eventBusImpl.createEvent(Event.EventType.UPDATE_FAVORITE,dictDTO));
     }
 
     @Override
     public void subscribeToBusEvents() {
-        addSubscription(eventBus.getEventBus().subscribe(this::onEvent));
+        addSubscription(eventBusImpl.getEventBus().subscribe(this::onEvent));
     }
 
     @Override

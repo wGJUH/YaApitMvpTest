@@ -1,4 +1,4 @@
-package test.ya.translater.wgjuh.yaapitmvptest.presenter;
+package test.ya.translater.wgjuh.yaapitmvptest.presenter.impl;
 
 
 import android.util.Log;
@@ -9,10 +9,11 @@ import rx.Subscription;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
-import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslatePojo;
+import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslateDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.IInputPresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.InputTranslateView;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.inter.InputView;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
@@ -20,7 +21,7 @@ import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
  * Created by wGJUH on 07.04.2017.
  */
 
-public class InputPresenterImpl extends BasePresenter<InputTranslateView> {
+public class InputPresenterImpl extends BasePresenter<InputView> implements IInputPresenter {
     private final IModel model;
     private final IEventBus eventBus;
     private  Subscription subscription;
@@ -31,15 +32,17 @@ public class InputPresenterImpl extends BasePresenter<InputTranslateView> {
         this.eventBus = eventBus;
     }
 
+    @Override
     public boolean onButtonTranslateClick() {
         if(!view.getTargetText().isEmpty()) {
-            eventBus.getEventBus().onNext(new Event<>(Event.EventType.BTN_CLEAR_CLICKED));
+            eventBus.getEventBusForPost().onNext(new Event<>(Event.EventType.BTN_CLEAR_CLICKED));
             startTranslate();
         }
         return true;
     }
 
-    private void startTranslate() {
+    @Override
+    public void startTranslate() {
         if(subscription!= null && !subscription.isUnsubscribed()){
             subscription.isUnsubscribed();
         }
@@ -50,7 +53,7 @@ public class InputPresenterImpl extends BasePresenter<InputTranslateView> {
 
         if(historyTranslate != null){
             model.updateHistoryDate(historyTranslate.getId());
-            eventBus.getEventBus().onNext(eventBus.createEvent(Event.EventType.WORD_UPDATED,historyTranslate));
+            eventBus.getEventBusForPost().onNext(eventBus.createEvent(Event.EventType.WORD_UPDATED,historyTranslate));
             return;
         }
         Observable<DictDTO> dictDTOObservable = model
@@ -59,7 +62,7 @@ public class InputPresenterImpl extends BasePresenter<InputTranslateView> {
                     Log.e(TAG, "dictDTOObservable: Сервис недоступен или запрос неверен",throwable);
                 return new DictDTO();});
 
-        Observable<TranslatePojo> translatePojoObservable = model
+        Observable<TranslateDTO> translatePojoObservable = model
                 .getTranslateForLanguage(view.getTargetText(), translateDirection)
                 .doOnError(throwable ->
                     Log.e(TAG, "translatePojoObservable: Сервис недоступен или запрос неверен",throwable )
@@ -108,12 +111,10 @@ public class InputPresenterImpl extends BasePresenter<InputTranslateView> {
         }));
     }
 
-    /**
-     * Метод для очистки поля ввода переводимого текста
-     */
+    @Override
     public void clearInput() {
         view.clearText();
-        eventBus.getEventBus().onNext(eventBus.createEvent(Event.EventType.BTN_CLEAR_CLICKED));
+        eventBus.getEventBusForPost().onNext(eventBus.createEvent(Event.EventType.BTN_CLEAR_CLICKED));
     }
 
     @Override

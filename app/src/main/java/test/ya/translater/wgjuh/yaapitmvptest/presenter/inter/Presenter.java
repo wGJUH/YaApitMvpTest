@@ -1,4 +1,4 @@
-package test.ya.translater.wgjuh.yaapitmvptest.presenter;
+package test.ya.translater.wgjuh.yaapitmvptest.presenter.inter;
 
 
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;

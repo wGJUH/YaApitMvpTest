@@ -22,14 +22,18 @@ public class Example {
         this.text = text;
     }
 
-    public List<EmbeddedTranslate> getTr() {
-        return tr;
+    public EmbeddedTranslate getTr() {
+        return tr.get(0);
     }
 
     public void setTr(List<EmbeddedTranslate> tr) {
         this.tr = tr;
     }
 
+    @Override
+    public String toString() {
+        return text + "-" + getTr().getText();
+    }
 }
 class EmbeddedTranslate {
 

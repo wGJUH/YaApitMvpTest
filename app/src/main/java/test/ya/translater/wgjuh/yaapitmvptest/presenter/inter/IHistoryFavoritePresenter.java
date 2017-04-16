@@ -1,6 +1,5 @@
-package test.ya.translater.wgjuh.yaapitmvptest.presenter;
+package test.ya.translater.wgjuh.yaapitmvptest.presenter.inter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;

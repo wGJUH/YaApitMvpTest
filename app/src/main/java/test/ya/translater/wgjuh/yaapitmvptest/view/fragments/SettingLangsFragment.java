@@ -16,11 +16,11 @@ import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.DATA;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
-import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
+import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.SettingsPresenter;
-import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.MyItemRecyclerViewAdapter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.Presenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.SettingsPresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.LanguageSettingsRecyclerViewAdapter;
 
 public class SettingLangsFragment extends BaseFragment implements test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View {
 
@@ -80,14 +80,14 @@ public class SettingLangsFragment extends BaseFragment implements test.ya.transl
         super.onDetach();
     }
 
-    public void setRecyclerViewAdapter(MyItemRecyclerViewAdapter myItemRecyclerViewAdapter){
-        recyclerView.setAdapter(myItemRecyclerViewAdapter);
+    public void setRecyclerViewAdapter(LanguageSettingsRecyclerViewAdapter languageSettingsRecyclerViewAdapter){
+        recyclerView.setAdapter(languageSettingsRecyclerViewAdapter);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        settingsPresenter = new SettingsPresenter(ModelImpl.getInstance(), EventBus.getInstance(), direction);
+        settingsPresenter = new SettingsPresenter(ModelImpl.getInstance(), EventBusImpl.getInstance(), direction);
         settingsPresenter.onBindView(this);
             }
 

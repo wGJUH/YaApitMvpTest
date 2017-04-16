@@ -5,6 +5,8 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import rx.Observable;
+
 public class Def {
 
     @SerializedName("text")
@@ -36,8 +38,12 @@ public class Def {
         return transcription;
     }
 
-    public List<Translate> getTranslate() {
-        return translate;
+    public Observable<Translate> getTranslateObservable() {
+        return Observable.from(translate);
+    }
+
+    public int getTranslate(){
+        return translate.size();
     }
 
     public void setTranslate(List<Translate> translate) {
@@ -47,6 +53,6 @@ public class Def {
     @Override
     public String toString() {
         return "DEF: " +
-                "\ntranscription: " + getTranscription() + " " + getTranslate().toString();
+                "\ntranscription: " + getTranscription() + " " + getTranslateObservable().toString();
     }
 }

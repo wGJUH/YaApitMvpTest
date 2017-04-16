@@ -1,4 +1,4 @@
-package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate;
+package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -14,11 +14,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
-import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
+import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.InputPresenterImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.InputPresenterImpl;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.IInputPresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.inter.InputView;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
@@ -26,19 +28,19 @@ import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
  * Created by wGJUH on 04.04.2017.
  */
 
-public class InputTranslateFragment extends BaseFragment implements InputTranslateView {
+public class InputFragment extends BaseFragment implements InputView {
     @BindView(R.id.edittext_translate_word)
     EditText editText;
     @BindView(R.id.btn_clear_input)
     ImageButton imageButton;
 
-    private InputPresenterImpl inputPresenter;
+    private IInputPresenter inputPresenter;
 
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        inputPresenter = new InputPresenterImpl(ModelImpl.getInstance(), EventBus.getInstance());
+        inputPresenter = new InputPresenterImpl(ModelImpl.getInstance(), EventBusImpl.getInstance());
         inputPresenter.onBindView(this);
     }
 

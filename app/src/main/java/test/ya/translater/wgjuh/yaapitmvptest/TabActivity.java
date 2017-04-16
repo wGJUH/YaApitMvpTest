@@ -1,9 +1,7 @@
 package test.ya.translater.wgjuh.yaapitmvptest;
 
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -13,8 +11,8 @@ import com.squareup.leakcanary.RefWatcher;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.FragmentAdapter;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.tabs.HistoryFavoriteFragmentContainer;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.tabs.TranslateFragment;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.activity_tabs.fragment.HistoryFavoriteFragmentContainer;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.activity_tabs.fragment.InputTranslateFragmentContainer;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
@@ -65,7 +63,7 @@ public class TabActivity extends AppCompatActivity implements ActivityCallback, 
 
     private void inits() {
         FragmentAdapter fragmentPagerAdapter = new FragmentAdapter(getSupportFragmentManager());
-        fragmentPagerAdapter.addFragment(new TranslateFragment(), TranslateFragment.class.getName());
+        fragmentPagerAdapter.addFragment(new InputTranslateFragmentContainer(), InputTranslateFragmentContainer.class.getName());
         fragmentPagerAdapter.addFragment(new HistoryFavoriteFragmentContainer(), HistoryFavoriteFragmentContainer.class.getName());
         tabLayout.setupWithViewPager(viewPager);
         viewPager.setAdapter(fragmentPagerAdapter);

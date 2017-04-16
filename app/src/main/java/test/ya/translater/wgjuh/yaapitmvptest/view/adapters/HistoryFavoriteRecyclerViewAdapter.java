@@ -7,21 +7,20 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.IHistoryFavoritePresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.IHistoryFavoritePresenter;
 
-public class MyhistoryfavoriteitemRecyclerViewAdapter extends RecyclerView.Adapter<MyhistoryfavoriteitemRecyclerViewAdapter.ViewHolder> {
+public class HistoryFavoriteRecyclerViewAdapter extends RecyclerView.Adapter<HistoryFavoriteRecyclerViewAdapter.ViewHolder> {
 
     private final List<DictDTO> mValues;
     private boolean isHistory;
     private IHistoryFavoritePresenter historyFavoritePresenter;
 
-    public MyhistoryfavoriteitemRecyclerViewAdapter(List<DictDTO> items, boolean isHistory, IHistoryFavoritePresenter historyFavoritePresenter) {
+    public HistoryFavoriteRecyclerViewAdapter(List<DictDTO> items, boolean isHistory, IHistoryFavoritePresenter historyFavoritePresenter) {
         mValues = items;
         this.isHistory = isHistory;
         this.historyFavoritePresenter = historyFavoritePresenter;

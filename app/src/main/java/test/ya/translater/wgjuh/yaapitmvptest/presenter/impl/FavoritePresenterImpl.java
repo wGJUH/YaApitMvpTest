@@ -1,15 +1,16 @@
-package test.ya.translater.wgjuh.yaapitmvptest.presenter;
+package test.ya.translater.wgjuh.yaapitmvptest.presenter.impl;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
-import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
+import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.IHistoryFavoritePresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.IHistoryFavoriteFragment;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.inter.IHistoryFavoriteFragment;
 
 /**
  * Created by wGJUH on 16.04.2017.
@@ -18,12 +19,12 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.IH
 public class FavoritePresenterImpl extends BasePresenter<IHistoryFavoriteFragment> implements IHistoryFavoritePresenter {
 
     private final IModel iModel;
-    private final EventBus eventBus;
+    private final EventBusImpl eventBusImpl;
     private final List<DictDTO> dictDTOs = new ArrayList<>();
 
-    public FavoritePresenterImpl(IModel iModel, EventBus eventBus){
+    public FavoritePresenterImpl(IModel iModel, EventBusImpl eventBusImpl){
         this.iModel = iModel;
-        this.eventBus = eventBus;
+        this.eventBusImpl = eventBusImpl;
     }
 
 
@@ -36,13 +37,7 @@ public class FavoritePresenterImpl extends BasePresenter<IHistoryFavoriteFragmen
     @Override
     public void deleteFavorite(DictDTO dictDTO) {
         dictDTO.setFavorite(Long.toString(iModel.setFavorites(dictDTO)));
-        eventBus.getEventBus().onNext(eventBus.createEvent(Event.EventType.UPDATE_FAVORITE,dictDTO));
-
-/*        int oldPosition = dictDTOs.indexOf(dictDTO);
-        dictDTOs.set(oldPosition,dictDTO);
-        view.getViewAdapter().notifyItemChanged(oldPosition);*/
-        //
-
+        eventBusImpl.getEventBusForPost().onNext(eventBusImpl.createEvent(Event.EventType.UPDATE_FAVORITE,dictDTO));
     }
 
     @Override
@@ -94,7 +89,7 @@ public class FavoritePresenterImpl extends BasePresenter<IHistoryFavoriteFragmen
 
     @Override
     public void subscribeToBusEvents() {
-       addSubscription( eventBus.getEventBus().subscribe(this::onEvent));
+       addSubscription( eventBusImpl.getEventBus().subscribe(this::onEvent));
     }
 
     @Override

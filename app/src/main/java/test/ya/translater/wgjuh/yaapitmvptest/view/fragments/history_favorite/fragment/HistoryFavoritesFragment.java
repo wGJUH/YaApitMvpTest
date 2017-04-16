@@ -1,4 +1,4 @@
-package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite;
+package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -17,14 +17,15 @@ import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.DATA;
 import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
-import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
+import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.FavoritePresenterImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.HistoryPresenterImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.IHistoryFavoritePresenter;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
-import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.MyhistoryfavoriteitemRecyclerViewAdapter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.FavoritePresenterImpl;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.HistoryPresenterImpl;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.IHistoryFavoritePresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.Presenter;
+import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.HistoryFavoriteRecyclerViewAdapter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.inter.IHistoryFavoriteFragment;
 
 
 public class HistoryFavoritesFragment extends BaseFragment implements IHistoryFavoriteFragment {
@@ -35,7 +36,7 @@ public class HistoryFavoritesFragment extends BaseFragment implements IHistoryFa
     private static final String IS_HISTORY = "is_history";
     private boolean isHistory;
     private IHistoryFavoritePresenter historyFavoritePresenter;
-    private MyhistoryfavoriteitemRecyclerViewAdapter viewAdapter;
+    private HistoryFavoriteRecyclerViewAdapter viewAdapter;
 
 
     public HistoryFavoritesFragment() {
@@ -75,11 +76,11 @@ public class HistoryFavoritesFragment extends BaseFragment implements IHistoryFa
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if(isHistory) {
-            historyFavoritePresenter = new HistoryPresenterImpl(ModelImpl.getInstance(), EventBus.getInstance());
+            historyFavoritePresenter = new HistoryPresenterImpl(ModelImpl.getInstance(), EventBusImpl.getInstance());
         }else{
-            historyFavoritePresenter = new FavoritePresenterImpl(ModelImpl.getInstance(), EventBus.getInstance());
+            historyFavoritePresenter = new FavoritePresenterImpl(ModelImpl.getInstance(), EventBusImpl.getInstance());
         }
-        viewAdapter = new MyhistoryfavoriteitemRecyclerViewAdapter(historyFavoritePresenter.getTranslateList(),isHistory, historyFavoritePresenter);
+        viewAdapter = new HistoryFavoriteRecyclerViewAdapter(historyFavoritePresenter.getTranslateList(),isHistory, historyFavoritePresenter);
         historyFavoritePresenter.onBindView(this);
         Context context = view.getContext();
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
@@ -89,7 +90,7 @@ public class HistoryFavoritesFragment extends BaseFragment implements IHistoryFa
         recyclerView.addItemDecoration(dividerItemDecoration);
     }
 
-    public MyhistoryfavoriteitemRecyclerViewAdapter getViewAdapter() {
+    public HistoryFavoriteRecyclerViewAdapter getViewAdapter() {
         return viewAdapter;
     }
 

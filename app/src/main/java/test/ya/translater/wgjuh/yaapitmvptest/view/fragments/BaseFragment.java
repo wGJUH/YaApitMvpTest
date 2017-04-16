@@ -2,8 +2,7 @@ package test.ya.translater.wgjuh.yaapitmvptest.view.fragments;
 
 import android.support.v4.app.Fragment;
 
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.Presenter;
 
 /**
  * Created by wGJUH on 04.04.2017.

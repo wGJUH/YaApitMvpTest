@@ -13,10 +13,9 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
-import test.ya.translater.wgjuh.yaapitmvptest.model.translate.LangsDirsModelPojo;
+import test.ya.translater.wgjuh.yaapitmvptest.model.translate.LangsDirsModelDTO;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
@@ -24,7 +23,7 @@ import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
  * Created by wGJUH on 02.04.2017.
  */
 
-public class DbBackEnd implements Contractor {
+public class DbBackEnd implements Contractor, IDbBackEnd {
     private final DbOpenHelper mDbOpenHelper;
     private SQLiteDatabase sqLiteDatabase;
 
@@ -39,7 +38,7 @@ public class DbBackEnd implements Contractor {
         // TODO: 02.04.2017 в конструктор добавить проверку на наличие бд
         mDbOpenHelper = dbOpenHelper;
     }
-
+    @Override
     public long insertHistoryTranslate(DictDTO dictDTO) {
         Long inserted;
         sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
@@ -59,14 +58,10 @@ public class DbBackEnd implements Contractor {
         return inserted;
     }
 
-    // TODO: 14.04.2017 доделать логику добавления в избранное!!!!
+    @Override
     public long insertFavoriteFromHistory(String id){
-        long inserted = getFavoriteId(Integer.parseInt(id));
+        long inserted;
         ContentValues contentValues = new ContentValues();
-        if(inserted != -1){
-                removeHistoryItemFavorite(Long.toString(inserted));
-                return -1;
-        }
         sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
         sqLiteDatabase.beginTransaction();
         Cursor cursor = sqLiteDatabase.query(DB_TABLE_HISTORY,new String[]{Translate.TARGET,Translate.LANGS,Translate.JSON},"id =?",new String[]{id},null,null,null);
@@ -80,18 +75,13 @@ public class DbBackEnd implements Contractor {
         inserted = sqLiteDatabase.insert(DB_TABLE_FAVORITES,null,contentValues);
         if( inserted != -1) {
             sqLiteDatabase.setTransactionSuccessful();
-            sqLiteDatabase.endTransaction();
-            sqLiteDatabase.close();
-            setHistoryItemFavorite(id,inserted);
-        }else {
-            sqLiteDatabase.endTransaction();
-            sqLiteDatabase.close();
         }
-
+            sqLiteDatabase.endTransaction();
+            sqLiteDatabase.close();
         return inserted;
     }
-
-    private void setHistoryItemFavorite(String historyId, long favoriteId){
+    @Override
+    public void setHistoryItemFavorite(String historyId, long favoriteId){
         ContentValues contentValues = new ContentValues();
         contentValues.put(Translate.FAVORITE,favoriteId);
         sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
@@ -102,8 +92,8 @@ public class DbBackEnd implements Contractor {
         sqLiteDatabase.endTransaction();
         sqLiteDatabase.close();
     }
-
-    private void removeHistoryItemFavorite(String favoriteId){
+    @Override
+    public void removeHistoryItemFavorite(String favoriteId){
         ContentValues contentValues = new ContentValues();
         contentValues.put(Translate.FAVORITE,"-1");
         sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
@@ -116,14 +106,7 @@ public class DbBackEnd implements Contractor {
         sqLiteDatabase.close();
     }
 
-    /**
-     * Метод позволяет получать сохраненный перевод из бд.
-     * При получении в объекта типа DictDTO ему присваевается id записи в бд.
-     * @see DictDTO
-     * @param target текст который переводили
-     * @param langs группа языков с-на который переводили
-     * @return DictDTO объект перевода
-     */
+    @Override
     public DictDTO getHistoryTranslate(String target, String langs) {
         sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
         Log.d(TAG, "getHistoryTranslate");
@@ -143,7 +126,7 @@ public class DbBackEnd implements Contractor {
         sqLiteDatabase.close();
         return null;
     }
-
+    @Override
     public DictDTO getHistoryTranslate(long id) {
         sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
         Log.d(TAG, "getHistoryTranslate");
@@ -162,19 +145,15 @@ public class DbBackEnd implements Contractor {
         sqLiteDatabase.close();
         return null;
     }
-
-    public int insertNewValue(ContentValues contentValues) {
-        return 0;
-    }
-
-    public void upateLangs(LangsDirsModelPojo langsDirsModelPojo) {
+    @Override
+    public void upateLangs(LangsDirsModelDTO langsDirsModelDTO) {
         long inserted = -1;
         sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
         sqLiteDatabase.beginTransaction();
         sqLiteDatabase.delete(DB_TABLE_LANGS, null, null);
         ContentValues contentValues = new ContentValues();
         for (Map.Entry<String, String> stringStringMap
-                : langsDirsModelPojo.getLangs().entrySet()) {
+                : langsDirsModelDTO.getLangs().entrySet()) {
             contentValues.put(Langs.CODE, stringStringMap.getKey());
             contentValues.put(Langs.NAME, stringStringMap.getValue());
             inserted = sqLiteDatabase.insert(DB_TABLE_LANGS, null, contentValues);
@@ -185,7 +164,7 @@ public class DbBackEnd implements Contractor {
         sqLiteDatabase.endTransaction();
         sqLiteDatabase.close();
     }
-
+    @Override
     public LangModel getStoredLangs() {
         LangModel langModel = new LangModel(getCountForTable(DB_TABLE_LANGS));
         sqLiteDatabase = mDbOpenHelper.getReadableDatabase();
@@ -247,7 +226,7 @@ public class DbBackEnd implements Contractor {
         return dictDTOs;
     }
 
-    private int getFavoriteId(int id){
+    public int getFavoriteId(int id){
         int favoriteId = -1;
         sqLiteDatabase = mDbOpenHelper.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.query(DB_TABLE_HISTORY,new String[]{Translate.FAVORITE},Translate.FAVORITE+" IS NOT NULL AND " + Translate.ID + " =? ",new String[]{""+id},null,null,null);

@@ -2,10 +2,13 @@
 package test.ya.translater.wgjuh.yaapitmvptest.model.dict;
 
 import android.util.Log;
+import android.view.MotionEvent;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import rx.Observable;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
@@ -54,7 +57,17 @@ public class Translate {
         return mean;
     }
 
-    public List<Example> getExample() {
+    public Observable<Mean> getMeanObservable() {
+        return Observable.from(mean);
+    }
+    public Observable<Synonyme> getSynonymeObservable() {
+        return Observable.from(synonyme);
+    }
+
+    public Observable<Example> getExampleObservable() {
+        return Observable.from(example);
+    }
+    public List<Example> getExample(){
         return example;
     }
 
@@ -67,6 +80,6 @@ public class Translate {
                 "\ngen: " + getGen() /*+
                 "\nsynonyme " + getSynonyme().toString()+
                 "\nmean " + getMean().toString()+
-                "\nexample " + getExample().toString()*/;
+                "\nexample " + getExampleObservable().toString()*/;
     }
 }

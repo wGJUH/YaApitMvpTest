@@ -6,6 +6,8 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import rx.Observable;
+
 public class DictDTO implements Serializable{
 
     @SerializedName("def")
@@ -17,12 +19,8 @@ public class DictDTO implements Serializable{
     private String id;
     private String favorite;
 
-    public List<Def> getDef() {
-        return def;
-    }
-
-    public void setDef(List<Def> def) {
-        this.def = def;
+    public Observable<Def> getDef() {
+        return Observable.from(def);
     }
 
     public void setCommonTranslate(String commonTranslate) {

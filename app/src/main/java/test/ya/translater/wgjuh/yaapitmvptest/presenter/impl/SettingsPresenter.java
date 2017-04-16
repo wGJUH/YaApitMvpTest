@@ -1,10 +1,10 @@
-package test.ya.translater.wgjuh.yaapitmvptest.presenter;
+package test.ya.translater.wgjuh.yaapitmvptest.presenter.impl;
 
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
-import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
+import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
-import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.MyItemRecyclerViewAdapter;
+import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.LanguageSettingsRecyclerViewAdapter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.SettingLangsFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 
@@ -35,10 +35,10 @@ public class SettingsPresenter extends BasePresenter<SettingLangsFragment> {
     }
 
     public void sentLanguageChangedEvent(Event.EventType eventType, String code) {
-        EventBus
+        EventBusImpl
                 .getInstance()
-                .getEventBus()
-                .onNext(EventBus
+                .getEventBusForPost()
+                .onNext(EventBusImpl
                         .getInstance()
                         .createEvent(eventType, code));
     }
@@ -46,7 +46,7 @@ public class SettingsPresenter extends BasePresenter<SettingLangsFragment> {
 
     public void initRecyclerView() {
         addSubscription(iModel.getLangs()
-                .subscribe(langModel -> view.setRecyclerViewAdapter(new MyItemRecyclerViewAdapter(langModel, this, direction))));
+                .subscribe(langModel -> view.setRecyclerViewAdapter(new LanguageSettingsRecyclerViewAdapter(langModel, this, direction))));
 
     }
 

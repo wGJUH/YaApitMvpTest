@@ -12,16 +12,16 @@ import java.util.List;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.db.LangModel;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.SettingsPresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.SettingsPresenter;
 
-public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
+public class LanguageSettingsRecyclerViewAdapter extends RecyclerView.Adapter<LanguageSettingsRecyclerViewAdapter.ViewHolder> {
 
     private final List<String> codes;
     private final List<String> names;
     private final SettingsPresenter settingsPresenter;
     private final Event.EventType eventType;
 
-    public MyItemRecyclerViewAdapter(LangModel langModel, SettingsPresenter settingsPresenter, Event.EventType eventType) {
+    public LanguageSettingsRecyclerViewAdapter(LangModel langModel, SettingsPresenter settingsPresenter, Event.EventType eventType) {
         codes = langModel.code;
         names = langModel.lang;
         this.settingsPresenter = settingsPresenter;

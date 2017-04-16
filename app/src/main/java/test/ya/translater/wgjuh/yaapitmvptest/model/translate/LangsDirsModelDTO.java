@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 import java.util.Map;
 
-public class LangsDirsModelPojo {
+public class LangsDirsModelDTO {
 
     @SerializedName("dirs")
     @Expose

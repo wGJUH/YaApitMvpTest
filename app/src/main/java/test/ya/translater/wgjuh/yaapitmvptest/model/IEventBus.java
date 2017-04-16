@@ -1,5 +1,6 @@
 package test.ya.translater.wgjuh.yaapitmvptest.model;
 
+import rx.Observable;
 import rx.subjects.Subject;
 
 /**
@@ -8,7 +9,9 @@ import rx.subjects.Subject;
 
 public interface IEventBus {
 
-    Subject<Event, Event> getEventBus();
+    Subject<Event, Event> getEventBusForPost();
+
+    Observable<Event> getEventBus();
 
     <T>Event createEvent(Event.EventType eventType, T... container);
 

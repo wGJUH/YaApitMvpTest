@@ -1,4 +1,4 @@
-package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.tabs;
+package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.activity_tabs.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -17,13 +17,14 @@ import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
-import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
+import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.TranslateFragmentContainerImpl;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.Presenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.TranslateFragmentContainerImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.InputTranslateFragment;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.TranslateListFragment;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.activity_tabs.inter.TransalteView;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment.InputFragment;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment.TranslateFragment;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
@@ -31,7 +32,7 @@ import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
  * Created by wGJUH on 04.04.2017.
  */
 
-public class TranslateFragment extends BaseFragment implements TransalteView {
+public class InputTranslateFragmentContainer extends BaseFragment implements TransalteView {
 
     @BindView(R.id.input_translateblock)
     FrameLayout inputFrame;
@@ -46,7 +47,7 @@ public class TranslateFragment extends BaseFragment implements TransalteView {
     private TranslateFragmentContainerImpl translatePresenter;
     private FragmentManager fragmentManager;
 
-    public TranslateFragment() {
+    public InputTranslateFragmentContainer() {
 
     }
 
@@ -80,11 +81,11 @@ public class TranslateFragment extends BaseFragment implements TransalteView {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-       translatePresenter = new TranslateFragmentContainerImpl(ModelImpl.getInstance(), EventBus.getInstance());
+       translatePresenter = new TranslateFragmentContainerImpl(ModelImpl.getInstance(), EventBusImpl.getInstance());
         translatePresenter.onBindView(this);
-        new InputTranslateFragment();
+        new InputFragment();
        if (savedInstanceState == null)
-            translatePresenter.addFragments(new InputTranslateFragment(), new TranslateListFragment());
+            translatePresenter.addFragments(new InputFragment(), new TranslateFragment());
         translatePresenter.updateToolbarLanguages(false);
         fromLanguageTextView.setOnClickListener(text -> translatePresenter.onChooseLanguage(Event.EventType.FROM_LANGUAGE));
         toLanguageTextView.setOnClickListener(text -> translatePresenter.onChooseLanguage(Event.EventType.TARGET_LANGUAGE));

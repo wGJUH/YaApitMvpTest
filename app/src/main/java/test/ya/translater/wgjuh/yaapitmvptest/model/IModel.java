@@ -1,11 +1,9 @@
 package test.ya.translater.wgjuh.yaapitmvptest.model;
 
-import java.util.List;
-
 import rx.Observable;
 import test.ya.translater.wgjuh.yaapitmvptest.model.db.LangModel;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
-import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslatePojo;
+import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslateDTO;
 
 /**
  * Created by wGJUH on 04.04.2017.
@@ -13,7 +11,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslatePojo;
 
 public interface IModel {
 
-    Observable<TranslatePojo> getTranslateForLanguage(String target, String language);
+    Observable<TranslateDTO> getTranslateForLanguage(String target, String language);
 
     Observable<DictDTO> getDicTionaryTranslateForLanguage(String target, String language);
 
