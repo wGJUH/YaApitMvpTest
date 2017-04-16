@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -17,8 +16,8 @@ import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.InputPresenterImpl;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
@@ -100,7 +99,7 @@ public class InputTranslateFragment extends BaseFragment implements InputTransla
     }
 
     @Override
-    protected BasePresenter getPresenter() {
+    protected Presenter getPresenter() {
         return inputPresenter;
     }
 

@@ -12,9 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.DATA;
@@ -22,9 +19,10 @@ import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.HistoryFavoritePresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.FavoritePresenterImpl;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.HistoryPresenterImpl;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.IHistoryFavoritePresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.MyhistoryfavoriteitemRecyclerViewAdapter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
 
@@ -36,7 +34,7 @@ public class HistoryFavoritesFragment extends BaseFragment implements IHistoryFa
 
     private static final String IS_HISTORY = "is_history";
     private boolean isHistory;
-    private HistoryFavoritePresenter historyFavoritePresenter;
+    private IHistoryFavoritePresenter historyFavoritePresenter;
     private MyhistoryfavoriteitemRecyclerViewAdapter viewAdapter;
 
 
@@ -70,19 +68,19 @@ public class HistoryFavoritesFragment extends BaseFragment implements IHistoryFa
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_historyfavoriteitem_list, container, false);
         ButterKnife.bind(this, view);
-
-
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        historyFavoritePresenter = new HistoryFavoritePresenter(ModelImpl.getInstance(), EventBus.getInstance(), isHistory);
-        viewAdapter = new MyhistoryfavoriteitemRecyclerViewAdapter(historyFavoritePresenter.getDictDTOs(),isHistory, historyFavoritePresenter);
+        if(isHistory) {
+            historyFavoritePresenter = new HistoryPresenterImpl(ModelImpl.getInstance(), EventBus.getInstance());
+        }else{
+            historyFavoritePresenter = new FavoritePresenterImpl(ModelImpl.getInstance(), EventBus.getInstance());
+        }
+        viewAdapter = new MyhistoryfavoriteitemRecyclerViewAdapter(historyFavoritePresenter.getTranslateList(),isHistory, historyFavoritePresenter);
         historyFavoritePresenter.onBindView(this);
-
         Context context = view.getContext();
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(viewAdapter);
@@ -111,7 +109,7 @@ public class HistoryFavoritesFragment extends BaseFragment implements IHistoryFa
     }
 
     @Override
-    protected BasePresenter getPresenter() {
+    protected Presenter getPresenter() {
         return historyFavoritePresenter;
     }
 
@@ -119,13 +117,6 @@ public class HistoryFavoritesFragment extends BaseFragment implements IHistoryFa
     public void onDestroyView() {
         super.onDestroyView();
         Log.d(DATA.TAG, "onDestroyView: " + getClass().getName());
-    }
-
-
-
-    @Override
-    public void updateRecyclerView() {
-
     }
 
     @Override

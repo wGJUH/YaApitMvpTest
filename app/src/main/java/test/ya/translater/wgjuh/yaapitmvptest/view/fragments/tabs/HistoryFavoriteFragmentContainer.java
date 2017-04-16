@@ -14,10 +14,9 @@ import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.FragmentAdapter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.SettingLangsFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.HistoryFavoritesFragment;
 
 /**
@@ -33,7 +32,7 @@ public class    HistoryFavoriteFragmentContainer extends BaseFragment {
     ViewPager viewPager;
 
     @Override
-    protected BasePresenter getPresenter() {
+    protected Presenter getPresenter() {
         return null;
     }
 
@@ -69,9 +68,9 @@ public class    HistoryFavoriteFragmentContainer extends BaseFragment {
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                if(tab.getPosition() == 1){
-                    EventBus.getInstance().getEventBus().onNext(EventBus.getInstance().createEvent(Event.EventType.UPDATE_FAVORITE));
-                }
+                // TODO: 15.04.2017  НЕОБХОДИМО СРОЧНО ПОПРАВИТЬ  УДАЛЕНИЕ ИЗ ИЗБРАННОГО ЧЕРЕЗ ИСТОРИЮ !
+                   // EventBus.getInstance().getEventBus().onNext(EventBus.getInstance().createEvent(Event.EventType.UPDATE_FAVORITE));
+
             }
 
             @Override

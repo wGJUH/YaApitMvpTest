@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import java.util.Iterator;
@@ -14,15 +13,15 @@ import java.util.Locale;
 
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.HistoryFavoritePresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.IHistoryFavoritePresenter;
 
 public class MyhistoryfavoriteitemRecyclerViewAdapter extends RecyclerView.Adapter<MyhistoryfavoriteitemRecyclerViewAdapter.ViewHolder> {
 
     private final List<DictDTO> mValues;
     private boolean isHistory;
-    private HistoryFavoritePresenter historyFavoritePresenter;
+    private IHistoryFavoritePresenter historyFavoritePresenter;
 
-    public MyhistoryfavoriteitemRecyclerViewAdapter(List<DictDTO> items, boolean isHistory, HistoryFavoritePresenter historyFavoritePresenter) {
+    public MyhistoryfavoriteitemRecyclerViewAdapter(List<DictDTO> items, boolean isHistory, IHistoryFavoritePresenter historyFavoritePresenter) {
         mValues = items;
         this.isHistory = isHistory;
         this.historyFavoritePresenter = historyFavoritePresenter;
@@ -46,8 +45,13 @@ public class MyhistoryfavoriteitemRecyclerViewAdapter extends RecyclerView.Adapt
             holder.mContentView.setText(mValues.get(position).getCommonTranslate());
             holder.checkBox.setChecked(!mValues.get(position).getFavorite().equals("-1"));
             holder.langs.setText(mValues.get(position).getLangs().toUpperCase(Locale.getDefault()));
-            holder.checkBox.setOnClickListener(view ->
-                    historyFavoritePresenter.updateFavorites(mValues.get(position)));
+            holder.checkBox.setOnClickListener(view ->{
+                if(!holder.checkBox.isChecked()) {
+                    historyFavoritePresenter.deleteFavorite(mValues.get(position));
+                }else {
+                    historyFavoritePresenter.addFavorite(mValues.get(position));
+                }
+            });
         }
     }
 

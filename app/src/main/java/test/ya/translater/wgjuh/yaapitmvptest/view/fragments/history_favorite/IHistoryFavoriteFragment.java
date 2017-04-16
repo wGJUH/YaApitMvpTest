@@ -1,5 +1,7 @@
 package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite;
 
+import android.support.v7.widget.RecyclerView;
+
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 
 /**
@@ -7,5 +9,6 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
  */
 
 public interface IHistoryFavoriteFragment extends View {
-    void updateRecyclerView();
+    RecyclerView.Adapter getViewAdapter();
+    RecyclerView getRecyclerView();
 }

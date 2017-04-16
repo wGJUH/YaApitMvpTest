@@ -3,6 +3,7 @@ package test.ya.translater.wgjuh.yaapitmvptest.presenter;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import test.ya.translater.wgjuh.yaapitmvptest.DATA;
@@ -112,30 +113,31 @@ public class HistoryFavoritePresenter extends BasePresenter<HistoryFavoritesFrag
         int position = dictDTOs.indexOf(dictDTO);
         if (position != -1) {
             updateFavoriteBox(dictDTO);
-            //dictDTOs.remove(position);
-            //view.getViewAdapter().notifyItemRemoved(position);
-            //view.getViewAdapter().notifyItemRangeChanged(0, dictDTOs.size()-1);
-            //view.getRecyclerView().invalidate();
-
         } else {
             updateFirstItemInAdapterData(dictDTO);
-
         }
     }
 
+
+    // TODO: 15.04.2017  СРОЧНО НАЙТИ СПОСОБ ПОПРАВИТЬ БАГ С ПЕРЕСТАНОВКОЙ ОБЪЕКТОВ В СПИСКЕ
+
     public void updateLastTranslatedInRow(DictDTO dictDTO) {
         int oldPosition = dictDTOs.indexOf(dictDTO);
-        dictDTOs.remove(dictDTO);
+        dictDTOs.remove(oldPosition);
         dictDTOs.add(0, dictDTO);
-        view.getViewAdapter().notifyItemMoved(oldPosition, 0);
-        view.getRecyclerView().scrollToPosition(0);
+        //view.getViewAdapter().notifyItemMoved(oldPosition,0);
+        //view.getViewAdapter().notifyItemChanged(oldPosition);
+        //view.getViewAdapter().notifyItemChanged(oldPosition);
+        //view.getViewAdapter().notifyItemChanged(0);
+        view.getViewAdapter().notifyDataSetChanged();
+        //view.getRecyclerView().scrollToPosition(0);
     }
 
     public void updateFavoriteBox(DictDTO dictDTO) {
         int position = dictDTOs.indexOf(dictDTO);
-        dictDTOs.set(position, dictDTO);
-        view.getViewAdapter().notifyItemChanged(position);
-        view.getRecyclerView().scrollToPosition(position);
+            dictDTOs.set(position, dictDTO);
+            view.getViewAdapter().notifyItemChanged(position);
+            view.getRecyclerView().scrollToPosition(position);
     }
 
     public List<DictDTO> getDictDTOs() {

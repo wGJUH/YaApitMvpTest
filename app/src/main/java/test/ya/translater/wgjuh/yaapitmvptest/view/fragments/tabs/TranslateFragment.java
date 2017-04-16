@@ -19,7 +19,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.TranslateFragmentContainerImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.InputTranslateFragment;
@@ -99,7 +99,7 @@ public class TranslateFragment extends BaseFragment implements TransalteView {
 
 
     @Override
-    protected BasePresenter getPresenter() {
+    protected Presenter getPresenter() {
         return translatePresenter;
     }
 

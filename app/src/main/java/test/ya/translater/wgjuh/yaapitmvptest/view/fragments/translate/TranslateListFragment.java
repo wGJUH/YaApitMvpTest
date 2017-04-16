@@ -3,13 +3,11 @@ package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import butterknife.BindView;
@@ -20,7 +18,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.TranslatePresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
 
@@ -65,7 +63,7 @@ public class TranslateListFragment extends BaseFragment implements TranslateList
     }
 
     @Override
-    protected BasePresenter getPresenter() {
+    protected Presenter getPresenter() {
         return translatePresenter;
     }
 

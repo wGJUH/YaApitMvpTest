@@ -18,7 +18,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.SettingsPresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.MyItemRecyclerViewAdapter;
 
@@ -97,7 +97,7 @@ public class SettingLangsFragment extends BaseFragment implements test.ya.transl
     }
 
     @Override
-    protected BasePresenter getPresenter() {
+    protected Presenter getPresenter() {
         return settingsPresenter;
     }
 }

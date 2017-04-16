@@ -3,6 +3,7 @@ package test.ya.translater.wgjuh.yaapitmvptest.view.fragments;
 import android.support.v4.app.Fragment;
 
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
 
 /**
  * Created by wGJUH on 04.04.2017.
@@ -10,7 +11,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.presenter.BasePresenter;
 
 public abstract class BaseFragment extends Fragment {
 
-    protected abstract BasePresenter getPresenter();
+    protected abstract Presenter getPresenter();
     @Override
     public void onDestroyView() {
         super.onDestroyView();
