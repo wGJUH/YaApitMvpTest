@@ -19,7 +19,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.Presenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.TranslateFragmentContainerImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.activity_tabs.inter.TransalteView;

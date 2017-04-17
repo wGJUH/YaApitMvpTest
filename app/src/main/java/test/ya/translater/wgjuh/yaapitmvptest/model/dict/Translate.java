@@ -1,21 +1,17 @@
 
 package test.ya.translater.wgjuh.yaapitmvptest.model.dict;
 
-import android.util.Log;
-import android.view.MotionEvent;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-import java.io.Serializable;
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
-import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
-
-public class Translate implements Serializable {
+public class Translate implements Parcelable {
 
     @SerializedName("text")
     @Expose
@@ -35,6 +31,27 @@ public class Translate implements Serializable {
     @SerializedName("ex")
     @Expose
     private List<Example> example = null;
+
+    protected Translate(Parcel in) {
+        text = in.readString();
+        pos = in.readString();
+        gen = in.readString();
+        synonyme = in.createTypedArrayList(Synonyme.CREATOR);
+        mean = in.createTypedArrayList(Mean.CREATOR);
+        example = in.createTypedArrayList(Example.CREATOR);
+    }
+
+    public static final Creator<Translate> CREATOR = new Creator<Translate>() {
+        @Override
+        public Translate createFromParcel(Parcel in) {
+            return new Translate(in);
+        }
+
+        @Override
+        public Translate[] newArray(int size) {
+            return new Translate[size];
+        }
+    };
 
     public String getText() {
         return text;
@@ -84,5 +101,20 @@ public class Translate implements Serializable {
                 "\nsynonyme " + getSynonyme().toString()+
                 "\nmean " + getMean().toString()+
                 "\nexample " + getExampleObservable().toString()*/;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(text);
+        parcel.writeString(pos);
+        parcel.writeString(gen);
+        parcel.writeTypedList(synonyme);
+        parcel.writeTypedList(mean);
+        parcel.writeTypedList(example);
     }
 }

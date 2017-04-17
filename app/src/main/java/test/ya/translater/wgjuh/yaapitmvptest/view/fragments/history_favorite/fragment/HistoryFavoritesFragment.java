@@ -3,14 +3,12 @@ package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.f
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,14 +19,14 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.FavoritePresenterImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.HistoryPresenterImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.IHistoryFavoritePresenter;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.Presenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.IHistoryFavoritePresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.HistoryFavoriteRecyclerViewAdapter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.inter.IHistoryFavoriteFragment;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.HistoryFavoriteView;
 
 
-public class HistoryFavoritesFragment extends BaseFragment implements IHistoryFavoriteFragment {
+public class HistoryFavoritesFragment extends BaseFragment implements HistoryFavoriteView {
 
     @BindView(R.id.list)
     RecyclerView recyclerView;
@@ -87,14 +85,6 @@ public class HistoryFavoritesFragment extends BaseFragment implements IHistoryFa
         recyclerView.setAdapter(viewAdapter);
     }
 
-    public HistoryFavoriteRecyclerViewAdapter getViewAdapter() {
-        return viewAdapter;
-    }
-
-    public RecyclerView getRecyclerView() {
-        return recyclerView;
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -128,6 +118,36 @@ public class HistoryFavoritesFragment extends BaseFragment implements IHistoryFa
         LeakCanaryApp.getRefWatcher(this.getContext()).watch(this);
     }
 
+
+    @Override
+    public void updateAdapterTale(int size) {
+        viewAdapter.notifyItemInserted(size);
+    }
+
+    @Override
+    public void updateAdapterNose() {
+        viewAdapter.notifyItemInserted(0);
+    }
+
+    @Override
+    public void scrollToPosition(int position) {
+        recyclerView.scrollToPosition(position);
+    }
+
+    @Override
+    public void updateAllData() {
+        viewAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void updateAdapterItemOnPosition(int position) {
+        viewAdapter.notifyItemChanged(position);
+    }
+
+    @Override
+    public void changeAdapterItemPosition(int oldPosition, int newPosition) {
+        viewAdapter.notifyItemMoved(oldPosition,0);
+    }
 
 
 }

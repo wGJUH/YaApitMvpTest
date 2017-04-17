@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import butterknife.BindView;
@@ -23,12 +22,12 @@ import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.ITranslatePrsenter;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.Presenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.ITranslatePrsenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.TranslatePresenterImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.DictionaryTranslateRecyclerViewAdapter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.inter.TranslateView;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.TranslateView;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
@@ -56,7 +55,7 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
         viewAdapter = new DictionaryTranslateRecyclerViewAdapter(translatePresenterImpl.getDictionarySate());
         translatePresenterImpl.onBindView(this);
         if(savedInstanceState != null) {
-            DictDTO dictDTO  = (DictDTO)savedInstanceState.getSerializable(DATA.OUT_STATE);
+            DictDTO dictDTO  = savedInstanceState.getParcelable(DATA.OUT_STATE);
             if(dictDTO != null) {
                 translatePresenterImpl.restoreState(dictDTO);
             }
@@ -89,16 +88,6 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
     }
 
     @Override
-    public RecyclerView getRecyclerView() {
-        return recyclerView;
-    }
-
-    @Override
-    public RecyclerView.Adapter getViewAdapter() {
-        return viewAdapter;
-    }
-
-    @Override
     public void showProgressBar(Boolean show) {
        if(show) {
            progressBar.show();
@@ -111,6 +100,19 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
     @Override
     public void setBtnFavoriteSelected(Boolean selected) {
         btnFavorite.setChecked(selected);
+    }
+
+    @Override
+    public void updateAdapterTale(int size) {
+        viewAdapter.notifyItemInserted(size);
+        viewAdapter.notifyDataSetChanged();
+        recyclerView.invalidate();
+    }
+
+    @Override
+    public void clearAdapter(int oldSize) {
+        viewAdapter.notifyItemRangeRemoved(0,oldSize);
+        viewAdapter.removeAllViews();
     }
 
     @Override

@@ -1,7 +1,9 @@
 package test.ya.translater.wgjuh.yaapitmvptest.model;
 
 import rx.Observable;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
@@ -16,10 +18,6 @@ public class EventBusImpl implements IEventBus {
     private static EventBusImpl instance;
     private static final Subject<Event, Event> eventBus = PublishSubject.create();
 
-
-    private EventBusImpl() {
-    }
-
     public static EventBusImpl getInstance() {
         if (instance == null) {
             instance = new EventBusImpl();
@@ -29,20 +27,27 @@ public class EventBusImpl implements IEventBus {
 
 
     @Override
-    public Subject<Event, Event> getEventBusForPost() {
-        return eventBus;
+    public void post(Event event) {
+        getEventBusForPost().onNext(event);
     }
 
     @Override
-    public Observable<Event> getEventBus() {
+    public Subscription subscribe(Action1<Event> eventAction) {
+        return getEventBus().subscribe(eventAction);
+    }
+
+    private Subject<Event, Event> getEventBusForPost() {
+        return eventBus;
+    }
+
+    private Observable<Event> getEventBus() {
         return eventBus.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .unsubscribeOn(Schedulers.io());
     }
 
-    @SafeVarargs
     @Override
-    public final <T> Event createEvent(Event.EventType eventType, T... container) {
+    public final Event createEvent(Event.EventType eventType, Object... container) {
         return new Event(eventType,container);
     }
 }

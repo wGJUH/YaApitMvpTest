@@ -5,17 +5,12 @@ import android.util.Log;
 
 import java.util.Locale;
 
-import rx.Observable;
-import rx.Observer;
-import rx.Subscription;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
-import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslateDTO;
-import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.IInputPresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.IInputPresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.inter.InputView;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.InputView;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
@@ -37,7 +32,7 @@ public class InputPresenterImpl extends BasePresenter<InputView> implements IInp
     @Override
     public boolean onButtonTranslateClick() {
         if (!view.getTargetText().isEmpty()) {
-            eventBus.getEventBusForPost().onNext(new Event<>(Event.EventType.BTN_CLEAR_CLICKED));
+            eventBus.post(new Event(Event.EventType.BTN_CLEAR_CLICKED));
             startTranslate();
         }
         return true;
@@ -45,15 +40,15 @@ public class InputPresenterImpl extends BasePresenter<InputView> implements IInp
 
     @Override
     public void startTranslate() {
-        eventBus.getEventBusForPost().onNext(eventBus.createEvent(Event.EventType.BTN_CLEAR_CLICKED));
-        eventBus.getEventBusForPost().onNext(eventBus.createEvent(Event.EventType.START_TRANSLATE, view.getTargetText().toLowerCase(Locale.getDefault()).trim()));
+        eventBus.post(eventBus.createEvent(Event.EventType.BTN_CLEAR_CLICKED));
+        eventBus.post(eventBus.createEvent(Event.EventType.START_TRANSLATE, view.getTargetText().toLowerCase(Locale.getDefault()).trim()));
 
     }
 
     @Override
     public void onBindView(View view) {
         super.onBindView(view);
-        addSubscription(eventBus.getEventBus().subscribe(event -> {
+        addSubscription(eventBus.subscribe(event -> {
             switch (event.eventType) {
                 case CHANGE_LANGUAGES:
                     startTranslate();
@@ -67,7 +62,7 @@ public class InputPresenterImpl extends BasePresenter<InputView> implements IInp
     @Override
     public void clearInput() {
         view.clearText();
-        eventBus.getEventBusForPost().onNext(eventBus.createEvent(Event.EventType.BTN_CLEAR_CLICKED));
+        eventBus.post(eventBus.createEvent(Event.EventType.BTN_CLEAR_CLICKED));
     }
 
     @Override

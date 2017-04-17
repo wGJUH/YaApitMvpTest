@@ -68,7 +68,7 @@ public class DbBackendTest {
         }).subscribe(testSubscriber);
 
         testSubscriber.assertValue("");
-        testSubscriber.assertCompleted()
+        testSubscriber.assertCompleted();
 
     }
 }

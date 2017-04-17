@@ -26,6 +26,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
                 Contractor.Langs.CODE + " TEXT UNIQUE NOT NULL, " +
                 Contractor.Langs.NAME + " TEXT UNIQUE NOT NULL" +
                 ")");
+
         db.execSQL("CREATE TABLE " + DB_TABLE_HISTORY + "(" +
                 Translate.ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, " +
                 Translate.TARGET + " TEXT NOT NULL, " +

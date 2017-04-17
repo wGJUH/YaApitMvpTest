@@ -1,19 +1,20 @@
 
 package test.ya.translater.wgjuh.yaapitmvptest.model.dict;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 // TODO: 16.04.2017 поменять на parcelable
-public class DictDTO implements Serializable{
+public class DictDTO implements Parcelable{
 
     @SerializedName("def")
     @Expose
@@ -23,6 +24,31 @@ public class DictDTO implements Serializable{
     private String target;
     private String id;
     private String favorite;
+
+    protected DictDTO(Parcel in) {
+        commonTranslate = in.readString();
+        langs = in.readString();
+        target = in.readString();
+        id = in.readString();
+        favorite = in.readString();
+        def = in.createTypedArrayList(Def.CREATOR);
+    }
+
+    public DictDTO(){
+
+    }
+
+    public static final Creator<DictDTO> CREATOR = new Creator<DictDTO>() {
+        @Override
+        public DictDTO createFromParcel(Parcel in) {
+            return new DictDTO(in);
+        }
+
+        @Override
+        public DictDTO[] newArray(int size) {
+            return new DictDTO[size];
+        }
+    };
 
     public Observable<Def> getDef() {
         if(def != null) {
@@ -80,5 +106,20 @@ public class DictDTO implements Serializable{
         }else {
             return false;
         }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(commonTranslate);
+        parcel.writeString(langs);
+        parcel.writeString(target);
+        parcel.writeString(id);
+        parcel.writeString(favorite);
+        parcel.writeTypedList(def);
     }
 }

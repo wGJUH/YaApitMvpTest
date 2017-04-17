@@ -1,4 +1,4 @@
-package test.ya.translater.wgjuh.yaapitmvptest.presenter.inter;
+package test.ya.translater.wgjuh.yaapitmvptest.presenter;
 
 import android.os.Bundle;
 

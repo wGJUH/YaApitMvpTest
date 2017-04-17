@@ -18,7 +18,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.Presenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.SettingsPresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.LanguageSettingsRecyclerViewAdapter;
 
@@ -56,19 +56,19 @@ public class SettingLangsFragment extends BaseFragment implements test.ya.transl
 
         View view = inflater.inflate(R.layout.language_setting_item_list, container, false);
         ButterKnife.bind(this, view);
-
         toolbar.setTitle(R.string.choose_language);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 linearLayoutManager.getOrientation());
-        recyclerView.addItemDecoration(dividerItemDecoration);
-        recyclerView.setLayoutManager(linearLayoutManager);
-
-
+        setRecyclerDecorator(linearLayoutManager,dividerItemDecoration);
 
         return view;
     }
 
+    public void setRecyclerDecorator(LinearLayoutManager linearLayoutManager, DividerItemDecoration dividerItemDecoration ){
+        recyclerView.addItemDecoration(dividerItemDecoration);
+        recyclerView.setLayoutManager(linearLayoutManager);
+    }
 
     @Override
     public void onAttach(Context context) {

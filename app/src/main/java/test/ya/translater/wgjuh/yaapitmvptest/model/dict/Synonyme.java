@@ -1,12 +1,13 @@
 
 package test.ya.translater.wgjuh.yaapitmvptest.model.dict;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
-
-public class Synonyme implements Serializable {
+public class Synonyme implements Parcelable {
 
     @SerializedName("text")
     @Expose
@@ -17,6 +18,24 @@ public class Synonyme implements Serializable {
     @SerializedName("gen")
     @Expose
     private String gen;
+
+    protected Synonyme(Parcel in) {
+        text = in.readString();
+        pos = in.readString();
+        gen = in.readString();
+    }
+
+    public static final Creator<Synonyme> CREATOR = new Creator<Synonyme>() {
+        @Override
+        public Synonyme createFromParcel(Parcel in) {
+            return new Synonyme(in);
+        }
+
+        @Override
+        public Synonyme[] newArray(int size) {
+            return new Synonyme[size];
+        }
+    };
 
     public String getText() {
         return text;
@@ -34,4 +53,15 @@ public class Synonyme implements Serializable {
         return gen;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(text);
+        parcel.writeString(pos);
+        parcel.writeString(gen);
+    }
 }

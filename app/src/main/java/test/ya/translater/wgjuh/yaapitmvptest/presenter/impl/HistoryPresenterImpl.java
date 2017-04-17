@@ -7,15 +7,15 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.IHistoryFavoritePresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.IHistoryFavoritePresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.inter.IHistoryFavoriteFragment;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.HistoryFavoriteView;
 
 /**
  * Created by wGJUH on 16.04.2017.
  */
 
-public class HistoryPresenterImpl extends BasePresenter<IHistoryFavoriteFragment> implements IHistoryFavoritePresenter {
+public class HistoryPresenterImpl extends BasePresenter<HistoryFavoriteView> implements IHistoryFavoritePresenter {
 
     private final IModel iModel;
     private final EventBusImpl eventBusImpl;
@@ -42,13 +42,14 @@ public class HistoryPresenterImpl extends BasePresenter<IHistoryFavoriteFragment
     @Override
     public void deleteFavorite(DictDTO dictDTO) {
         dictDTO.setFavorite(Long.toString(iModel.setFavorites(dictDTO)));
-        eventBusImpl.getEventBusForPost().onNext(eventBusImpl.createEvent(Event.EventType.UPDATE_FAVORITE,dictDTO));
+        eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.UPDATE_FAVORITE,dictDTO));
     }
 
     @Override
     public void insertItemInTaleOfAdapterListAndNotify(DictDTO dictDTO) {
         dictDTOs.add(dictDTO);
-        view.getViewAdapter().notifyItemInserted(dictDTOs.size()-1);
+        view.updateAdapterTale(dictDTOs.size()-1);
+
     }
 
     @Override
@@ -70,33 +71,32 @@ public class HistoryPresenterImpl extends BasePresenter<IHistoryFavoriteFragment
     public void updateFavorite(DictDTO dictDTO) {
         int position = dictDTOs.indexOf(dictDTO);
         dictDTOs.set(position,dictDTO);
-        view.getViewAdapter().notifyItemChanged(position);
+        view.updateAdapterItemOnPosition(position);
+
     }
 
     @Override
     public void addFavorite(DictDTO dictDTO) {
         dictDTO.setFavorite(Long.toString(iModel.setFavorites(dictDTO)));
-        eventBusImpl.getEventBusForPost().onNext(eventBusImpl.createEvent(Event.EventType.UPDATE_FAVORITE,dictDTO));
+        eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.UPDATE_FAVORITE,dictDTO));
     }
 
     @Override
     public void subscribeToBusEvents() {
-        addSubscription(eventBusImpl.getEventBus().subscribe(this::onEvent));
+        addSubscription(eventBusImpl.subscribe(this::onEvent));
     }
 
     @Override
     public void replaceItemsInAdapterData(int oldPosition, DictDTO dictDTO) {
         dictDTOs.remove(oldPosition);
         dictDTOs.add(0, dictDTO);
-        view.getViewAdapter().notifyItemMoved(oldPosition,0);
-        // TODO: 16.04.2017  баг с необновлением индексов в списке
-        //view.getViewAdapter().notifyDataSetChanged();
+        view.changeAdapterItemPosition(oldPosition,0);
     }
 
     @Override
     public void insertItemInNoseOfAdapterDataAndNotify(DictDTO dictDTO) {
         dictDTOs.add(0,dictDTO);
-        view.getViewAdapter().notifyItemInserted(0);
+        view.updateAdapterNose();
     }
 
     @Override

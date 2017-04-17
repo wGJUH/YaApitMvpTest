@@ -37,8 +37,10 @@ public class ModelImpl implements IModel {
     private final YandexTranslateApiInterface yandexTranslateApiInterface = YandexTranslateApiModule.getYandexTranslateApiInterface();
     private final YandexDictionaryApiInterface yandexDictionaryApiInterface = YandexDictionaryApiModule.getYandexDictionaryApiInterface();
     private final DbBackEnd dbBackEnd;
+    private IEventBus iEventBus;
 
-    private ModelImpl() {
+    private ModelImpl(IEventBus iEventBus) {
+        this.iEventBus = iEventBus;
         dbBackEnd = new DbBackEnd(context);
         schedulersTransformer = o -> ((Observable) o).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -56,7 +58,7 @@ public class ModelImpl implements IModel {
 
     public static IModel getInstance() {
         if (model == null) {
-            model = new ModelImpl();
+            model = new ModelImpl(EventBusImpl.getInstance());
         }
         return model;
     }
@@ -110,12 +112,8 @@ public class ModelImpl implements IModel {
                 .compose(applySchedulers())
                 .flatMap(aLong -> Observable.just(dbBackEnd.getHistoryTranslate(aLong)))
                 .doAfterTerminate(() -> Log.d(DATA.TAG,"Terminated"))
-                .subscribe(dictDTOFromDB -> EventBusImpl
-                        .getInstance()
-                        .getEventBusForPost()
-                        .onNext(EventBusImpl
-                                .getInstance()
-                                .createEvent(Event
+                .subscribe(dictDTOFromDB -> iEventBus
+                        .post(iEventBus.createEvent(Event
                                         .EventType
                                         .WORD_TRANSLATED, dictDTOFromDB)),throwable -> Log.e(DATA.TAG,throwable.getMessage()));
     }
@@ -169,7 +167,6 @@ public class ModelImpl implements IModel {
     @Override
     public void setTranslateLang(String translateLang) {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(Event.EventType.TARGET_LANGUAGE.toString(),translateLang).commit();
-        //EventBusImpl.getInstance().getEventBus().onNext(EventBusImpl.getInstance().createEvent(Event.EventType.TARGET_LANGUAGE_CHANGED));
     }
 
     @Override
@@ -180,7 +177,6 @@ public class ModelImpl implements IModel {
     @Override
     public void setFromLang(String translateLang) {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(Event.EventType.FROM_LANGUAGE.toString(),translateLang).commit();
-        //EventBusImpl.getInstance().getEventBus().onNext(EventBusImpl.getInstance().createEvent(Event.EventType.FROM_LANGUAGE_CHANGED));
     }
 
     private <T> Observable.Transformer<T, T> applySchedulers() {

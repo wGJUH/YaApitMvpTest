@@ -35,12 +35,7 @@ public class SettingsPresenter extends BasePresenter<SettingLangsFragment> {
     }
 
     public void sentLanguageChangedEvent(Event.EventType eventType, String code) {
-        EventBusImpl
-                .getInstance()
-                .getEventBusForPost()
-                .onNext(EventBusImpl
-                        .getInstance()
-                        .createEvent(eventType, code));
+        iEventBus.post(iEventBus.createEvent(eventType, code));
     }
 
 

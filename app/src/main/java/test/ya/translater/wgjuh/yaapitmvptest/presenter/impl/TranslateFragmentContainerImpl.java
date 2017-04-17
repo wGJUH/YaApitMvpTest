@@ -61,9 +61,7 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TransalteView>
         String from = iModel.getFromLang();
         iModel.setFromLang(iModel.getTranslateLang());
         iModel.setTranslateLang(from);
-        EventBusImpl.getInstance()
-                .getEventBusForPost()
-                .onNext(iEventBus
+        iEventBus.post(iEventBus
                         .createEvent(Event
                                 .EventType
                                 .CHANGE_LANGUAGES));
@@ -73,7 +71,7 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TransalteView>
     public void updateToolbarLanguages(Boolean withSubscribe) {
         if (withSubscribe) {
             if (this.view != null) {
-                addSubscription(iEventBus.getEventBus().subscribe(event -> {
+                addSubscription(iEventBus.subscribe(event -> {
                     switch (event.eventType) {
                         case CHANGE_LANGUAGES:
                             view.setToLanguageTextView(iModel.getLangByCode(iModel.getTranslateLang()));
@@ -81,18 +79,14 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TransalteView>
                             break;
                         case TARGET_LANGUAGE:
                             iModel.setTranslateLang((String) event.content[0]);
-                            EventBusImpl.getInstance()
-                                    .getEventBusForPost()
-                                    .onNext(iEventBus
+                            iEventBus.post(iEventBus
                                             .createEvent(Event
                                                     .EventType
                                                     .CHANGE_LANGUAGES));
                             break;
                         case FROM_LANGUAGE:
                             iModel.setFromLang((String) event.content[0]);
-                            EventBusImpl.getInstance()
-                                    .getEventBusForPost()
-                                    .onNext(iEventBus
+                            iEventBus.post(iEventBus
                                             .createEvent(Event
                                                     .EventType
                                                     .CHANGE_LANGUAGES));

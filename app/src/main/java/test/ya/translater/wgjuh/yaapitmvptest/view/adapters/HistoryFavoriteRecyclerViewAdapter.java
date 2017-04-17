@@ -12,7 +12,7 @@ import java.util.Locale;
 
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.IHistoryFavoritePresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.IHistoryFavoritePresenter;
 
 public class HistoryFavoriteRecyclerViewAdapter extends RecyclerView.Adapter<HistoryFavoriteRecyclerViewAdapter.ViewHolder> {
 

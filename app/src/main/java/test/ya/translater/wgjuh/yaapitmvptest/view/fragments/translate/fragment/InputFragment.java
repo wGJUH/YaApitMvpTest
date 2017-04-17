@@ -17,10 +17,10 @@ import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.InputPresenterImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.IInputPresenter;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.Presenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.IInputPresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.inter.InputView;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.InputView;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 

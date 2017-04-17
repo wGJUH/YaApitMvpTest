@@ -1,6 +1,13 @@
 package test.ya.translater.wgjuh.yaapitmvptest.model;
 
+import android.app.usage.UsageEvents;
+
 import rx.Observable;
+import rx.Observer;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.functions.Action;
+import rx.functions.Action1;
 import rx.subjects.Subject;
 
 /**
@@ -9,10 +16,10 @@ import rx.subjects.Subject;
 
 public interface IEventBus {
 
-    Subject<Event, Event> getEventBusForPost();
+    void post(Event event);
 
-    Observable<Event> getEventBus();
+    Subscription subscribe(Action1<Event> eventAction);
 
-    <T>Event createEvent(Event.EventType eventType, T... container);
+    Event createEvent(Event.EventType eventType, Object... container);
 
 }

@@ -11,7 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/bottom_tabLayout_app"
-        android:background="@color/colorPrimary"
         />
     <android.support.design.widget.TabLayout
         android:id="@+id/bottom_tabLayout_app"
@@ -25,7 +24,7 @@
         app:tabGravity="fill"
         app:tabMode="fixed"
         app:tabIndicatorHeight="4dp"
-        app:tabIndicatorColor="@color/colorDarkYellow"
+        app:tabIndicatorColor="@color/colorAccent"
         >
     </android.support.design.widget.TabLayout>
 </RelativeLayout>

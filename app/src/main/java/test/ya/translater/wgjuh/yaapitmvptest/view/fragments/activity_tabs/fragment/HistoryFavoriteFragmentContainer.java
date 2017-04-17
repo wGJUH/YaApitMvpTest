@@ -14,7 +14,7 @@ import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.Presenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.FragmentAdapter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.fragment.HistoryFavoritesFragment;
@@ -69,7 +69,7 @@ public class  HistoryFavoriteFragmentContainer extends BaseFragment {
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
                 // TODO: 15.04.2017  НЕОБХОДИМО СРОЧНО ПОПРАВИТЬ  УДАЛЕНИЕ ИЗ ИЗБРАННОГО ЧЕРЕЗ ИСТОРИЮ !
-                    EventBusImpl.getInstance().getEventBusForPost().onNext(EventBusImpl.getInstance().createEvent(Event.EventType.DELETE_FAVORITE));
+                    EventBusImpl.getInstance().post(EventBusImpl.getInstance().createEvent(Event.EventType.DELETE_FAVORITE));
 
             }
 

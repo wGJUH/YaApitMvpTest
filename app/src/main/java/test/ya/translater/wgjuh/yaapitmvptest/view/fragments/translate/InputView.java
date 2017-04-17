@@ -1,4 +1,4 @@
-package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.inter;
+package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate;
 
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 
@@ -7,6 +7,8 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
  */
 
 public interface InputView extends View {
+
     void clearText();
+
     String getTargetText();
 }

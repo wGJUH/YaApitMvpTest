@@ -7,8 +7,6 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Observer;
@@ -22,9 +20,9 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DefTranslateItem;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.Translate;
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslateDTO;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.inter.ITranslatePrsenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.ITranslatePrsenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.inter.TranslateView;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.TranslateView;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
@@ -50,7 +48,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
     @Override
     public void onBindView(View view) {
         super.onBindView(view);
-        addSubscription(eventBus.getEventBus().subscribe(event -> {
+        addSubscription(eventBus.subscribe(event -> {
             switch (event.eventType) {
                 case BTN_CLEAR_CLICKED:
                     clearTranslate();
@@ -93,7 +91,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
 
         if(historyTranslate != null){
            iModel.updateHistoryDate(historyTranslate.getId());
-            eventBus.getEventBusForPost().onNext(eventBus.createEvent(Event.EventType.WORD_UPDATED,historyTranslate));
+            eventBus.post(eventBus.createEvent(Event.EventType.WORD_UPDATED,historyTranslate));
             return;
         }
         Observable<DictDTO> dictDTOObservable =iModel
@@ -173,9 +171,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
 
     private void insertItemInTaleOfAdapterListAndNotify(DefRecyclerItem defRecyclerItem){
         defRecyclerItems.add(defRecyclerItem);
-        view.getViewAdapter().notifyItemInserted(defRecyclerItems.size());
-        view.getViewAdapter().notifyDataSetChanged();
-        view.getRecyclerView().invalidate();
+        view.updateAdapterTale(defRecyclerItems.size());
     }
 
     private void SetSyns(Translate translate, DefTranslateItem defTranslateItem) {
@@ -211,31 +207,28 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
         view.setBtnFavoriteSelected(isFavorite);
     }
 
+
+
+
     @Override
     public void clearTranslate() {
         view.showTranslate("");
-
-        // TODO: 16.04.2017 плохой план ?
-        view.getViewAdapter().notifyItemRangeRemoved(0,defRecyclerItems.size());
+        view.clearAdapter(defRecyclerItems.size());
         defRecyclerItems.clear();
-        view.getRecyclerView().removeAllViews();
-        view.getViewAdapter().notifyDataSetChanged();
     }
 
     @Override
     public void addToFavorites() {
         if (lastTranslate != null) {
             lastTranslate.setFavorite(Long.toString(iModel.setFavorites(lastTranslate)));
-            eventBus
-                    .getEventBusForPost()
-                    .onNext(eventBus.createEvent(Event.EventType.UPDATE_FAVORITE, lastTranslate));
+            eventBus.post(eventBus.createEvent(Event.EventType.UPDATE_FAVORITE, lastTranslate));
         }
     }
 
     @Override
     public void saveOutState(Bundle outState) {
         if (lastTranslate != null) {
-            outState.putSerializable(DATA.OUT_STATE, lastTranslate);
+            outState.putParcelable(DATA.OUT_STATE, lastTranslate);
         }
     }
 
