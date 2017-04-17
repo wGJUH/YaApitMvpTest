@@ -46,7 +46,7 @@ public class InputPresenterImpl extends BasePresenter<InputView> implements IInp
     @Override
     public void startTranslate() {
         eventBus.getEventBusForPost().onNext(eventBus.createEvent(Event.EventType.BTN_CLEAR_CLICKED));
-        eventBus.getEventBusForPost().onNext(eventBus.createEvent(Event.EventType.START_TRANSLATE, view.getTargetText().toLowerCase(Locale.getDefault())));
+        eventBus.getEventBusForPost().onNext(eventBus.createEvent(Event.EventType.START_TRANSLATE, view.getTargetText().toLowerCase(Locale.getDefault()).trim()));
 
     }
 
