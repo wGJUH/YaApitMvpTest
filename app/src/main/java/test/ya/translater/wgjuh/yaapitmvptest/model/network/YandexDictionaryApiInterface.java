@@ -16,6 +16,6 @@ public interface YandexDictionaryApiInterface {
     Observable<LangsDirsModelDTO> getLangs(@Query("key") String apiKey);
 
     @GET("/api/v1/dicservice.json/lookup")
-    Observable<DictDTO> translateForLanguage(@Query("key") String apiKey, @Query("lang") String lang, @Query("text") String text);
+    Observable<DictDTO> translateForLanguage(@Query("key") String apiKey, @Query("lang") String lang, @Query("text") String text, @Query("ui") String ui);
 
 }

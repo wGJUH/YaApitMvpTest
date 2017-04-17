@@ -9,7 +9,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:background="@color/colorPrimary">
+        android:background="@color/colorYellow">
     </android.support.v7.widget.Toolbar>
 <android.support.v7.widget.RecyclerView
     android:id="@+id/langs_recycler_view"

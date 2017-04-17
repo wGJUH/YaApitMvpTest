@@ -64,15 +64,11 @@ public class Translate implements Serializable {
         return Observable.from(mean);
     }
     public Observable<Synonyme> getSynonymeObservable() {
-        return Observable.from(synonyme).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .unsubscribeOn(Schedulers.io());
+        return Observable.from(synonyme);
     }
 
     public Observable<Example> getExampleObservable() {
-        return Observable.from(example).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .unsubscribeOn(Schedulers.io());
+        return Observable.from(example);
     }
     public List<Example> getExample(){
         return example;

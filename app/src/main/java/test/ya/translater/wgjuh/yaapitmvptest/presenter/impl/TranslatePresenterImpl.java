@@ -2,11 +2,13 @@ package test.ya.translater.wgjuh.yaapitmvptest.presenter.impl;
 
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Observer;
@@ -147,23 +149,25 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
 
     @Override
     public void updateRecylcerView(DictDTO dictDTO) {
-        dictDTO.getDef().subscribe(def -> {
-            DefRecyclerItem defRecyclerItem = new DefRecyclerItem();
-            defRecyclerItem.setText(def.getText());
-            defRecyclerItem.setTs("["+def.getTranscription()+"]");
-            defRecyclerItem.setPos(def.getPos());
-            if (def.getTranslate() != 0){
-                def.getTranslateObservable().subscribe(translate -> {
-                    DefTranslateItem defTranslateItem = new DefTranslateItem();
-                    SetExamples(translate, defTranslateItem);
-                    SetMeans(translate, defTranslateItem);
-                    defTranslateItem.getTextAndSyn().add(translate.getText());
-                    SetSyns(translate, defTranslateItem);
-                    defRecyclerItem.getDefTranslateItems().add(defTranslateItem);
-                });
-            }
-            insertItemInTaleOfAdapterListAndNotify(defRecyclerItem);
-        });
+        dictDTO.getDef()
+                /*.flatMap(i->Observable.just(i).delay(200, TimeUnit.MILLISECONDS))*/
+                .flatMap(def -> {
+                    DefRecyclerItem defRecyclerItem = new DefRecyclerItem();
+                    defRecyclerItem.setText(def.getText());
+                    defRecyclerItem.setTs("["+def.getTranscription()+"]");
+                    defRecyclerItem.setPos(def.getPos());
+                    if (def.getTranslate() != 0){
+                        def.getTranslateObservable().subscribe(translate -> {
+                            DefTranslateItem defTranslateItem = new DefTranslateItem();
+                            SetExamples(translate, defTranslateItem);
+                            SetMeans(translate, defTranslateItem);
+                            defTranslateItem.getTextAndSyn().add(translate.getText());
+                            SetSyns(translate, defTranslateItem);
+                            defRecyclerItem.getDefTranslateItems().add(defTranslateItem);
+                        });
+                    }
+                    return Observable.just(defRecyclerItem);
+                }).subscribe(this::insertItemInTaleOfAdapterListAndNotify);
         view.showProgressBar(false);
     }
 
@@ -177,7 +181,9 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
     private void SetSyns(Translate translate, DefTranslateItem defTranslateItem) {
         if(translate.getSynonyme() != null && translate.getSynonyme().size() != 0) {
             translate.getSynonymeObservable().subscribe(syn -> {
+                Log.d(TAG,"Synonyms: " +syn.getText());
                 defTranslateItem.getTextAndSyn().add(syn.getText());
+                Log.d(TAG,"Synonyms After add: " + TextUtils.join(", ",defTranslateItem.getTextAndSyn()));
             });
         }
     }
@@ -185,6 +191,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
     private void SetMeans(Translate translate, DefTranslateItem defTranslateItem) {
         if(translate.getMean() != null && translate.getMean().size() != 0) {
             translate.getMeanObservable().subscribe(mean -> {
+                Log.d(TAG,"Means: " +mean.getText());
                 defTranslateItem.getMeans().add(mean.getText());
             });
         }
@@ -193,6 +200,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
     private void SetExamples(Translate translate, DefTranslateItem defTranslateItem) {
         if(translate.getExample() != null && translate.getExample().size() != 0) {
             translate.getExampleObservable().subscribe(example -> {
+                Log.d(TAG,"Example: " +example.toString());
                 defTranslateItem.getExamples().add(example.toString());
             });
         }

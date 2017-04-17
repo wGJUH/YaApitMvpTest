@@ -48,7 +48,7 @@ public class DbBackEnd implements Contractor, IDbBackEnd {
         contentValues.put(Translate.LANGS, dictDTO.getLangs());
         contentValues.put(Translate.JSON, new Gson().toJson(dictDTO));
         contentValues.put(Translate.DATE, System.currentTimeMillis());
-        inserted = sqLiteDatabase.insertOrThrow(DB_TABLE_HISTORY, null, contentValues);
+        inserted = sqLiteDatabase.insert(DB_TABLE_HISTORY, null, contentValues);
         if (inserted != -1) {
             sqLiteDatabase.setTransactionSuccessful();
         }

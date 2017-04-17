@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,8 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DefRecyclerItem;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DefTranslateItem;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.Mean;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.Synonyme;
+
+import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
 /**
  * Created by wGJUH on 16.04.2017.
@@ -61,7 +64,9 @@ public class DictionaryTranslateRecyclerViewAdapter extends RecyclerView.Adapter
                         DefTranslateItem defTranslateItem = defRecyclerItem.getDefTranslateItems().get(i);
                         ((TextView)view.findViewById(R.id.row_number)).setText(Integer.toString(i+1));
                         ((TextView)view.findViewById(R.id.synonyms)).setText(TextUtils.join(", ",defTranslateItem.getTextAndSyn()));
+                        Log.d(TAG,"synonyms adapter: " + TextUtils.join(", ",defTranslateItem.getTextAndSyn()));
                         if(defTranslateItem.getMeans().size() != 0) {
+
                             ((TextView) view.findViewById(R.id.means)).setText("(" + TextUtils.join(", ", defTranslateItem.getMeans()) + ")");
                         }else {
                             view.findViewById(R.id.means).setVisibility(View.GONE);

@@ -72,7 +72,7 @@ public class ModelImpl implements IModel {
     @Override
     public Observable<DictDTO> getDicTionaryTranslateForLanguage(String target, String language) {
         return yandexDictionaryApiInterface
-                .translateForLanguage(DATA.DICT_API_KEY, language, target)
+                .translateForLanguage(DATA.DICT_API_KEY, language, target,Locale.getDefault().getLanguage())
                 .compose(applySchedulers());
     }
 
