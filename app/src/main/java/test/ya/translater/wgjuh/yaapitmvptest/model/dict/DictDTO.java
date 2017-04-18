@@ -66,6 +66,10 @@ public class DictDTO implements Parcelable{
         return commonTranslate;
     }
 
+    public void setDef(List<Def> def) {
+        this.def = def;
+    }
+
     public void setLangs(String langs) {
         this.langs = langs;
     }

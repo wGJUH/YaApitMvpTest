@@ -1,4 +1,4 @@
-package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.activity_tabs.inter;
+package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.activity_tabs;
 
 import android.support.v4.app.FragmentManager;
 
@@ -8,7 +8,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
  * Created by wGJUH on 04.04.2017.
  */
 
-public interface TransalteView extends View {
+public interface TranslateContainerView extends View {
 
     FragmentManager getTranslateFragmentManager();
 

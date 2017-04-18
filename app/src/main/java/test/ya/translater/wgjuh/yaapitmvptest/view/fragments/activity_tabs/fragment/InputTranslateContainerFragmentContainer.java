@@ -22,9 +22,10 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.TranslateFragmentContainerImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.activity_tabs.inter.TransalteView;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.activity_tabs.TranslateContainerView;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment.InputFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment.TranslateFragment;
+
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
@@ -32,7 +33,7 @@ import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
  * Created by wGJUH on 04.04.2017.
  */
 
-public class InputTranslateFragmentContainer extends BaseFragment implements TransalteView {
+public class InputTranslateContainerFragmentContainer extends BaseFragment implements TranslateContainerView {
 
     @BindView(R.id.input_translateblock)
     FrameLayout inputFrame;
@@ -47,7 +48,7 @@ public class InputTranslateFragmentContainer extends BaseFragment implements Tra
     private TranslateFragmentContainerImpl translatePresenter;
     private FragmentManager fragmentManager;
 
-    public InputTranslateFragmentContainer() {
+    public InputTranslateContainerFragmentContainer() {
 
     }
 

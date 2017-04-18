@@ -34,13 +34,16 @@ public class ModelImpl implements IModel {
     private static ModelImpl model;
     private final Context context = LeakCanaryApp.getAppContext();
     private final Observable.Transformer schedulersTransformer;
-    private final YandexTranslateApiInterface yandexTranslateApiInterface = YandexTranslateApiModule.getYandexTranslateApiInterface();
-    private final YandexDictionaryApiInterface yandexDictionaryApiInterface = YandexDictionaryApiModule.getYandexDictionaryApiInterface();
+    private final YandexTranslateApiInterface yandexTranslateApiInterface ;
+    private final YandexDictionaryApiInterface yandexDictionaryApiInterface ;
     private final DbBackEnd dbBackEnd;
     private IEventBus iEventBus;
 
-    private ModelImpl(IEventBus iEventBus) {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    ModelImpl(IEventBus iEventBus,YandexTranslateApiInterface yandexTranslateApiInterface,YandexDictionaryApiInterface yandexDictionaryApiInterface) {
         this.iEventBus = iEventBus;
+        this.yandexTranslateApiInterface = yandexTranslateApiInterface;
+        this.yandexDictionaryApiInterface = yandexDictionaryApiInterface;
         dbBackEnd = new DbBackEnd(context);
         schedulersTransformer = o -> ((Observable) o).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -51,6 +54,8 @@ public class ModelImpl implements IModel {
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     ModelImpl(DbBackEnd dbBackend) {
         this.dbBackEnd = dbBackend;
+        this.yandexTranslateApiInterface = null;
+        this.yandexDictionaryApiInterface = null;
         schedulersTransformer = o -> ((Observable) o).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .unsubscribeOn(Schedulers.io());
@@ -58,14 +63,14 @@ public class ModelImpl implements IModel {
 
     public static IModel getInstance() {
         if (model == null) {
-            model = new ModelImpl(EventBusImpl.getInstance());
+                model = new ModelImpl(EventBusImpl.getInstance(),YandexTranslateApiModule.getYandexTranslateApiInterface(),YandexDictionaryApiModule.getYandexDictionaryApiInterface());
         }
         return model;
     }
 
 
     @Override
-    public Observable<TranslateDTO> getTranslateForLanguage(String target, String language) {
+    public Observable<TranslateDTO> getTranslateForLanguage (String target, String language) {
         return yandexTranslateApiInterface
                 .translateForLanguage(DATA.API_KEY, target, language)
                 .compose(applySchedulers());

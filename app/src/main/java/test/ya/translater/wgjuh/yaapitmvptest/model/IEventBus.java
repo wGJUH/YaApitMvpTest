@@ -20,6 +20,8 @@ public interface IEventBus {
 
     Subscription subscribe(Action1<Event> eventAction);
 
+    Subscription subscribe(Subscriber subscriber);
+
     Event createEvent(Event.EventType eventType, Object... container);
 
 }

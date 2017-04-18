@@ -40,6 +40,9 @@ public class Translate implements Parcelable {
         mean = in.createTypedArrayList(Mean.CREATOR);
         example = in.createTypedArrayList(Example.CREATOR);
     }
+    public Translate(){
+
+    }
 
     public static final Creator<Translate> CREATOR = new Creator<Translate>() {
         @Override

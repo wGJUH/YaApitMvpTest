@@ -3,12 +3,11 @@ package test.ya.translater.wgjuh.yaapitmvptest.presenter.impl;
 import android.util.Log;
 
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
-import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.SettingLangsFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
-import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.activity_tabs.inter.TransalteView;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.activity_tabs.TranslateContainerView;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment.InputFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment.TranslateFragment;
 
@@ -19,7 +18,7 @@ import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
  * Created by wGJUH on 04.04.2017.
  */
 // TODO: 06.04.2017 добавить bind, unbind для вьюх срочно !
-public class TranslateFragmentContainerImpl extends BasePresenter<TransalteView> {
+public class TranslateFragmentContainerImpl extends BasePresenter<TranslateContainerView> {
     private final IModel iModel;
     private final IEventBus iEventBus;
 

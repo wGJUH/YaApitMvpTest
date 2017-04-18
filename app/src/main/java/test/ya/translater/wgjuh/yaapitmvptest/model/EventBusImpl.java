@@ -1,6 +1,9 @@
 package test.ya.translater.wgjuh.yaapitmvptest.model;
 
+import android.support.annotation.VisibleForTesting;
+
 import rx.Observable;
+import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -36,10 +39,16 @@ public class EventBusImpl implements IEventBus {
         return getEventBus().subscribe(eventAction);
     }
 
+    @Override
+    public Subscription subscribe(Subscriber subscriber) {
+        return getEventBus().subscribe(subscriber);
+    }
+
     private Subject<Event, Event> getEventBusForPost() {
         return eventBus;
     }
 
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     private Observable<Event> getEventBus() {
         return eventBus.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

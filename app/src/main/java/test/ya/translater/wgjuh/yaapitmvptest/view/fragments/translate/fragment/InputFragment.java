@@ -3,6 +3,8 @@ package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +30,7 @@ import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
  * Created by wGJUH on 04.04.2017.
  */
 
-public class InputFragment extends BaseFragment implements InputView {
+public class InputFragment extends BaseFragment implements InputView, TextWatcher {
     @BindView(R.id.edittext_translate_word)
     EditText editText;
     @BindView(R.id.btn_clear_input)
@@ -75,6 +77,7 @@ public class InputFragment extends BaseFragment implements InputView {
         ButterKnife.bind(this, view);
         imageButton.setOnClickListener(btn -> inputPresenter.clearInput());
         editText.setOnEditorActionListener((input, action, event) -> inputPresenter.onButtonTranslateClick());
+        editText.addTextChangedListener(this);
         return view;
     }
 
@@ -106,4 +109,21 @@ public class InputFragment extends BaseFragment implements InputView {
     }
 
 
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+      //  inputPresenter.startTranslate();
+/*        if (editable.length() == 0){
+            inputPresenter.clearInput();
+        }*/
+    }
 }

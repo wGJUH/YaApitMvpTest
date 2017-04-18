@@ -11,7 +11,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslateDTO;
 
 public interface IModel {
 
-    Observable<TranslateDTO> getTranslateForLanguage(String target, String language);
+    Observable<TranslateDTO> getTranslateForLanguage (String target, String language);
 
     Observable<DictDTO> getDicTionaryTranslateForLanguage(String target, String language);
 

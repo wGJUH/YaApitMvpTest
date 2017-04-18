@@ -2,6 +2,7 @@ package test.ya.translater.wgjuh.yaapitmvptest.presenter.impl;
 
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -15,6 +16,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.DATA;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
+import test.ya.translater.wgjuh.yaapitmvptest.model.dict.Def;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DefRecyclerItem;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DefTranslateItem;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
@@ -79,43 +81,36 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
         }));
     }
 
-    void startTranslate(String targetText){
+    @Override
+    public void startTranslate(String targetText) {
         view.showProgressBar(true);
-        if(subscription!= null && !subscription.isUnsubscribed()){
+
+        if (subscription != null && !subscription.isUnsubscribed()) {
             subscription.isUnsubscribed();
         }
 
-        String translateDirection =iModel.getTranslateLangPair();
+        String translateDirection = iModel.getTranslateLangPair();
 
-        DictDTO historyTranslate =iModel.getHistoryTranslate(targetText, translateDirection);
+        DictDTO historyTranslate = iModel.getHistoryTranslate(targetText, translateDirection);
 
-        if(historyTranslate != null){
-           iModel.updateHistoryDate(historyTranslate.getId());
-            eventBus.post(eventBus.createEvent(Event.EventType.WORD_UPDATED,historyTranslate));
+        if (historyTranslate != null) {
+            iModel.updateHistoryDate(historyTranslate.getId());
+            eventBus.post(eventBus.createEvent(Event.EventType.WORD_UPDATED, historyTranslate));
             return;
         }
-        Observable<DictDTO> dictDTOObservable =iModel
-                .getDicTionaryTranslateForLanguage(targetText, translateDirection)
-                .onErrorReturn(throwable -> {
-                    Log.e(TAG, "dictDTOObservable: Сервис недоступен или запрос неверен",throwable);
-                    return new DictDTO();});
+        Observable<DictDTO> dictDTOObservable = getDictDTOObservable(targetText, translateDirection);
 
-        Observable<TranslateDTO> translatePojoObservable =iModel
-                .getTranslateForLanguage(targetText, translateDirection)
-                .doOnError(throwable ->
-                        Log.e(TAG, "translatePojoObservable: Сервис недоступен или запрос неверен",throwable )
-                );
+        Observable<TranslateDTO> translatePojoObservable = getTranslateDTOObservable(targetText, translateDirection);
 
-        // TODO: 08.04.2017 спросить про проверку при зиппе
-        Observable zipObservable = Observable.zip(dictDTOObservable, translatePojoObservable, (dictDTO, translatePojo) -> {
+        Observable zipObservable = getZipTranslates(targetText, dictDTOObservable, translatePojoObservable);
 
-            dictDTO.setCommonTranslate(translatePojo.getText());
-            dictDTO.setTarget(targetText);
-            dictDTO.setLangs(translatePojo.getLang());
+        subscription = getTranslateSubscribe(zipObservable);
 
-            return dictDTO;
-        });
-        subscription = zipObservable
+        addSubscription(subscription);
+    }
+
+    private Subscription getTranslateSubscribe(Observable zipObservable) {
+        return zipObservable
                 .subscribe(new Observer<DictDTO>() {
                     @Override
                     public void onCompleted() {
@@ -127,12 +122,41 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
                         e.printStackTrace();
                         view.showError(e.getMessage());
                     }
+
                     @Override
                     public void onNext(DictDTO dictDTO) {
-                       iModel.saveToDBAndNotify(dictDTO);
+                        iModel.saveToDBAndNotify(dictDTO);
                     }
                 });
-        addSubscription(subscription);
+    }
+
+    @NonNull
+    private Observable<DictDTO> getZipTranslates(String targetText, Observable<DictDTO> dictDTOObservable, Observable<TranslateDTO> translatePojoObservable) {
+        return Observable.zip(dictDTOObservable, translatePojoObservable, (dictDTO, translatePojo) -> {
+            dictDTO.setCommonTranslate(translatePojo.getText());
+            dictDTO.setTarget(targetText);
+            dictDTO.setLangs(translatePojo.getLang());
+            return dictDTO;
+        });
+    }
+
+    @NonNull
+    private Observable<TranslateDTO> getTranslateDTOObservable(String targetText, String translateDirection) {
+        return iModel
+                .getTranslateForLanguage(targetText, translateDirection)
+                .doOnError(throwable ->
+                        Log.e(TAG, "translatePojoObservable: Сервис недоступен или запрос неверен", throwable)
+                );
+    }
+
+    @NonNull
+    private Observable<DictDTO> getDictDTOObservable(String targetText, String translateDirection) {
+        return iModel
+                .getDicTionaryTranslateForLanguage(targetText, translateDirection)
+                .onErrorReturn(throwable -> {
+                    Log.e(TAG, "dictDTOObservable: Сервис недоступен или запрос неверен", throwable);
+                    return new DictDTO();
+                });
     }
 
     @Override
@@ -147,56 +171,68 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
 
     @Override
     public void updateRecylcerView(DictDTO dictDTO) {
-        dictDTO.getDef()
-                /*.flatMap(i->Observable.just(i).delay(200, TimeUnit.MILLISECONDS))*/
-                .flatMap(def -> {
-                    DefRecyclerItem defRecyclerItem = new DefRecyclerItem();
-                    defRecyclerItem.setText(def.getText());
-                    defRecyclerItem.setTs("["+def.getTranscription()+"]");
-                    defRecyclerItem.setPos(def.getPos());
-                    if (def.getTranslate() != 0){
-                        def.getTranslateObservable().subscribe(translate -> {
-                            DefTranslateItem defTranslateItem = new DefTranslateItem();
-                            SetExamples(translate, defTranslateItem);
-                            SetMeans(translate, defTranslateItem);
-                            defTranslateItem.getTextAndSyn().add(translate.getText());
-                            SetSyns(translate, defTranslateItem);
-                            defRecyclerItem.getDefTranslateItems().add(defTranslateItem);
-                        });
-                    }
-                    return Observable.just(defRecyclerItem);
-                }).subscribe(this::insertItemInTaleOfAdapterListAndNotify);
+        dictDTO
+                .getDef()
+                .flatMap(this::getDefRecyclerItemObservable).subscribe(this::insertItemInTaleOfAdapterListAndNotify);
         view.showProgressBar(false);
     }
 
-    private void insertItemInTaleOfAdapterListAndNotify(DefRecyclerItem defRecyclerItem){
+    private Observable<DefRecyclerItem> getDefRecyclerItemObservable(Def def) {
+        DefRecyclerItem defRecyclerItem = getDefRecyclerItem(def);
+        if (def.getTranslate() != 0) {
+            def.getTranslateObservable().subscribe(translate -> {
+                DefTranslateItem defTranslateItem = getDefTranslateItem(translate);
+                defRecyclerItem.getDefTranslateItems().add(defTranslateItem);
+            });
+        }
+        return Observable.just(defRecyclerItem);
+    }
+
+    private DefTranslateItem getDefTranslateItem(Translate translate) {
+        DefTranslateItem defTranslateItem = new DefTranslateItem();
+        SetExamples(translate, defTranslateItem);
+        SetMeans(translate, defTranslateItem);
+        defTranslateItem.getTextAndSyn().add(translate.getText());
+        SetSyns(translate, defTranslateItem);
+        return defTranslateItem;
+    }
+
+    private DefRecyclerItem getDefRecyclerItem(Def def) {
+        DefRecyclerItem defRecyclerItem = new DefRecyclerItem();
+        defRecyclerItem.setText(def.getText());
+        defRecyclerItem.setTs("[" + def.getTranscription() + "]");
+        defRecyclerItem.setPos(def.getPos());
+        return defRecyclerItem;
+    }
+
+    private void insertItemInTaleOfAdapterListAndNotify(DefRecyclerItem defRecyclerItem) {
         defRecyclerItems.add(defRecyclerItem);
         view.updateAdapterTale(defRecyclerItems.size());
     }
 
     private void SetSyns(Translate translate, DefTranslateItem defTranslateItem) {
-        if(translate.getSynonyme() != null && translate.getSynonyme().size() != 0) {
+        if (translate.getSynonyme() != null && translate.getSynonyme().size() != 0) {
             translate.getSynonymeObservable().subscribe(syn -> {
-                Log.d(TAG,"Synonyms: " +syn.getText());
+                Log.d(TAG, "Synonyms: " + syn.getText());
                 defTranslateItem.getTextAndSyn().add(syn.getText());
-                Log.d(TAG,"Synonyms After add: " + TextUtils.join(", ",defTranslateItem.getTextAndSyn()));
+                Log.d(TAG, "Synonyms After add: " + TextUtils.join(", ", defTranslateItem.getTextAndSyn()));
             });
         }
     }
 
     private void SetMeans(Translate translate, DefTranslateItem defTranslateItem) {
-        if(translate.getMean() != null && translate.getMean().size() != 0) {
+        if (translate.getMean() != null && translate.getMean().size() != 0) {
             translate.getMeanObservable().subscribe(mean -> {
-                Log.d(TAG,"Means: " +mean.getText());
+                Log.d(TAG, "Means: " + mean.getText());
                 defTranslateItem.getMeans().add(mean.getText());
             });
         }
     }
 
     private void SetExamples(Translate translate, DefTranslateItem defTranslateItem) {
-        if(translate.getExample() != null && translate.getExample().size() != 0) {
+        if (translate.getExample() != null && translate.getExample().size() != 0) {
             translate.getExampleObservable().subscribe(example -> {
-                Log.d(TAG,"Example: " +example.toString());
+                Log.d(TAG, "Example: " + example.toString());
                 defTranslateItem.getExamples().add(example.toString());
             });
         }
@@ -206,9 +242,6 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
     public void updateChecboxFavorite(boolean isFavorite) {
         view.setBtnFavoriteSelected(isFavorite);
     }
-
-
-
 
     @Override
     public void clearTranslate() {

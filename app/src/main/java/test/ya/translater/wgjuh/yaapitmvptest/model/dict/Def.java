@@ -32,6 +32,7 @@ public class Def implements Parcelable{
         transcription = in.readString();
         translate = in.createTypedArrayList(Translate.CREATOR);
     }
+    public Def(){}
 
     public static final Creator<Def> CREATOR = new Creator<Def>() {
         @Override

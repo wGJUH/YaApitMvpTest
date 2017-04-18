@@ -117,7 +117,7 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
 
     @Override
     public void showError(String error) {
-
+        progressBar.hide();
     }
     @Override
     public void onSaveInstanceState(Bundle outState) {

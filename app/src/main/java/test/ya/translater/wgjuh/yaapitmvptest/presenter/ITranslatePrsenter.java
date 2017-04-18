@@ -36,5 +36,7 @@ public interface ITranslatePrsenter extends Presenter {
 
     void restoreState(DictDTO dictDTO);
 
+    void startTranslate(String targetText);
+
     List<DefRecyclerItem> getDictionarySate();
 }

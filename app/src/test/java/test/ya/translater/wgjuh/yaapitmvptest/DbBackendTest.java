@@ -24,6 +24,7 @@ import rx.observers.TestSubscriber;
 import test.ya.translater.wgjuh.yaapitmvptest.model.db.DbBackEnd;
 import test.ya.translater.wgjuh.yaapitmvptest.model.db.DbOpenHelper;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.TranslatePresenterImpl;
 
 import static org.mockito.Mockito.when;
 
