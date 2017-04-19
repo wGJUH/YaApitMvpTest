@@ -74,18 +74,32 @@ public class HistoryFavoritesFragment extends BaseFragment implements HistoryFav
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+            historyFavoritePresenter.saveOutState(outState);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if(isHistory) {
+
+        if (isHistory) {
             historyFavoritePresenter = new HistoryPresenterImpl(ModelImpl.getInstance(), EventBusImpl.getInstance());
-        }else{
+        } else {
             historyFavoritePresenter = new FavoritePresenterImpl(ModelImpl.getInstance(), EventBusImpl.getInstance());
         }
-        viewAdapter = new HistoryFavoriteRecyclerViewAdapter(historyFavoritePresenter.getTranslateList(),isHistory, historyFavoritePresenter);
+        if (savedInstanceState != null) {
+            historyFavoritePresenter.restoreArray(savedInstanceState);
+        } else {
+            historyFavoritePresenter.initTranslateList();
+        }
+        viewAdapter = new HistoryFavoriteRecyclerViewAdapter(historyFavoritePresenter.getTranslateList(), isHistory, historyFavoritePresenter);
         historyFavoritePresenter.onBindView(this);
         Context context = view.getContext();
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(viewAdapter);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setItemViewCacheSize(1);
     }
 
     @Override
@@ -107,6 +121,7 @@ public class HistoryFavoritesFragment extends BaseFragment implements HistoryFav
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        viewAdapter = null;
         Log.d(DATA.TAG, "onDestroyView: " + getClass().getName());
     }
 
@@ -154,7 +169,7 @@ public class HistoryFavoritesFragment extends BaseFragment implements HistoryFav
 
     @Override
     public void changeAdapterItemPosition(int oldPosition, int newPosition) {
-        viewAdapter.notifyItemMoved(oldPosition,0);
+        viewAdapter.notifyItemMoved(oldPosition, 0);
     }
 
 

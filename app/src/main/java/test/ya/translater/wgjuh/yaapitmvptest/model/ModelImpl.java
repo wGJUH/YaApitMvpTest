@@ -8,6 +8,7 @@ import android.util.Log;
 
 import java.util.Locale;
 
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import test.ya.translater.wgjuh.yaapitmvptest.DATA;
@@ -37,6 +38,7 @@ public class ModelImpl implements IModel {
     private final YandexDictionaryApiInterface yandexDictionaryApiInterface;
     private final DbBackEnd dbBackEnd;
     private IEventBus iEventBus;
+    private Observable cachedRequest;
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     ModelImpl(IEventBus iEventBus, YandexTranslateApiInterface yandexTranslateApiInterface, YandexDictionaryApiInterface yandexDictionaryApiInterface) {
@@ -95,7 +97,7 @@ public class ModelImpl implements IModel {
         yandexTranslateApiInterface
                 .getLangs(DATA.API_KEY, Locale.getDefault().getLanguage())
                 .compose(applySchedulers())
-                .subscribe(dbBackEnd::upateLangs,throwable -> throwable.printStackTrace());
+                .subscribe(dbBackEnd::upateLangs, throwable -> throwable.printStackTrace());
     }
 
     @Override
@@ -105,16 +107,24 @@ public class ModelImpl implements IModel {
 
     @Override
     public void saveToDBAndNotify(DictDTO dictDTO) {
-        Observable
-                .just(dbBackEnd.insertHistoryTranslate(dictDTO))
-                .compose(applySchedulers())
-                .flatMap(aLong -> Observable.just(dbBackEnd.getHistoryTranslate(aLong)))
-                .doAfterTerminate(() -> Log.d(DATA.TAG, "Terminated"))
-                .subscribe(dictDTOFromDB -> iEventBus
-                        .post(iEventBus.createEvent(Event
-                                .EventType
-                                .WORD_TRANSLATED, dictDTOFromDB)), throwable -> Log.e(DATA.TAG, throwable.getMessage()));
+        if (dbBackEnd.getHistoryId(dictDTO).equals("-1")) {
+            Observable
+                    .just(dbBackEnd.insertHistoryTranslate(dictDTO))
+                    .compose(applySchedulers())
+                    .flatMap(aLong -> Observable.just(dbBackEnd.getHistoryTranslate(aLong)))
+                    .doAfterTerminate(() -> Log.d(DATA.TAG, "Terminated"))
+                    .subscribe(dictDTOFromDB -> iEventBus
+                            .post(iEventBus.createEvent(Event
+                                    .EventType
+                                    .WORD_TRANSLATED, dictDTOFromDB)), throwable -> Log.e(DATA.TAG, throwable.getMessage()));
+        } else {
+            iEventBus
+                    .post(iEventBus.createEvent(Event
+                            .EventType
+                            .WORD_TRANSLATED, model.getHistoryTranslate(dictDTO.getTarget(),dictDTO.getLangs())));
+        }
     }
+
 
     @Override
     public long setFavorites(DictDTO dictDTO) {
@@ -136,6 +146,23 @@ public class ModelImpl implements IModel {
         dbBackEnd.updateHistoryDate(id);
     }
 
+    public void initZipTranslate(String target, String lang) {
+        cachedRequest = getDicTionaryTranslateForLanguage(target, lang)
+                .zipWith(getTranslateForLanguage(target, lang), (dictDTO, translateDTO) -> {
+                    dictDTO.setCommonTranslate(translateDTO.getText());
+                    dictDTO.setTarget(target);
+                    dictDTO.setLangs(translateDTO.getLang());
+                    return dictDTO;
+                })
+                .flatMap(Observable::just)
+                .compose(applySchedulers())
+                .cache();
+    }
+
+    public Observable<DictDTO> getZipTranslate() {
+        return cachedRequest==null?Observable.empty():cachedRequest;
+    }
+
     @Override
     public String getLangByCode(String code) {
         return dbBackEnd.getLangByCode(code);
@@ -152,13 +179,20 @@ public class ModelImpl implements IModel {
     }
 
     @Override
+    public void freeCachedOBservable() {
+        cachedRequest = null;
+    }
+
+    @Override
     public Observable<DictDTO> getHistoryListTranslate() {
-        return Observable.from(dbBackEnd.getHistoryListTranslate());
+        return Observable.from(dbBackEnd.getHistoryListTranslate())
+                .compose(applySchedulers());
     }
 
     @Override
     public Observable<DictDTO> getFavoriteListTranslate() {
-        return Observable.from(dbBackEnd.getFavoriteListTranslate());
+        return Observable.from(dbBackEnd.getFavoriteListTranslate())
+                .compose(applySchedulers());
     }
 
     @Override

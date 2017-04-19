@@ -58,13 +58,11 @@ public class HistoryFavoriteRecyclerViewAdapter extends RecyclerView.Adapter<His
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        if (mValues.size() != position) {
             holder.mItem = mValues.get(position);
             holder.mIdView.setText(mValues.get(position).getTarget());
             holder.mContentView.setText(mValues.get(position).getCommonTranslate());
             holder.checkBox.setChecked(!mValues.get(position).getFavorite().equals("-1"));
             holder.langs.setText(mValues.get(position).getLangs().toUpperCase(Locale.getDefault()));
-        }
     }
 
     @Override

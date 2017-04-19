@@ -41,9 +41,15 @@ public interface IModel {
 
     void updateHistoryDate(String id);
 
+    void initZipTranslate(String target, String lang);
+
+    Observable<DictDTO> getZipTranslate();
+
     String getLangByCode(String code);
 
     int removeHistoryItem(DictDTO dictDTO);
 
     DictDTO getFavoriteTranslate(String targetText, String translateDirection);
+
+    void freeCachedOBservable();
 }

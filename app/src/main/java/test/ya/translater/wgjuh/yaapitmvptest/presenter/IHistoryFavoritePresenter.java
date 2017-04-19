@@ -1,5 +1,7 @@
 package test.ya.translater.wgjuh.yaapitmvptest.presenter;
 
+import android.os.Bundle;
+
 import java.util.List;
 
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
@@ -56,4 +58,8 @@ public interface IHistoryFavoritePresenter extends Presenter {
     int deleteItem(DictDTO dictDTO);
 
     void showTranslate(DictDTO dictDTO);
+
+    void saveOutState(Bundle outState);
+
+    void restoreArray(Bundle savedInstanceState);
 }

@@ -63,6 +63,8 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
             DictDTO dictDTO  = savedInstanceState.getParcelable(DATA.OUT_STATE);
             if(dictDTO != null) {
                 translatePresenterImpl.restoreState(dictDTO);
+            }else {
+                translatePresenterImpl.restoreState();
             }
         }
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
@@ -127,8 +129,8 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
         translatePresenterImpl.saveOutState(outState);
+        super.onSaveInstanceState(outState);
     }
 
     @Override

@@ -1,8 +1,11 @@
 package test.ya.translater.wgjuh.yaapitmvptest.presenter.impl;
 
+import android.os.Bundle;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
@@ -20,7 +23,7 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
 
     private final IModel iModel;
     private final EventBusImpl eventBusImpl;
-    private final List<DictDTO> dictDTOs = new ArrayList<>();
+    private ArrayList<DictDTO> dictDTOs = new ArrayList<>();
 
     public FavoritePresenterImpl(IModel iModel, EventBusImpl eventBusImpl){
         this.iModel = iModel;
@@ -56,7 +59,9 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
 
     @Override
     public void initTranslateList() {
-        iModel.getFavoriteListTranslate().subscribe(this::insertItemInTaleOfAdapterListAndNotify);
+        iModel.getFavoriteListTranslate()
+                .delay(200, TimeUnit.MILLISECONDS)
+                .subscribe(this::insertItemInTaleOfAdapterListAndNotify);
 
     }
 
@@ -87,7 +92,6 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
     @Override
     public void onBindView(View view) {
         super.onBindView(view);
-        initTranslateList();
         subscribeToBusEvents();
     }
 
@@ -142,6 +146,16 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
     @Override
     public void showTranslate(DictDTO dictDTO) {
         eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.BTN_CLEAR_CLICKED));
-        eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.WORD_TRANSLATED,dictDTO));
+        iModel.saveToDBAndNotify(dictDTO);
+    }
+
+    @Override
+    public void saveOutState(Bundle outState) {
+        outState.putParcelableArrayList("FAVORITES_PARCEL",dictDTOs);
+    }
+
+    @Override
+    public void restoreArray(Bundle savedInstanceState) {
+        dictDTOs = savedInstanceState.getParcelableArrayList("FAVORITES_PARCEL");
     }
 }

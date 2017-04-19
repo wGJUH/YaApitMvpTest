@@ -1,8 +1,15 @@
 package test.ya.translater.wgjuh.yaapitmvptest.presenter.impl;
 
+import android.os.Bundle;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
@@ -19,7 +26,8 @@ public class HistoryPresenterImpl extends BasePresenter<HistoryFavoriteView> imp
 
     private final IModel iModel;
     private final EventBusImpl eventBusImpl;
-    private final List<DictDTO> dictDTOs = new ArrayList<>();
+
+    private ArrayList<DictDTO> dictDTOs = new ArrayList<>();
 
 
     public HistoryPresenterImpl(IModel iModel, EventBusImpl eventBusImpl) {
@@ -30,7 +38,6 @@ public class HistoryPresenterImpl extends BasePresenter<HistoryFavoriteView> imp
     @Override
     public void onBindView(View view) {
         super.onBindView(view);
-        initTranslateList();
         subscribeToBusEvents();
     }
 
@@ -55,7 +62,9 @@ public class HistoryPresenterImpl extends BasePresenter<HistoryFavoriteView> imp
 
     @Override
     public void initTranslateList() {
-        iModel.getHistoryListTranslate().subscribe(this::insertItemInTaleOfAdapterListAndNotify);
+        iModel.getHistoryListTranslate()
+                .delay(200, TimeUnit.MILLISECONDS)
+                .subscribe(this::insertItemInTaleOfAdapterListAndNotify);
     }
 
     @Override
@@ -129,8 +138,17 @@ public class HistoryPresenterImpl extends BasePresenter<HistoryFavoriteView> imp
 
     @Override
     public void showTranslate(DictDTO dictDTO) {
-        iModel.updateHistoryDate(dictDTO.getId());
         eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.BTN_CLEAR_CLICKED));
         eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.WORD_TRANSLATED,dictDTO));
+    }
+
+    @Override
+    public void saveOutState(Bundle outState) {
+        outState.putParcelableArrayList("HISTORY_PARCEL",dictDTOs);
+    }
+
+    @Override
+    public void restoreArray(Bundle savedInstanceState) {
+        dictDTOs = savedInstanceState.getParcelableArrayList("HISTORY_PARCEL");
     }
 }

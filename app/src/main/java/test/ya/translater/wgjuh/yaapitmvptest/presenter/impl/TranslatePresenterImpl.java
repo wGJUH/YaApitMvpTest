@@ -63,11 +63,13 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
                     break;
                 case START_TRANSLATE:
                     if (!event.content[0].toString().equals("")) {
+                        initTranslateCache(event.content[0].toString(),iModel.getTranslateLangPair());
                         startTranslate(event.content[0].toString());
                     }
                     break;
                 case WORD_TRANSLATED:
                     restoreState((DictDTO) event.content[0]);
+                    iModel.updateHistoryDate(((DictDTO) event.content[0]).getId());
                     break;
                 case WORD_UPDATED:
                     restoreState((DictDTO) event.content[0]);
@@ -81,6 +83,10 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
                     break;
             }
         }));
+    }
+
+    private void initTranslateCache(String target, String langs){
+        iModel.initZipTranslate(target, langs);
     }
 
     @Override
@@ -104,69 +110,23 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
         } else if (favoriteTranslate != null) {
             iModel.saveToDBAndNotify(favoriteTranslate);
             return;
+        }else {
+            translateFromInternet();
         }
+    }
 
-
-        Observable<DictDTO> dictDTOObservable = getDictDTOObservable(targetText, translateDirection);
-
-        Observable<TranslateDTO> translatePojoObservable = getTranslateDTOObservable(targetText, translateDirection);
-
-        Observable zipObservable = getZipTranslates(targetText, dictDTOObservable, translatePojoObservable);
-
-        subscription = getTranslateSubscribe(zipObservable);
+    private void translateFromInternet() {
+        subscription = iModel
+                .getZipTranslate()
+                .doOnSubscribe(() -> view.showProgressBar(true))
+                .doOnTerminate(() -> view.showProgressBar(false))
+                .doOnCompleted(() -> iModel.freeCachedOBservable())
+                .subscribe(iModel::saveToDBAndNotify
+                        ,throwable -> view.showError(throwable.getMessage()));
 
         addSubscription(subscription);
     }
 
-    private Subscription getTranslateSubscribe(Observable zipObservable) {
-        return zipObservable
-                .subscribe(new Observer<DictDTO>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        //e.printStackTrace();
-                        view.showError(e.getMessage());
-                    }
-
-                    @Override
-                    public void onNext(DictDTO dictDTO) {
-                        iModel.saveToDBAndNotify(dictDTO);
-                    }
-                });
-    }
-
-    @NonNull
-    private Observable<DictDTO> getZipTranslates(String targetText, Observable<DictDTO> dictDTOObservable, Observable<TranslateDTO> translatePojoObservable) {
-        return Observable.zip(dictDTOObservable, translatePojoObservable, (dictDTO, translatePojo) -> {
-            dictDTO.setCommonTranslate(translatePojo.getText());
-            dictDTO.setTarget(targetText);
-            dictDTO.setLangs(translatePojo.getLang());
-            return dictDTO;
-        });
-    }
-
-    @NonNull
-    private Observable<TranslateDTO> getTranslateDTOObservable(String targetText, String translateDirection) {
-        return iModel
-                .getTranslateForLanguage(targetText, translateDirection)
-                .doOnError(throwable ->
-                        Log.e(TAG, "translatePojoObservable: Сервис недоступен или запрос неверен", throwable)
-                );
-    }
-
-    @NonNull
-    private Observable<DictDTO> getDictDTOObservable(String targetText, String translateDirection) {
-        return iModel
-                .getDicTionaryTranslateForLanguage(targetText, translateDirection)
-                .onErrorReturn(throwable -> {
-                    Log.e(TAG, "dictDTOObservable: Сервис недоступен или запрос неверен", throwable);
-                    return new DictDTO();
-                });
-    }
 
     @Override
     public void setFavorite(boolean isFavorite) {
@@ -292,6 +252,11 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
         updateChecboxFavorite(!lastTranslate.getFavorite().equals("-1"));
         updateTranslateView(dictDTO.getCommonTranslate());
         updateRecylcerView(dictDTO);
+    }
+
+    @Override
+    public void restoreState() {
+        translateFromInternet();
     }
 
     @Override

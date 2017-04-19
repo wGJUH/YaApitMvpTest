@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+import android.telecom.Call;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -14,6 +15,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import rx.Observable;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
@@ -230,6 +232,15 @@ public class DbBackEnd implements Contractor, IDbBackEnd {
         sqLiteDatabase.close();
         return dictDTOs;
     }
+
+/*    public Callable<List<DictDTO>> getHistoryListTranslate(){
+        return new Callable<List<DictDTO>>() {
+            @Override
+            public List<DictDTO> call() throws Exception {
+                return null;
+            }
+        }
+    }*/
 
     public List<DictDTO> getFavoriteListTranslate() {
         ArrayList<DictDTO> dictDTOs = new ArrayList<>(getCountForTable(DB_TABLE_HISTORY));
