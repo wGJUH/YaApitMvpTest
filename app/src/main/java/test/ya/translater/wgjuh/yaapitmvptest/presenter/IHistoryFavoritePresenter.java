@@ -27,21 +27,10 @@ public interface IHistoryFavoritePresenter extends Presenter {
     void deleteFavorite(DictDTO dictDTO);
 
     /**
-     * Метод помещает объект в конец списка и уведомляет адаптер о том что список изменился
-     * @param dictDTO объект помещаемый в конец списка
-     */
-    void insertItemInTaleOfAdapterListAndNotify(DictDTO dictDTO);
-
-    /**
      * Метода помещает объект в начало списка и уведомляет адаптер о том что список изменился
      * @param dictDTO объект помещаемый в начало списка
      */
     void insertItemInNoseOfAdapterDataAndNotify(DictDTO dictDTO);
-
-    /**
-     * Подписываемся на получение списка из бд
-     */
-    void initTranslateList();
 
     void addItem(DictDTO dictDTO);
 
@@ -59,7 +48,4 @@ public interface IHistoryFavoritePresenter extends Presenter {
 
     void showTranslate(DictDTO dictDTO);
 
-    void saveOutState(Bundle outState);
-
-    void restoreArray(Bundle savedInstanceState);
 }

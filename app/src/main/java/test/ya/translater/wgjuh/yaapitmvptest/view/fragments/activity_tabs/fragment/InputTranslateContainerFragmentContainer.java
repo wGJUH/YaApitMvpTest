@@ -91,8 +91,9 @@ public class InputTranslateContainerFragmentContainer extends BaseFragment imple
        translatePresenter = new TranslateFragmentContainerImpl(ModelImpl.getInstance(), EventBusImpl.getInstance());
         translatePresenter.onBindView(this);
         new InputFragment();
-       if (savedInstanceState == null)
-            translatePresenter.addFragments(new InputFragment(), new TranslateFragment());
+       if (savedInstanceState == null) {
+           translatePresenter.addFragments(new InputFragment(), new TranslateFragment());
+       }
         translatePresenter.updateToolbarLanguages(false);
         fromLanguageTextView.setOnClickListener(text -> translatePresenter.onChooseLanguage(Event.EventType.FROM_LANGUAGE));
         toLanguageTextView.setOnClickListener(text -> translatePresenter.onChooseLanguage(Event.EventType.TARGET_LANGUAGE));

@@ -1,14 +1,19 @@
 package test.ya.translater.wgjuh.yaapitmvptest.presenter.impl;
 
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import rx.Observable;
 import rx.Observer;
@@ -17,6 +22,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import test.ya.translater.wgjuh.yaapitmvptest.DATA;
+import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
@@ -41,7 +47,6 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
 
     private final IModel iModel;
     private final IEventBus eventBus;
-    private DictDTO lastTranslate;
     private List<DefRecyclerItem> defRecyclerItems = new ArrayList<>();
     private Subscription subscription;
 
@@ -59,12 +64,13 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
                 case BTN_CLEAR_CLICKED:
                     clearTranslate();
                     setFavorite(false);
-                    lastTranslate = null;
+                    iModel.setLastTranslate(null);
                     break;
                 case START_TRANSLATE:
                     if (!event.content[0].toString().equals("")) {
-                        initTranslateCache(event.content[0].toString(),iModel.getTranslateLangPair());
-                        startTranslate(event.content[0].toString());
+                        iModel.setLastTranslateTarget(event.content[0].toString());
+                        initTranslateCache(iModel.getLastTranslateTarget(), iModel.getTranslateLangPair());
+                        startTranslate();
                     }
                     break;
                 case WORD_TRANSLATED:
@@ -75,7 +81,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
                     restoreState((DictDTO) event.content[0]);
                     break;
                 case UPDATE_FAVORITE:
-                    if (lastTranslate != null && lastTranslate.equals(event.content[0])) {
+                    if (iModel.getLastTranslate() != null && iModel.getLastTranslate().equals(event.content[0])) {
                         setFavorite(!((DictDTO) event.content[0]).getFavorite().equals("-1"));
                     }
                     break;
@@ -85,12 +91,12 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
         }));
     }
 
-    private void initTranslateCache(String target, String langs){
+    private void initTranslateCache(String target, String langs) {
         iModel.initZipTranslate(target, langs);
     }
 
     @Override
-    public void startTranslate(String targetText) {
+    public void startTranslate() {
         view.showProgressBar(true);
 
         if (subscription != null && !subscription.isUnsubscribed()) {
@@ -99,9 +105,9 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
 
         String translateDirection = iModel.getTranslateLangPair();
 
-        DictDTO historyTranslate = iModel.getHistoryTranslate(targetText, translateDirection);
+        DictDTO historyTranslate = iModel.getHistoryTranslate(iModel.getLastTranslateTarget(), translateDirection);
 
-        DictDTO favoriteTranslate = iModel.getFavoriteTranslate(targetText, translateDirection);
+        DictDTO favoriteTranslate = iModel.getFavoriteTranslate(iModel.getLastTranslateTarget(), translateDirection);
 
         if (historyTranslate != null) {
             iModel.updateHistoryDate(historyTranslate.getId());
@@ -110,7 +116,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
         } else if (favoriteTranslate != null) {
             iModel.saveToDBAndNotify(favoriteTranslate);
             return;
-        }else {
+        } else {
             translateFromInternet();
         }
     }
@@ -119,10 +125,18 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
         subscription = iModel
                 .getZipTranslate()
                 .doOnSubscribe(() -> view.showProgressBar(true))
-                .doOnTerminate(() -> view.showProgressBar(false))
-                .doOnCompleted(() -> iModel.freeCachedOBservable())
+                .doOnTerminate(() -> {
+                    view.showProgressBar(false);
+                   /* iModel.freeCachedOBservable();*/
+                })
                 .subscribe(iModel::saveToDBAndNotify
-                        ,throwable -> view.showError(throwable.getMessage()));
+                        , throwable -> {
+                            if (!hasConnection(LeakCanaryApp.getAppContext())) {
+                                view.showError("Ошибка соединения.\nПроверьте подключение к\nИнтернету и повторите попытку.");
+                            } else {
+                                view.showError("Ошибка, повторите запрос позже.");
+                            }
+                        });
 
         addSubscription(subscription);
     }
@@ -142,7 +156,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
     @Override
     public void updateRecylcerView(DictDTO dictDTO) {
         dictDTO.getDef()
-                .delay(150, TimeUnit.MILLISECONDS)
+                .delay(100, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(this::getDefRecyclerItemObservable)
@@ -221,35 +235,40 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
         view.showTranslate("");
         view.clearAdapter(defRecyclerItems.size());
         defRecyclerItems.clear();
+        if (subscription != null && !subscription.isUnsubscribed()) {
+            subscription.unsubscribe();
+            view.showProgressBar(false);
+            iModel.freeCachedOBservable();
+        }
     }
 
     @Override
     public void addToFavorites() {
-        if (lastTranslate != null) {
-            lastTranslate.setFavorite(Long.toString(iModel.setFavorites(lastTranslate)));
-            if (lastTranslate.getFavorite().equals("-1")) {
+        if (iModel.getLastTranslate() != null) {
+            iModel.setFavorites(iModel.getLastTranslate());
+            if (iModel.getLastTranslate().getFavorite().equals("-1")) {
                 eventBus.post(eventBus.createEvent(Event.EventType.DELETE_FAVORITE));
             }
-            eventBus.post(eventBus.createEvent(Event.EventType.UPDATE_FAVORITE, lastTranslate));
+            eventBus.post(eventBus.createEvent(Event.EventType.UPDATE_FAVORITE, iModel.getLastTranslate()));
         }
     }
 
     @Override
     public void saveOutState(Bundle outState) {
-        if (lastTranslate != null) {
-            outState.putParcelable(DATA.OUT_STATE, lastTranslate);
+        if (iModel.getLastTranslate() != null) {
+            outState.putParcelable(DATA.OUT_STATE, iModel.getLastTranslate());
         }
     }
 
     @Override
     public void setLastTranslate(DictDTO lastTranslate) {
-        this.lastTranslate = lastTranslate;
+        iModel.setLastTranslate(lastTranslate);
     }
 
     @Override
     public void restoreState(DictDTO dictDTO) {
         setLastTranslate(dictDTO);
-        updateChecboxFavorite(!lastTranslate.getFavorite().equals("-1"));
+        updateChecboxFavorite(!iModel.getLastTranslate().getFavorite().equals("-1"));
         updateTranslateView(dictDTO.getCommonTranslate());
         updateRecylcerView(dictDTO);
     }
@@ -263,4 +282,42 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
     public List<DefRecyclerItem> getDictionarySate() {
         return defRecyclerItems;
     }
+
+    @Override
+    public void startRetry() {
+        subscription = iModel
+                .getZipTranslate()
+                //.doOnSubscribe(() -> view.startAnimateButton())
+                //.retryWhen(observable -> observable.flatMap(o -> Observable.timer(3000, TimeUnit.MILLISECONDS)))
+                .retry(5)
+                .doOnEach(notification ->Log.d(TAG, "doOnEach") )
+                .doOnNext(dictDTO -> Log.d(TAG, "doOnNext"))
+                .doOnError(throwable -> Log.d(TAG, "doOnError " + throwable.getMessage()))
+                .doOnCompleted(() -> Log.d(TAG, "doOnCompleted"))
+                .doOnTerminate(() -> Log.d(TAG, "doOnTerminate"))
+                .subscribe(dictDTO -> {
+                    iModel.saveToDBAndNotify(dictDTO);
+                    view.hideError();
+                }, throwable -> view.stopAnimateButton());
+    }
+
+
+    public boolean hasConnection(Context context) {
+
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifiInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (wifiInfo != null && wifiInfo.isConnected()) {
+            return true;
+        }
+        wifiInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        if (wifiInfo != null && wifiInfo.isConnected()) {
+            return true;
+        }
+        wifiInfo = cm.getActiveNetworkInfo();
+        if (wifiInfo != null && wifiInfo.isConnected()) {
+            return true;
+        }
+        return false;
+    }
+
 }

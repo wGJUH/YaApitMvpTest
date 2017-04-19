@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.FragmentAdapter;
+import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.ErrorFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.activity_tabs.fragment.HistoryFavoriteFragmentContainer;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.activity_tabs.fragment.InputTranslateContainerFragmentContainer;
 
@@ -70,10 +71,10 @@ public class TabActivity extends AppCompatActivity implements ActivityCallback, 
         tabLayout.setupWithViewPager(viewPager);
         viewPager.setAdapter(fragmentPagerAdapter);
         tabLayout.addOnTabSelectedListener(this);
-        if(viewPager.getCurrentItem() == 0) {
+        if (viewPager.getCurrentItem() == 0) {
             tabLayout.getTabAt(0).setIcon(R.drawable.ic_translate_ya);
             tabLayout.getTabAt(1).setIcon(R.drawable.ic_bookmark);
-        }else {
+        } else {
             tabLayout.getTabAt(0).setIcon(R.drawable.ic_translate);
             tabLayout.getTabAt(1).setIcon(R.drawable.ic_bookmark_ya);
         }
@@ -98,18 +99,18 @@ public class TabActivity extends AppCompatActivity implements ActivityCallback, 
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
-        if(tab.getPosition() == 0) {
+        if (tab.getPosition() == 0) {
             tab.setIcon(R.drawable.ic_translate_ya);
-        }else {
+        } else {
             tab.setIcon(R.drawable.ic_bookmark_ya);
         }
     }
 
     @Override
     public void onTabUnselected(TabLayout.Tab tab) {
-        if(tab.getPosition() == 0) {
+        if (tab.getPosition() == 0) {
             tab.setIcon(R.drawable.ic_translate);
-        }else {
+        } else {
             tab.setIcon(R.drawable.ic_bookmark);
         }
     }
@@ -121,5 +122,14 @@ public class TabActivity extends AppCompatActivity implements ActivityCallback, 
     @Override
     public void onShowHistoryWord() {
         viewPager.setCurrentItem(0);
+    }
+
+    @Override
+    public void onTranslateError() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.list_translateblock, new ErrorFragment())
+                .addToBackStack(ErrorFragment.class.getName())
+                .commit();
     }
 }

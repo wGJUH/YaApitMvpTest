@@ -1,11 +1,7 @@
 package test.ya.translater.wgjuh.yaapitmvptest.presenter.impl;
 
-import android.os.Bundle;
-
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
@@ -23,9 +19,8 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
 
     private final IModel iModel;
     private final EventBusImpl eventBusImpl;
-    private ArrayList<DictDTO> dictDTOs = new ArrayList<>();
 
-    public FavoritePresenterImpl(IModel iModel, EventBusImpl eventBusImpl){
+    public FavoritePresenterImpl(IModel iModel, EventBusImpl eventBusImpl) {
         this.iModel = iModel;
         this.eventBusImpl = eventBusImpl;
     }
@@ -33,40 +28,25 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
 
     @Override
     public List<DictDTO> getTranslateList() {
-        return dictDTOs;
+        return iModel.getFavoriteDictDTOs();
     }
 
 
     @Override
     public void deleteFavorite(DictDTO dictDTO) {
-        dictDTO.setFavorite(Long.toString(iModel.setFavorites(dictDTO)));
-        eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.UPDATE_FAVORITE,dictDTO));
-    }
-
-    @Override
-    public void insertItemInTaleOfAdapterListAndNotify(DictDTO dictDTO) {
-        dictDTOs.add(dictDTO);
-        view.updateAdapterTale(dictDTOs.size()-1);
+        iModel.setFavorites(dictDTO);
+        eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.UPDATE_FAVORITE, dictDTO));
     }
 
     @Override
     public void insertItemInNoseOfAdapterDataAndNotify(DictDTO dictDTO) {
-        dictDTOs.add(0,dictDTO);
-        view.updateAdapterNose();
-        view.scrollToPosition(0);
-
-    }
-
-    @Override
-    public void initTranslateList() {
-        iModel.getFavoriteListTranslate()
-                .delay(200, TimeUnit.MILLISECONDS)
-                .subscribe(this::insertItemInTaleOfAdapterListAndNotify);
-
+         view.updateAdapterNose();
+         view.scrollToPosition(0);
     }
 
     /**
      * Метод позволяющий помести новый объект избранного в начало списка
+     *
      * @param dictDTO новая запись в избранном
      */
     @Override
@@ -76,17 +56,17 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
 
     @Override
     public void updateFavorite(DictDTO dictDTO) {
-        int position = dictDTOs.indexOf(dictDTO);
-        if(position != -1) {
-            dictDTOs.set(position, dictDTO);
+        int position = iModel.getFavoriteDictDTOs().indexOf(dictDTO);
+        if (position != -1) {
+            iModel.updateFavoriteDto(position, dictDTO);
             view.updateAdapterItemOnPosition(position);
         }
     }
 
     @Override
     public void addFavorite(DictDTO dictDTO) {
-        dictDTO.setFavorite(Long.toString(iModel.setFavorites(dictDTO)));
-        eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.UPDATE_FAVORITE,dictDTO));
+        iModel.setFavorites(dictDTO);
+        eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.UPDATE_FAVORITE, dictDTO));
     }
 
     @Override
@@ -97,18 +77,17 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
 
     @Override
     public void subscribeToBusEvents() {
-       addSubscription(eventBusImpl.subscribe(this::onEvent));
+        addSubscription(eventBusImpl.subscribe(this::onEvent));
     }
 
     @Override
     public void replaceItemsInAdapterData(int oldPosition, DictDTO dictDTO) {
-        dictDTOs.remove(oldPosition);
-        dictDTOs.add(0, dictDTO);
-        view.changeAdapterItemPosition(oldPosition,0);
+        iModel.moveFavoriteDictDto(oldPosition, dictDTO);
+        view.changeAdapterItemPosition(oldPosition, 0);
     }
 
-    public void removeAllNotFavorite(){
-        for (Iterator<DictDTO> it = dictDTOs.iterator(); it.hasNext();) {
+    public void removeAllNotFavorite() {
+        for (Iterator<DictDTO> it = iModel.getFavoriteDictDTOs().iterator(); it.hasNext(); ) {
             if (it.next().getFavorite().equals("-1")) {
                 it.remove();
             }
@@ -118,13 +97,13 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
 
     @Override
     public void onEvent(Event event) {
-        switch (event.eventType){
+        switch (event.eventType) {
             case UPDATE_FAVORITE:
-                DictDTO dictDTO = (DictDTO)event.content[0];
-                if(dictDTO.getFavorite().equals("-1")){
+                DictDTO dictDTO = (DictDTO) event.content[0];
+                if (dictDTO.getFavorite().equals("-1") || iModel.getFavoriteDictDTOs().contains(dictDTO)) {
                     updateFavorite(dictDTO);
-                }else if(!dictDTOs.contains(dictDTO)){
-                    addItem((DictDTO)event.content[0]);
+                } else {
+                    addItem((DictDTO) event.content[0]);
                 }
                 break;
             case DELETE_FAVORITE:
@@ -138,8 +117,8 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
 
     @Override
     public int deleteItem(DictDTO dictDTO) {
-        dictDTO.setFavorite(Long.toString(iModel.setFavorites(dictDTO)));
-        eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.UPDATE_FAVORITE,dictDTO));
+        iModel.setFavorites(dictDTO);
+        eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.UPDATE_FAVORITE, dictDTO));
         return 0;
     }
 
@@ -147,15 +126,5 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
     public void showTranslate(DictDTO dictDTO) {
         eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.BTN_CLEAR_CLICKED));
         iModel.saveToDBAndNotify(dictDTO);
-    }
-
-    @Override
-    public void saveOutState(Bundle outState) {
-        outState.putParcelableArrayList("FAVORITES_PARCEL",dictDTOs);
-    }
-
-    @Override
-    public void restoreArray(Bundle savedInstanceState) {
-        dictDTOs = savedInstanceState.getParcelableArrayList("FAVORITES_PARCEL");
     }
 }

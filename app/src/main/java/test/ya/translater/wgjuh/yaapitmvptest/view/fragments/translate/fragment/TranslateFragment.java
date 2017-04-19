@@ -1,6 +1,5 @@
 package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -12,9 +11,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
+import android.view.animation.AnimationUtils;
+import android.view.animation.RotateAnimation;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import butterknife.BindView;
@@ -47,11 +49,16 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
     CheckBox btnFavorite;
     @BindView(R.id.progressBar)
     ContentLoadingProgressBar progressBar;
+    @BindView(R.id.error_frame)
+    RelativeLayout error_frame;
+    @BindView(R.id.btn_retry)
+    ImageButton btn_retry;
 
     View view;
     private DictionaryTranslateRecyclerViewAdapter viewAdapter;
 
     private ITranslatePrsenter translatePresenterImpl;
+    private Snackbar snackbar;
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -73,6 +80,7 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
                 LinearLayout.VERTICAL);
         recyclerView.addItemDecoration(dividerItemDecoration);
         btnFavorite.setOnClickListener(btn -> translatePresenterImpl.addToFavorites());
+        btn_retry.setOnClickListener(btn_retry -> translatePresenterImpl.startRetry());
     }
 
     @Nullable
@@ -80,7 +88,6 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
          view = inflater.inflate(R.layout.list_translate_block,container,false);
         ButterKnife.bind(this,view);
-
         return view;
     }
 
@@ -122,9 +129,32 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
     }
 
     @Override
+    public void stopAnimateButton() {
+        Log.d(TAG, "stopAnimateButton: ");
+        btn_retry.clearAnimation();
+    }
+
+    @Override
+    public void startAnimateButton() {
+        Log.d(TAG, "startAnimateButton: ");
+        if(btn_retry.getAnimation() == null) {
+
+            RotateAnimation ranim = (RotateAnimation) AnimationUtils.loadAnimation(getContext(), R.anim.rotate);
+            btn_retry.setAnimation(ranim);
+            btn_retry.startAnimation(ranim);
+        }
+    }
+
+    @Override
+    public void hideError() {
+        Log.d(TAG, "hideError: ");
+        stopAnimateButton();
+        error_frame.setVisibility(View.GONE);
+    }
+
+    @Override
     public void showError(String error) {
-        Snackbar.make(view,error,Snackbar.LENGTH_LONG).show();
-        progressBar.hide();
+        error_frame.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -155,4 +185,5 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
     public void onDestroyView() {
         super.onDestroyView();
     }
+
 }

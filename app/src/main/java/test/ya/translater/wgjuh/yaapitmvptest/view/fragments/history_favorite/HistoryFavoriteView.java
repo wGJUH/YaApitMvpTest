@@ -10,9 +10,6 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 
 public interface HistoryFavoriteView extends View {
 
-
-    void updateAdapterTale(int size);
-
     void updateAdapterItemOnPosition(int position);
 
     void changeAdapterItemPosition(int oldPosition, int newPosition);

@@ -1,5 +1,6 @@
 package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate;
 
+import rx.functions.Action1;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 
 /**
@@ -17,4 +18,10 @@ public interface TranslateView extends View {
     void updateAdapterTale(int size);
 
     void clearAdapter(int oldSize);
+
+    void stopAnimateButton();
+
+    void startAnimateButton();
+
+    void hideError();
 }

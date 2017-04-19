@@ -84,8 +84,8 @@ public class IModelTest {
         TestSubscriber<DictDTO> testSubscriber = new TestSubscriber<>();
         List<DictDTO> dictDTOs = initDictoDtoList(10);
         iModel = new ModelImpl(dbBackEnd);
-        when(dbBackEnd.getHistoryListTranslate()).thenReturn(dictDTOs);
-        iModel.getHistoryListTranslate().subscribe(testSubscriber);
+       // when(dbBackEnd.getHistoryListTranslate()).thenReturn(dictDTOs);
+      //  iModel.getHistoryListTranslate().subscribe(testSubscriber);
         testSubscriber.assertReceivedOnNext(dictDTOs);
         testSubscriber.assertUnsubscribed();
     }
@@ -94,8 +94,8 @@ public class IModelTest {
         TestSubscriber<DictDTO> testSubscriber = new TestSubscriber<>();
         List<DictDTO> dictDTOs = initDictoDtoList(10);
         iModel = new ModelImpl(dbBackEnd);
-        when(dbBackEnd.getHistoryListTranslate()).thenReturn(dictDTOs);
-        iModel.getHistoryListTranslate().subscribe(testSubscriber);
+       // when(dbBackEnd.getHistoryListTranslate()).thenReturn(dictDTOs);
+      //  iModel.getHistoryListTranslate().subscribe(testSubscriber);
         testSubscriber.assertReceivedOnNext(dictDTOs);
         testSubscriber.assertUnsubscribed();
     }
@@ -104,8 +104,8 @@ public class IModelTest {
         TestSubscriber<DictDTO> testSubscriber = new TestSubscriber<>();
         List<DictDTO> dictDTOs = initDictoDtoList(10);
         iModel = new ModelImpl(dbBackEnd);
-        when(dbBackEnd.getFavoriteListTranslate()).thenReturn(dictDTOs);
-        iModel.getFavoriteListTranslate().subscribe(testSubscriber);
+       // when(dbBackEnd.getFavoriteListTranslate()).thenReturn(dictDTOs);
+      //  iModel.getFavoriteListTranslate().subscribe(testSubscriber);
         testSubscriber.assertReceivedOnNext(dictDTOs);
         testSubscriber.assertUnsubscribed();
     }

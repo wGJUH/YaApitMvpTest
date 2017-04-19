@@ -40,10 +40,7 @@ public class SettingsPresenter extends BasePresenter<SettingLangsFragment> {
 
 
     public void initRecyclerView() {
-        addSubscription(iModel.getLangs()
-                .subscribe(langModel -> view
-                        .setRecyclerViewAdapter(new LanguageSettingsRecyclerViewAdapter(langModel, this, direction))));
-
+        view.setRecyclerViewAdapter(new LanguageSettingsRecyclerViewAdapter(iModel.getLangs(), this, direction));
     }
 
 }

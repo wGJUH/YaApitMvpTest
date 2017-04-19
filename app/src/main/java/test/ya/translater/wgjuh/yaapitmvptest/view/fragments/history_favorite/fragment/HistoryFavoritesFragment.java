@@ -74,12 +74,6 @@ public class HistoryFavoritesFragment extends BaseFragment implements HistoryFav
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-            historyFavoritePresenter.saveOutState(outState);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -87,11 +81,6 @@ public class HistoryFavoritesFragment extends BaseFragment implements HistoryFav
             historyFavoritePresenter = new HistoryPresenterImpl(ModelImpl.getInstance(), EventBusImpl.getInstance());
         } else {
             historyFavoritePresenter = new FavoritePresenterImpl(ModelImpl.getInstance(), EventBusImpl.getInstance());
-        }
-        if (savedInstanceState != null) {
-            historyFavoritePresenter.restoreArray(savedInstanceState);
-        } else {
-            historyFavoritePresenter.initTranslateList();
         }
         viewAdapter = new HistoryFavoriteRecyclerViewAdapter(historyFavoritePresenter.getTranslateList(), isHistory, historyFavoritePresenter);
         historyFavoritePresenter.onBindView(this);
@@ -136,11 +125,6 @@ public class HistoryFavoritesFragment extends BaseFragment implements HistoryFav
         LeakCanaryApp.getRefWatcher(this.getContext()).watch(this);
     }
 
-
-    @Override
-    public void updateAdapterTale(int size) {
-        viewAdapter.notifyItemInserted(size);
-    }
 
     @Override
     public void updateAdapterNose() {

@@ -13,6 +13,8 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 
 public interface ITranslatePrsenter extends Presenter {
 
+    void startTranslate();
+
     void setFavorite(boolean isFavorite);
     /**
      * Метод вызывает у View метод вывода переведенного текста на экран
@@ -38,7 +40,7 @@ public interface ITranslatePrsenter extends Presenter {
 
     void restoreState();
 
-    void startTranslate(String targetText);
-
     List<DefRecyclerItem> getDictionarySate();
+
+    void startRetry();
 }
