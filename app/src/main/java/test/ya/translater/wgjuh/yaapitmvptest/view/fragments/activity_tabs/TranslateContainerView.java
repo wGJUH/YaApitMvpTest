@@ -19,4 +19,6 @@ public interface TranslateContainerView extends View {
     void setFromLanguageTextView(String s);
 
     void setToLanguageTextView(String s);
+
+    void notifyActivityHistoryShown();
 }

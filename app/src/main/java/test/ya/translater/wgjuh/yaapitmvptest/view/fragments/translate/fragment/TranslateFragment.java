@@ -1,7 +1,9 @@
 package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -44,6 +47,8 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
     CheckBox btnFavorite;
     @BindView(R.id.progressBar)
     ContentLoadingProgressBar progressBar;
+
+    View view;
     private DictionaryTranslateRecyclerViewAdapter viewAdapter;
 
     private ITranslatePrsenter translatePresenterImpl;
@@ -71,7 +76,7 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.list_translate_block,container,false);
+         view = inflater.inflate(R.layout.list_translate_block,container,false);
         ButterKnife.bind(this,view);
 
         return view;
@@ -90,11 +95,10 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
     @Override
     public void showProgressBar(Boolean show) {
        if(show) {
-           progressBar.show();
+           progressBar.setVisibility(View.VISIBLE);
        }else {
            progressBar.hide();
        }
-        //progressBar.invalidate();
     }
 
     @Override
@@ -111,14 +115,16 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
 
     @Override
     public void clearAdapter(int oldSize) {
-        viewAdapter.notifyItemRangeRemoved(0,oldSize);
+        viewAdapter.notifyDataSetChanged();
         viewAdapter.removeAllViews();
     }
 
     @Override
     public void showError(String error) {
+        Snackbar.make(view,error,Snackbar.LENGTH_LONG).show();
         progressBar.hide();
     }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);

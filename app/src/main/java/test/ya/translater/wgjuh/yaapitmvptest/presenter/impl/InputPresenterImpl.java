@@ -1,13 +1,18 @@
 package test.ya.translater.wgjuh.yaapitmvptest.presenter.impl;
 
 
+import android.app.Application;
+import android.content.Context;
 import android.util.Log;
+import android.view.inputmethod.InputMethodManager;
 
 import java.util.Locale;
 
+import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
+import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.IInputPresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.InputView;
@@ -32,7 +37,6 @@ public class InputPresenterImpl extends BasePresenter<InputView> implements IInp
     @Override
     public boolean onButtonTranslateClick() {
         if (!view.getTargetText().isEmpty()) {
-            eventBus.post(new Event(Event.EventType.BTN_CLEAR_CLICKED));
             startTranslate();
         }
         return true;
@@ -50,6 +54,9 @@ public class InputPresenterImpl extends BasePresenter<InputView> implements IInp
         super.onBindView(view);
         addSubscription(eventBus.subscribe(event -> {
             switch (event.eventType) {
+                case WORD_TRANSLATED:
+                    setText(((DictDTO) event.content[0]).getTarget());
+                    break;
                 case CHANGE_LANGUAGES:
                     startTranslate();
                     break;
@@ -59,6 +66,10 @@ public class InputPresenterImpl extends BasePresenter<InputView> implements IInp
         }));
     }
 
+    public void  setText(String text){
+        view.setText(text);
+
+    }
     @Override
     public void clearInput() {
         view.clearText();

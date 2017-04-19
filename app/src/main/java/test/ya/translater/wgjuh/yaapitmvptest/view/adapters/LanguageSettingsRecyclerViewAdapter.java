@@ -7,11 +7,12 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
-import test.ya.translater.wgjuh.yaapitmvptest.model.db.LangModel;
+import test.ya.translater.wgjuh.yaapitmvptest.model.translate.LangsDirsModelDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.SettingsPresenter;
 
 public class LanguageSettingsRecyclerViewAdapter extends RecyclerView.Adapter<LanguageSettingsRecyclerViewAdapter.ViewHolder> {
@@ -21,9 +22,9 @@ public class LanguageSettingsRecyclerViewAdapter extends RecyclerView.Adapter<La
     private final SettingsPresenter settingsPresenter;
     private final Event.EventType eventType;
 
-    public LanguageSettingsRecyclerViewAdapter(LangModel langModel, SettingsPresenter settingsPresenter, Event.EventType eventType) {
-        codes = langModel.code;
-        names = langModel.lang;
+    public LanguageSettingsRecyclerViewAdapter(LangsDirsModelDTO langModel, SettingsPresenter settingsPresenter, Event.EventType eventType) {
+        codes = new ArrayList<>(langModel.getLangs().keySet());
+        names = new ArrayList<>(langModel.getLangs().values());
         this.settingsPresenter = settingsPresenter;
         this.eventType = eventType;
     }
@@ -32,18 +33,19 @@ public class LanguageSettingsRecyclerViewAdapter extends RecyclerView.Adapter<La
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.language_settings_item, parent, false);
-        return new ViewHolder(view);
+        ViewHolder viewHolder = new ViewHolder(view);
+        viewHolder.mView.setOnClickListener(view1 -> {
+                    settingsPresenter.popBackStack();
+                    settingsPresenter.sentLanguageChangedEvent(eventType, viewHolder.code);
+                }
+        );
+        return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.code = codes.get(position);
         holder.mIdView.setText(names.get(position));
-        holder.mView.setOnClickListener(v -> {
-            settingsPresenter.popBackStack();
-            settingsPresenter.sentLanguageChangedEvent(eventType, holder.code);
-
-        });
     }
 
     @Override

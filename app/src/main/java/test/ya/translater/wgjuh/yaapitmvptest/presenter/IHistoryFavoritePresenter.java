@@ -52,4 +52,8 @@ public interface IHistoryFavoritePresenter extends Presenter {
     void replaceItemsInAdapterData(int oldPosition, DictDTO dictDTO);
 
     void onEvent(Event event);
+
+    int deleteItem(DictDTO dictDTO);
+
+    void showTranslate(DictDTO dictDTO);
 }

@@ -5,6 +5,7 @@ import android.util.Log;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
+import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.SettingLangsFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.activity_tabs.TranslateContainerView;
@@ -72,6 +73,18 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TranslateConta
             if (this.view != null) {
                 addSubscription(iEventBus.subscribe(event -> {
                     switch (event.eventType) {
+                        case WORD_TRANSLATED:
+                            DictDTO dictDTO = (DictDTO) event.content[0];
+                            String[] langs = dictDTO.getLangs().split("-");
+
+                            iModel.setTranslateLang(langs[1]);
+                            iModel.setFromLang(langs[0]);
+
+                            view.setToLanguageTextView(iModel.getLangByCode(langs[1]));
+                            view.setFromLanguageTextView(iModel.getLangByCode(langs[0]));
+
+                            view.notifyActivityHistoryShown();
+                            break;
                         case CHANGE_LANGUAGES:
                             view.setToLanguageTextView(iModel.getLangByCode(iModel.getTranslateLang()));
                             view.setFromLanguageTextView(iModel.getLangByCode(iModel.getFromLang()));

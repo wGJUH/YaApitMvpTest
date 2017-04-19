@@ -92,4 +92,25 @@ public class Def implements Parcelable{
         parcel.writeString(transcription);
         parcel.writeTypedList(translate);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        Def def = (Def)obj;
+        if(obj == this) return true;
+        if(!(obj instanceof Def))return false;
+
+
+        return (text.equals(def.getText())
+                && pos.equals(def.getPos())
+                && transcription.equals(def.getTranscription()));
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 7733;
+        result += text.hashCode();
+        result += pos.hashCode();
+        result += transcription.hashCode();
+        return result;
+    }
 }

@@ -143,6 +143,11 @@ public class HistoryFavoritesFragment extends BaseFragment implements HistoryFav
     }
 
     @Override
+    public void removeItemOnPosition(int position) {
+        viewAdapter.notifyItemRemoved(position);
+    }
+
+    @Override
     public void updateAdapterItemOnPosition(int position) {
         viewAdapter.notifyItemChanged(position);
     }

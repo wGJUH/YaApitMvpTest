@@ -3,12 +3,14 @@ package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
@@ -35,7 +37,7 @@ public class InputFragment extends BaseFragment implements InputView, TextWatche
     EditText editText;
     @BindView(R.id.btn_clear_input)
     ImageButton imageButton;
-
+    View view;
     private IInputPresenter inputPresenter;
 
 
@@ -73,10 +75,15 @@ public class InputFragment extends BaseFragment implements InputView, TextWatche
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.edittext_translate_block, container, false);
+        view = inflater.inflate(R.layout.edittext_translate_block, container, false);
         ButterKnife.bind(this, view);
         imageButton.setOnClickListener(btn -> inputPresenter.clearInput());
-        editText.setOnEditorActionListener((input, action, event) -> inputPresenter.onButtonTranslateClick());
+        editText.setOnEditorActionListener((input, action, event) -> {
+            InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getApplicationContext()
+                    .getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(editText.getApplicationWindowToken(),0);
+            return inputPresenter.onButtonTranslateClick();
+        });
         editText.addTextChangedListener(this);
         return view;
     }
@@ -91,10 +98,14 @@ public class InputFragment extends BaseFragment implements InputView, TextWatche
         return editText.getText().toString();
     }
 
+    @Override
+    public void setText(String text) {
+        editText.setText(text);
+    }
+
 
     @Override
     public void showError(String e) {
-        editText.setText(e);
         Log.e(TAG, "Error: " + e);
     }
 

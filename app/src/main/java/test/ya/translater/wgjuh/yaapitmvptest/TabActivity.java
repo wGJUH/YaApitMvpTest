@@ -8,6 +8,8 @@ import android.util.Log;
 
 import com.squareup.leakcanary.RefWatcher;
 
+import java.lang.reflect.Field;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.FragmentAdapter;
@@ -114,5 +116,10 @@ public class TabActivity extends AppCompatActivity implements ActivityCallback, 
 
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
+    }
+
+    @Override
+    public void onShowHistoryWord() {
+        viewPager.setCurrentItem(0);
     }
 }

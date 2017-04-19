@@ -11,5 +11,5 @@
     <dimen name="fragment_historyfavoriteitem_high_padding">6dp</dimen>
     <dimen name="textview_translate_textsize">20sp</dimen>
     <dimen name="text_dict_size">18sp</dimen>
-    <dimen name="text_pos_size">10sp</dimen>
+    <dimen name="text_pos_size">14sp</dimen>
 </resources>

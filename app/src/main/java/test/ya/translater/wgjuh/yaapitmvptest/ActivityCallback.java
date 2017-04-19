@@ -6,4 +6,6 @@ package test.ya.translater.wgjuh.yaapitmvptest;
 
 public interface ActivityCallback {
 
+    void onShowHistoryWord();
+
 }

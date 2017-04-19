@@ -49,7 +49,6 @@ public class DictionaryTranslateRecyclerViewAdapter extends RecyclerView.Adapter
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-
         if(defRecyclerItems.size() != 0) {
             for (DefRecyclerItem defRecyclerItem : defRecyclerItems) {
                 for (int i = 0; i < defRecyclerItem.getDefTranslateItems().size(); i++) {
@@ -76,7 +75,6 @@ public class DictionaryTranslateRecyclerViewAdapter extends RecyclerView.Adapter
                     }else {
                         view.findViewById(R.id.examples).setVisibility(View.GONE);
                     }
-                        //view.setLayoutParams(new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                     holder.linearLayout.addView(view);
                 }
 
@@ -87,6 +85,7 @@ public class DictionaryTranslateRecyclerViewAdapter extends RecyclerView.Adapter
     public void removeAllViews(){
         viewHolder.linearLayout.removeAllViews();
     }
+
     @Override
     public int getItemCount() {
         return 1;

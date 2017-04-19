@@ -43,6 +43,7 @@ public class HistoryPresenterImpl extends BasePresenter<HistoryFavoriteView> imp
     public void deleteFavorite(DictDTO dictDTO) {
         dictDTO.setFavorite(Long.toString(iModel.setFavorites(dictDTO)));
         eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.UPDATE_FAVORITE,dictDTO));
+        eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.DELETE_FAVORITE));
     }
 
     @Override
@@ -70,9 +71,10 @@ public class HistoryPresenterImpl extends BasePresenter<HistoryFavoriteView> imp
     @Override
     public void updateFavorite(DictDTO dictDTO) {
         int position = dictDTOs.indexOf(dictDTO);
-        dictDTOs.set(position,dictDTO);
-        view.updateAdapterItemOnPosition(position);
-
+        if(position != -1) {
+            dictDTOs.set(position, dictDTO);
+            view.updateAdapterItemOnPosition(position);
+        }
     }
 
     @Override
@@ -108,13 +110,27 @@ public class HistoryPresenterImpl extends BasePresenter<HistoryFavoriteView> imp
             case WORD_UPDATED:
                 addItem((DictDTO)event.content[0]);
                 break;
-            case ADD_FAVORITE:
-                break;
             case UPDATE_FAVORITE:
                 updateFavorite((DictDTO)event.content[0]);
                 break;
             default:
                 break;
         }
+    }
+
+    @Override
+    public int deleteItem(DictDTO dictDTO) {
+        int removed = iModel.removeHistoryItem(dictDTO);
+        int position = dictDTOs.indexOf(dictDTO);
+        dictDTOs.remove(dictDTO);
+        view.removeItemOnPosition(position);
+        return removed;
+    }
+
+    @Override
+    public void showTranslate(DictDTO dictDTO) {
+        iModel.updateHistoryDate(dictDTO.getId());
+        eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.BTN_CLEAR_CLICKED));
+        eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.WORD_TRANSLATED,dictDTO));
     }
 }

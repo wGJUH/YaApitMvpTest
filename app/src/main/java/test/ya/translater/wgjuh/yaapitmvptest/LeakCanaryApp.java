@@ -2,9 +2,12 @@ package test.ya.translater.wgjuh.yaapitmvptest;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.SystemClock;
 
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by wGJUH on 07.04.2017.
@@ -16,6 +19,7 @@ public class LeakCanaryApp extends Application {
     private static Context context;
     @Override public void onCreate() {
         super.onCreate();
+
         refWatcher = LeakCanary.install(this);
         context = getApplicationContext();
     }

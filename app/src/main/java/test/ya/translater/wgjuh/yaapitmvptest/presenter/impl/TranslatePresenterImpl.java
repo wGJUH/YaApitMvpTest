@@ -8,10 +8,14 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 import test.ya.translater.wgjuh.yaapitmvptest.DATA;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
@@ -58,17 +62,15 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
                     lastTranslate = null;
                     break;
                 case START_TRANSLATE:
-                    startTranslate((String) event.content[0]);
+                    if (!event.content[0].toString().equals("")) {
+                        startTranslate(event.content[0].toString());
+                    }
                     break;
                 case WORD_TRANSLATED:
-                    // TODO: 09.04.2017  как тут абстрагироваться от конкретной реализации ?
                     restoreState((DictDTO) event.content[0]);
                     break;
                 case WORD_UPDATED:
                     restoreState((DictDTO) event.content[0]);
-                    break;
-                case ADD_FAVORITE:
-
                     break;
                 case UPDATE_FAVORITE:
                     if (lastTranslate != null && lastTranslate.equals(event.content[0])) {
@@ -93,11 +95,18 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
 
         DictDTO historyTranslate = iModel.getHistoryTranslate(targetText, translateDirection);
 
+        DictDTO favoriteTranslate = iModel.getFavoriteTranslate(targetText, translateDirection);
+
         if (historyTranslate != null) {
             iModel.updateHistoryDate(historyTranslate.getId());
             eventBus.post(eventBus.createEvent(Event.EventType.WORD_UPDATED, historyTranslate));
             return;
+        } else if (favoriteTranslate != null) {
+            iModel.saveToDBAndNotify(favoriteTranslate);
+            return;
         }
+
+
         Observable<DictDTO> dictDTOObservable = getDictDTOObservable(targetText, translateDirection);
 
         Observable<TranslateDTO> translatePojoObservable = getTranslateDTOObservable(targetText, translateDirection);
@@ -119,7 +128,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
 
                     @Override
                     public void onError(Throwable e) {
-                        e.printStackTrace();
+                        //e.printStackTrace();
                         view.showError(e.getMessage());
                     }
 
@@ -162,6 +171,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
     @Override
     public void setFavorite(boolean isFavorite) {
         view.setBtnFavoriteSelected(isFavorite);
+
     }
 
     @Override
@@ -171,9 +181,12 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
 
     @Override
     public void updateRecylcerView(DictDTO dictDTO) {
-        dictDTO
-                .getDef()
-                .flatMap(this::getDefRecyclerItemObservable).subscribe(this::insertItemInTaleOfAdapterListAndNotify);
+        dictDTO.getDef()
+                .delay(150, TimeUnit.MILLISECONDS)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(this::getDefRecyclerItemObservable)
+                .subscribe(this::insertItemInTaleOfAdapterListAndNotify);
         view.showProgressBar(false);
     }
 
@@ -207,7 +220,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
 
     private void insertItemInTaleOfAdapterListAndNotify(DefRecyclerItem defRecyclerItem) {
         defRecyclerItems.add(defRecyclerItem);
-        view.updateAdapterTale(defRecyclerItems.size());
+        view.updateAdapterTale(0);
     }
 
     private void SetSyns(Translate translate, DefTranslateItem defTranslateItem) {
@@ -254,6 +267,9 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
     public void addToFavorites() {
         if (lastTranslate != null) {
             lastTranslate.setFavorite(Long.toString(iModel.setFavorites(lastTranslate)));
+            if (lastTranslate.getFavorite().equals("-1")) {
+                eventBus.post(eventBus.createEvent(Event.EventType.DELETE_FAVORITE));
+            }
             eventBus.post(eventBus.createEvent(Event.EventType.UPDATE_FAVORITE, lastTranslate));
         }
     }

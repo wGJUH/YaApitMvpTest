@@ -72,8 +72,10 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
     @Override
     public void updateFavorite(DictDTO dictDTO) {
         int position = dictDTOs.indexOf(dictDTO);
-        dictDTOs.set(position,dictDTO);
-        view.updateAdapterItemOnPosition(position);
+        if(position != -1) {
+            dictDTOs.set(position, dictDTO);
+            view.updateAdapterItemOnPosition(position);
+        }
     }
 
     @Override
@@ -113,9 +115,6 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
     @Override
     public void onEvent(Event event) {
         switch (event.eventType){
-            case ADD_FAVORITE:
-                addItem((DictDTO)event.content[0]);
-                break;
             case UPDATE_FAVORITE:
                 DictDTO dictDTO = (DictDTO)event.content[0];
                 if(dictDTO.getFavorite().equals("-1")){
@@ -131,5 +130,18 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
                 break;
 
         }
+    }
+
+    @Override
+    public int deleteItem(DictDTO dictDTO) {
+        dictDTO.setFavorite(Long.toString(iModel.setFavorites(dictDTO)));
+        eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.UPDATE_FAVORITE,dictDTO));
+        return 0;
+    }
+
+    @Override
+    public void showTranslate(DictDTO dictDTO) {
+        eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.BTN_CLEAR_CLICKED));
+        eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.WORD_TRANSLATED,dictDTO));
     }
 }

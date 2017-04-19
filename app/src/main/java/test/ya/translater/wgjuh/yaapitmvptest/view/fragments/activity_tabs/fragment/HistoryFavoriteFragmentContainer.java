@@ -69,7 +69,9 @@ public class  HistoryFavoriteFragmentContainer extends BaseFragment {
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
                 // TODO: 15.04.2017  НЕОБХОДИМО СРОЧНО ПОПРАВИТЬ  УДАЛЕНИЕ ИЗ ИЗБРАННОГО ЧЕРЕЗ ИСТОРИЮ !
+                if(tab.getPosition() == 1) {
                     EventBusImpl.getInstance().post(EventBusImpl.getInstance().createEvent(Event.EventType.DELETE_FAVORITE));
+                }
 
             }
 

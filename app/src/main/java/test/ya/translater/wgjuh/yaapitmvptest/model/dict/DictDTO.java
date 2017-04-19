@@ -8,6 +8,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -52,7 +53,9 @@ public class DictDTO implements Parcelable{
 
     public Observable<Def> getDef() {
         if(def != null) {
-            return Observable.from(def).subscribeOn(Schedulers.io())
+            return Observable.from(def)
+
+                    .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .unsubscribeOn(Schedulers.io());
         }return Observable.never();
@@ -86,16 +89,18 @@ public class DictDTO implements Parcelable{
         return target;
     }
 
-    public void setId(String id) {
+    public DictDTO setId(String id) {
         this.id = id;
+        return this;
     }
 
     public String getId() {
         return id;
     }
 
-    public void setFavorite(String favorite) {
+    public DictDTO setFavorite(String favorite) {
         this.favorite = favorite;
+        return this;
     }
 
     public String getFavorite() {

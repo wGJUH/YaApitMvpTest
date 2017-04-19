@@ -22,4 +22,6 @@ public interface HistoryFavoriteView extends View {
     void scrollToPosition(int position);
 
     void updateAllData();
+
+    void removeItemOnPosition(int position);
 }

@@ -1,8 +1,8 @@
 package test.ya.translater.wgjuh.yaapitmvptest.model;
 
 import rx.Observable;
-import test.ya.translater.wgjuh.yaapitmvptest.model.db.LangModel;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
+import test.ya.translater.wgjuh.yaapitmvptest.model.translate.LangsDirsModelDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslateDTO;
 
 /**
@@ -19,7 +19,7 @@ public interface IModel {
 
     Observable<DictDTO> getFavoriteListTranslate();
 
-    Observable<LangModel> getLangs();
+    Observable<LangsDirsModelDTO> getLangs();
 
     DictDTO getHistoryTranslate(String target, String langs);
 
@@ -42,4 +42,8 @@ public interface IModel {
     void updateHistoryDate(String id);
 
     String getLangByCode(String code);
+
+    int removeHistoryItem(DictDTO dictDTO);
+
+    DictDTO getFavoriteTranslate(String targetText, String translateDirection);
 }

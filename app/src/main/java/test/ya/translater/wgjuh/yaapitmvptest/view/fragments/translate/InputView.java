@@ -11,4 +11,6 @@ public interface InputView extends View {
     void clearText();
 
     String getTargetText();
+
+    void setText(String text);
 }

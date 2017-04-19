@@ -16,37 +16,10 @@ public interface IDbBackEnd {
      */
     long insertHistoryTranslate(DictDTO dictDTO);
 
-    /**
-     * Метод копирования объекта из истории в избранное
-     * @param id объекта переноса в таблице истории
-     * @return id в таблице, в случае добавления нового
-     */
-    long insertFavoriteFromHistory(String id);
+    void setHistoryItemFavorite(DictDTO dictDTO, long favoriteId);
 
-    /**
-     * Метод устанавливает значение из таблицы избранное в поле "избранное"
-     * строки в таблице история
-     * @param historyId id объекта в таблице история
-     * @param favoriteId id в таблице избранное
-     */
-    void setHistoryItemFavorite(String historyId, long favoriteId);
 
-    /**
-     * Метод удаляет из таблице избранное объект по его id, и
-     * обнавляет поле избранное в таблице история, у которого
-     * значение было равно favorit_id
-     * @param favoriteId id избранного в таблице история
-     */
-    void removeHistoryItemFavorite(String favoriteId);
-    /**
-     * Метод позволяет получать сохраненный перевод из бд.
-     * При получении в объекта типа DictDTO ему присваевается id записи в бд.
-     * @see DictDTO
-     * @param target текст который переводили
-     * @param langs группа языков с/на который переводили
-     * @return DictDTO объект перевода
-     */
-    DictDTO getHistoryTranslate(String target, String langs);
+    void removeHistoryItemFavorite(DictDTO dictDTO);
 
     /**
      * Метод позволяет получать сохраненный перевод из бд.
@@ -55,8 +28,8 @@ public interface IDbBackEnd {
      * @param id идентификатор в таблице история
      * @return DictDTO объект перевода
      */
-    DictDTO getHistoryTranslate(long id);
 
+    DictDTO getHistoryTranslate(long id);
     /**
      * Метод обнавляет список доступных языков в таблице Языки
      * @see test.ya.translater.wgjuh.yaapitmvptest.model.db.Contractor.Langs
@@ -68,5 +41,11 @@ public interface IDbBackEnd {
      * Метод возвращает хранимые в базе языки
      * @return LangModel хранимые в базе языки
      */
-    LangModel getStoredLangs();
+    LangsDirsModelDTO getStoredLangs();
+
+    int removeHistoryItem(DictDTO dictDTO);
+
+    long insertFavorite(DictDTO dictDTO);
+
+    DictDTO getFavoriteTranslate(String targetText, String translateDirection);
 }

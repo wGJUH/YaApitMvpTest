@@ -14,8 +14,10 @@ import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import test.ya.translater.wgjuh.yaapitmvptest.ActivityCallback;
 import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
+import test.ya.translater.wgjuh.yaapitmvptest.TabActivity;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
@@ -47,7 +49,6 @@ public class InputTranslateContainerFragmentContainer extends BaseFragment imple
     ImageButton imageButton;
     private TranslateFragmentContainerImpl translatePresenter;
     private FragmentManager fragmentManager;
-
     public InputTranslateContainerFragmentContainer() {
 
     }
@@ -72,6 +73,11 @@ public class InputTranslateContainerFragmentContainer extends BaseFragment imple
     public void setFromLanguageTextView(String s){
         fromLanguageTextView.setText(s);
         toLanguageTextView.invalidate();
+
+    }
+
+    public void notifyActivityHistoryShown(){
+        ((TabActivity)getActivity()).onShowHistoryWord();
     }
 
     public void setToLanguageTextView(String s){
@@ -157,4 +163,5 @@ public class InputTranslateContainerFragmentContainer extends BaseFragment imple
         super.onStop();
         Log.d(TAG, "onStop: " + getClass().getName());
     }
+
 }

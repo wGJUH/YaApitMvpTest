@@ -48,11 +48,10 @@ public class Event implements Parcelable {
         WORD_UPDATED,
         TARGET_LANGUAGE,
         FROM_LANGUAGE,
-        ADD_FAVORITE,
         UPDATE_FAVORITE,
         DELETE_FAVORITE,
         START_TRANSLATE,
-        CHANGE_LANGUAGES
+         CHANGE_LANGUAGES
     }
 
     public final Object[] content;

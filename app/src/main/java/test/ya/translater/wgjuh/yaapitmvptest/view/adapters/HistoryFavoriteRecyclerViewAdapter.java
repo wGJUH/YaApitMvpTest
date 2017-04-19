@@ -42,6 +42,16 @@ public class HistoryFavoriteRecyclerViewAdapter extends RecyclerView.Adapter<His
                 }
             }
         });
+        holder.itemView.setOnLongClickListener(view1 -> {
+            int position = holder.getAdapterPosition();
+            return historyFavoritePresenter
+                    .deleteItem(mValues.get(position)) > 0;
+        });
+        holder.itemView.setOnClickListener(view1 -> {
+            int position = holder.getAdapterPosition();
+            historyFavoritePresenter
+                    .showTranslate(mValues.get(position));
+        });
         return holder;
     }
 

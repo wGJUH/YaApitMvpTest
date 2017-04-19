@@ -1,6 +1,7 @@
 package test.ya.translater.wgjuh.yaapitmvptest;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
@@ -22,6 +23,10 @@ public class CustomEditText extends EditText {
         super(context, attrs, defStyleAttr);
     }
 
+    @Override
+    public void setCompoundDrawables(Drawable left, Drawable top, Drawable right, Drawable bottom) {
+        super.setCompoundDrawables(left, top, right, bottom);
+    }
 
     @Override
     public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
