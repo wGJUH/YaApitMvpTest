@@ -110,7 +110,11 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
             eventBus.post(eventBus.createEvent(Event.EventType.WORD_UPDATED, historyTranslate));
             return;
         } else if (favoriteTranslate != null) {
-            iModel.saveToDBAndNotify(favoriteTranslate);
+            iModel.saveToDB(favoriteTranslate)
+                    .subscribe(dictDTO -> eventBus
+                            .post(eventBus
+                                    .createEvent(Event.EventType.WORD_TRANSLATED, dictDTO)),
+                                    throwable -> Log.e(TAG, "startTranslate: " + throwable.getMessage()));
             return;
         } else {
             translateFromInternet();
@@ -124,12 +128,11 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
                 .doOnTerminate(() -> {
                     view.showProgressBar(false);
                     iModel.freeCachedOBservable();
-                })
-                .subscribe(iModel::saveToDBAndNotify
+                }).flatMap(iModel::saveToDB)
+                .subscribe(dictDTO -> eventBus.post(eventBus.createEvent(Event.EventType.WORD_TRANSLATED, dictDTO))
                         , throwable -> {
-                                view.showError("Ошибка соединения.\n\nПроверьте подключение к\nИнтернету и повторите попытку.");
+                            view.showError("Ошибка соединения.\n\nПроверьте подключение к\nИнтернету и повторите попытку.");
                         });
-
         addSubscription(subscription);
     }
 
@@ -237,28 +240,28 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
 
     @Override
     public void addToFavorites() {
-        if (iModel.getLastTranslate() != null) {
-            iModel.setFavorites(iModel.getLastTranslate());
-            if (iModel.getLastTranslate().getFavorite().equals("-1")) {
-                eventBus.post(eventBus.createEvent(Event.EventType.DELETE_FAVORITE));
-            }
-            eventBus.post(eventBus.createEvent(Event.EventType.UPDATE_FAVORITE, iModel.getLastTranslate()));
-        }
+        eventBus.post(eventBus.createEvent(Event.EventType.UPDATE_FAVORITE, iModel.getLastTranslate()));
     }
 
     @Override
     public void restoreState() {
-        if(iModel.getLastTranslate() != null) {
+        if (iModel.getLastTranslate() != null) {
             updateChecboxFavorite(!iModel.getLastTranslate().getFavorite().equals("-1"));
             updateTranslateView(iModel.getLastTranslate().getCommonTranslate());
             updateRecylcerView(iModel.getLastTranslate());
         }
+
     }
 
     @Override
     public void restoreState(DictDTO dictDTO) {
-        iModel.setLastTranslate(dictDTO);
-        restoreState();
+        iModel
+                .saveToDB(dictDTO)
+                .subscribe(iModel::setLastTranslate,
+                        throwable -> Log.e(TAG, "restoreStateError: " + throwable.getMessage()),
+                        this::restoreState
+                            );
+
     }
 
     @Override
@@ -268,10 +271,16 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
 
     @Override
     public void startRetry() {
-        if(hasConnection(LeakCanaryApp.getAppContext())) {
+        if (hasConnection(LeakCanaryApp.getAppContext())) {
             initTranslateCache(iModel.getLastTranslateTarget(), iModel.getTranslateLangPair());
             startTranslate();
         }
+    }
+
+    @Override
+    public void deleteFavorite() {
+        eventBus.post(eventBus.createEvent(Event.EventType.UPDATE_FAVORITE, iModel.getLastTranslate()));
+        eventBus.post(eventBus.createEvent(Event.EventType.DELETE_FAVORITE));
     }
 
 

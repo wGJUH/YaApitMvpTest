@@ -109,12 +109,18 @@ public class ModelImpl implements IModel {
 
     @Override
     public DictDTO getLastTranslate() {
+        if(lastTranslate != null)
+            Log.d(TAG, "getLastTranslateTarget: " + lastTranslate.getTarget());
+        else Log.d(TAG, "getLastTranslateTarget: null");
         return lastTranslate;
     }
 
     @Override
     public void setLastTranslate(DictDTO lastTranslate) {
         this.lastTranslate = lastTranslate;
+        if(lastTranslate != null) {
+            Log.d(TAG, "setLastTranslate: " + this.lastTranslate.getTarget());
+        }else Log.d(TAG, "setLastTranslate: null");
     }
 
     @Override
@@ -205,34 +211,26 @@ public class ModelImpl implements IModel {
     }
 
     @Override
-    public void saveToDBAndNotify(DictDTO dictDTO) {
+    public Observable<DictDTO> saveToDB(DictDTO dictDTO) {
         if (dbBackEnd.getHistoryId(dictDTO).equals("-1")) {
-            Observable
+            return Observable
                     .just(dbBackEnd.insertHistoryTranslate(dictDTO))                            //добавляем объект в базу
                     .compose(applySchedulers())
                     .flatMap(aLong -> Observable.just(dictDTO.setId(Long.toString(aLong))))     //Уставнавливаем объекту id из базы
-                    .map(dictDTOFromDB -> dictDTO.setFavorite(dbBackEnd.getFavoriteId(dictDTO)))//Устанавливаем favorite id из базы
-                    .subscribe(dictDTOFromDB -> iEventBus
-                                    .post(iEventBus.createEvent(Event
-                                            .EventType
-                                            .WORD_TRANSLATED, dictDTOFromDB)),                              //В случае успех уведомляем об успехе
-                            throwable -> Log.e(TAG, throwable.getMessage()));              //В случае ошибки выводим в лог ошибку
-        } else {
-            iEventBus
-                    .post(iEventBus.createEvent(Event
-                            .EventType
-                            .WORD_TRANSLATED, model.getHistoryTranslate(dictDTO.getTarget(), dictDTO.getLangs())));
+                    .flatMap(dictDTOFromDB -> Observable.just(dictDTO.setFavorite(dbBackEnd.getFavoriteId(dictDTO))));
+        }else {
+            return Observable.just(model.getHistoryTranslate(dictDTO.getTarget(), dictDTO.getLangs()));
         }
     }
 
     @Override
-    public long setFavorites(DictDTO dictDTO) {
+    public DictDTO setFavorites(DictDTO dictDTO) {
         long result = -1;
         if (!dbBackEnd.getFavoriteId(dictDTO).equals("-1")) {
             dbBackEnd.removeFavoriteItemAndUpdateHistory(dictDTO);
             dictDTO.setFavorite("-1");
             favoriteDictDTOs.set(favoriteDictDTOs.indexOf(dictDTO), dictDTO);
-            return result;
+            return dictDTO;
         } else {
             dictDTO.setFavorite(Long.toString(dbBackEnd.insertFavoriteItem(dictDTO)));
             if (!dictDTO.getFavorite().equals("-1") && !dbBackEnd.getHistoryId(dictDTO).equals("-1")) {
@@ -245,7 +243,7 @@ public class ModelImpl implements IModel {
                 dbBackEnd.setHistoryItemFavorite(dictDTO, result);
             }
         }
-        return result;
+        return dictDTO;
     }
 
     @Override
@@ -336,6 +334,7 @@ public class ModelImpl implements IModel {
 
     @Override
     public String getLastTranslateTarget() {
+
         return lastTranslateTarget;
     }
 
@@ -375,4 +374,7 @@ public class ModelImpl implements IModel {
             favoriteDictDTOs.add(0, dictDTO);
         }
     }
+
+
+
 }
