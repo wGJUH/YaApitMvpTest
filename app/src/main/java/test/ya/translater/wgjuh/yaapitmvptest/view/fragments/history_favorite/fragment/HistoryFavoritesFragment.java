@@ -127,11 +127,6 @@ public class HistoryFavoritesFragment extends BaseFragment implements HistoryFav
 
 
     @Override
-    public void updateAdapterNose() {
-        viewAdapter.notifyItemInserted(0);
-    }
-
-    @Override
     public void scrollToPosition(int position) {
         recyclerView.scrollToPosition(position);
     }
@@ -147,6 +142,11 @@ public class HistoryFavoritesFragment extends BaseFragment implements HistoryFav
     }
 
     @Override
+    public void updateAdapterNose() {
+        viewAdapter.notifyItemInserted(0);
+    }
+
+    @Override
     public void updateAdapterItemOnPosition(int position) {
         viewAdapter.notifyItemChanged(position);
     }
@@ -154,6 +154,11 @@ public class HistoryFavoritesFragment extends BaseFragment implements HistoryFav
     @Override
     public void changeAdapterItemPosition(int oldPosition, int newPosition) {
         viewAdapter.notifyItemMoved(oldPosition, 0);
+    }
+
+    @Override
+    public void updateAdapterNose(int i) {
+        viewAdapter.notifyItemInserted(i);
     }
 
 

@@ -40,7 +40,7 @@ public interface IHistoryFavoritePresenter extends Presenter {
 
     void subscribeToBusEvents();
 
-    void replaceItemsInAdapterData(int oldPosition, DictDTO dictDTO);
+   // void replaceItemsInAdapterData(int oldPosition, DictDTO dictDTO);
 
     void onEvent(Event event);
 

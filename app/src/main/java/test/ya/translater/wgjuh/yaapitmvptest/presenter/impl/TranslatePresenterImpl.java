@@ -4,7 +4,6 @@ package test.ya.translater.wgjuh.yaapitmvptest.presenter.impl;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -16,7 +15,6 @@ import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import test.ya.translater.wgjuh.yaapitmvptest.DATA;
 import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
@@ -127,12 +125,10 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
                 .doOnSubscribe(() -> view.showProgressBar(true))
                 .doOnTerminate(() -> {
                     view.showProgressBar(false);
-                    iModel.freeCachedOBservable();
                 }).flatMap(iModel::saveToDB)
                 .subscribe(dictDTO -> eventBus.post(eventBus.createEvent(Event.EventType.WORD_TRANSLATED, dictDTO))
-                        , throwable -> {
-                            view.showError("Ошибка соединения.\n\nПроверьте подключение к\nИнтернету и повторите попытку.");
-                        });
+                        , throwable -> view.showError("Ошибка соединения.\n\nПроверьте подключение к\nИнтернету и повторите попытку."),
+                        iModel::freeCachedOBservable);
         addSubscription(subscription);
     }
 
@@ -229,6 +225,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
     public void clearTranslate() {
         view.hideError();
         view.showTranslate("");
+        view.setBtnFavoriteEnabled(false);
         view.clearAdapter(defRecyclerItems.size());
         defRecyclerItems.clear();
         if (subscription != null && !subscription.isUnsubscribed()) {
@@ -239,18 +236,21 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
     }
 
     @Override
-    public void addToFavorites() {
-        eventBus.post(eventBus.createEvent(Event.EventType.UPDATE_FAVORITE, iModel.getLastTranslate()));
+    public void addFavorite() {
+        if(iModel.getLastTranslate() != null) {
+            eventBus.post(eventBus.createEvent(Event.EventType.UPDATE_FAVORITE, iModel.getLastTranslate()));
+        }
     }
 
     @Override
     public void restoreState() {
+        translateFromInternet();
         if (iModel.getLastTranslate() != null) {
+            view.setBtnFavoriteEnabled(true);
             updateChecboxFavorite(!iModel.getLastTranslate().getFavorite().equals("-1"));
             updateTranslateView(iModel.getLastTranslate().getCommonTranslate());
             updateRecylcerView(iModel.getLastTranslate());
         }
-
     }
 
     @Override
@@ -259,8 +259,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
                 .saveToDB(dictDTO)
                 .subscribe(iModel::setLastTranslate,
                         throwable -> Log.e(TAG, "restoreStateError: " + throwable.getMessage()),
-                        this::restoreState
-                            );
+                        this::restoreState);
 
     }
 

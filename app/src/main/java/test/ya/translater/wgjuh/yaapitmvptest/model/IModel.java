@@ -13,8 +13,6 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslateDTO;
 
 public interface IModel {
 
-    LangsDirsModelDTO getLangsDirsModelDTOs();
-
     List<DictDTO> getHistoryDictDTOs();
 
     List<DictDTO> getFavoriteDictDTOs();
@@ -24,8 +22,6 @@ public interface IModel {
     void setLastTranslate(DictDTO lastTranslate);
 
     void insertHistoryDictDTOs(DictDTO historyDictDTO);
-
-    void insertHistoryDictDTOToTheTale(DictDTO historyDictDTO);
 
     void insertFavoriteDictDTOs(DictDTO favoriteDictDTO);
 
@@ -49,9 +45,7 @@ public interface IModel {
 
     LangsDirsModelDTO getLangs();
 
-    void saveToDBAndNotify(DictDTO dictDTO);
-
-    long setFavorites(DictDTO dictDTO);
+    DictDTO setFavorites(DictDTO dictDTO);
 
     void updateHistoryDate(String id);
 
@@ -80,4 +74,7 @@ public interface IModel {
     void updateFavoriteDto(int position, DictDTO dictDTO);
 
     void moveFavoriteDictDto(int oldPosition, DictDTO dictDTO);
+
+
+    Observable<DictDTO> saveToDB(DictDTO dictDTO);
 }

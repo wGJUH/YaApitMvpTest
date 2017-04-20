@@ -14,11 +14,13 @@ public interface HistoryFavoriteView extends View {
 
     void changeAdapterItemPosition(int oldPosition, int newPosition);
 
-    void updateAdapterNose();
+    void updateAdapterNose(int i);
 
     void scrollToPosition(int position);
 
     void updateAllData();
 
     void removeItemOnPosition(int position);
+
+    void updateAdapterNose();
 }

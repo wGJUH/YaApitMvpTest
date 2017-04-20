@@ -1,7 +1,15 @@
 package test.ya.translater.wgjuh.yaapitmvptest.presenter.impl;
 
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.support.v7.view.ContextThemeWrapper;
+
 import java.util.List;
 
+import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
+import test.ya.translater.wgjuh.yaapitmvptest.R;
+import test.ya.translater.wgjuh.yaapitmvptest.TabActivity;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
@@ -38,7 +46,6 @@ public class HistoryPresenterImpl extends BasePresenter<HistoryFavoriteView> imp
 
     @Override
     public void deleteFavorite(DictDTO dictDTO) {
-        iModel.setFavorites(dictDTO);
         eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.UPDATE_FAVORITE,dictDTO));
         eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.DELETE_FAVORITE));
     }
@@ -46,12 +53,7 @@ public class HistoryPresenterImpl extends BasePresenter<HistoryFavoriteView> imp
 
     @Override
     public void addItem(DictDTO dictDTO) {
-        int oldPosition = iModel.getHistoryDictDTOs().indexOf(dictDTO);
-        if(oldPosition != -1){
-            replaceItemsInAdapterData(oldPosition,dictDTO);
-        }else {
             insertItemInNoseOfAdapterDataAndNotify(dictDTO);
-        }
     }
 
     @Override
@@ -65,7 +67,6 @@ public class HistoryPresenterImpl extends BasePresenter<HistoryFavoriteView> imp
 
     @Override
     public void addFavorite(DictDTO dictDTO) {
-        iModel.setFavorites(dictDTO);
         eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.UPDATE_FAVORITE,dictDTO));
     }
 
@@ -75,15 +76,15 @@ public class HistoryPresenterImpl extends BasePresenter<HistoryFavoriteView> imp
     }
 
     @Override
-    public void replaceItemsInAdapterData(int oldPosition, DictDTO dictDTO) {
-        iModel.moveHistoryDictDto(oldPosition,dictDTO);
-        view.changeAdapterItemPosition(oldPosition,0);
-    }
-
-    @Override
     public void insertItemInNoseOfAdapterDataAndNotify(DictDTO dictDTO) {
-        iModel.insertHistoryDictDTOs(dictDTO);
-        view.updateAdapterNose();
+        int position = iModel.getHistoryDictDTOs().indexOf(dictDTO);
+        if(position > -1){
+            iModel.moveHistoryDictDto(position,dictDTO);
+            view.changeAdapterItemPosition(position,0);
+        }else {
+            iModel.insertHistoryDictDTOs(dictDTO);
+            view.updateAdapterNose();
+        }
     }
 
     @Override

@@ -2,7 +2,6 @@ package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,23 +10,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
-import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import test.ya.translater.wgjuh.yaapitmvptest.DATA;
 import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.ITranslatePrsenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.TranslatePresenterImpl;
@@ -76,7 +70,13 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 LinearLayout.VERTICAL);
         recyclerView.addItemDecoration(dividerItemDecoration);
-        btnFavorite.setOnClickListener(btn -> translatePresenterImpl.addToFavorites());
+        btnFavorite.setOnClickListener(btn -> {
+            if(btnFavorite.isChecked()) {
+                translatePresenterImpl.addFavorite();
+            }else {
+                translatePresenterImpl.deleteFavorite();
+            }
+        });
         btn_retry.setOnClickListener(btn_retry -> translatePresenterImpl.startRetry());
     }
 
@@ -141,8 +141,13 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        //ftranslatePresenterImpl.saveOutState(outState);
+        outState.putBoolean("IS_ERROR",error_frame.getVisibility() == View.VISIBLE);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void setBtnFavoriteEnabled(Boolean enabled) {
+        this.btnFavorite.setClickable(enabled);
     }
 
     @Override

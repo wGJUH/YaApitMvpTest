@@ -194,14 +194,11 @@ public class ModelImpl implements IModel {
                 .getLangs(DATA.API_KEY, Locale.getDefault().getLanguage())
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
-                .retryWhen(observable -> observable/*
-                        .zipWith(Observable.range(1, 3), (o, integer) -> 0)*/
-                        .flatMap(o -> Observable.timer(3000, TimeUnit.MILLISECONDS)))
                 .subscribe(langsDirsModelDTO -> {
-                    dbBackEnd.upateLangs(langsDirsModelDTO);
-                    langsDirsModelDTOs = dbBackEnd.getStoredLangs();
-                    iEventBus.post(iEventBus.createEvent(Event.EventType.CHANGE_LANGUAGES));
-                },
+                            dbBackEnd.upateLangs(langsDirsModelDTO);
+                            langsDirsModelDTOs = dbBackEnd.getStoredLangs();
+                            iEventBus.post(iEventBus.createEvent(Event.EventType.CHANGE_LANGUAGES));
+                        },
                         Throwable::printStackTrace);
     }
 
@@ -217,7 +214,8 @@ public class ModelImpl implements IModel {
                     .just(dbBackEnd.insertHistoryTranslate(dictDTO))                            //добавляем объект в базу
                     .compose(applySchedulers())
                     .flatMap(aLong -> Observable.just(dictDTO.setId(Long.toString(aLong))))     //Уставнавливаем объекту id из базы
-                    .flatMap(dictDTOFromDB -> Observable.just(dictDTO.setFavorite(dbBackEnd.getFavoriteId(dictDTO))));
+                    .map(dbBackEnd::getFavoriteId)
+                    .map(dictDTO::setFavorite);
         }else {
             return Observable.just(model.getHistoryTranslate(dictDTO.getTarget(), dictDTO.getLangs()));
         }
@@ -241,6 +239,8 @@ public class ModelImpl implements IModel {
                     favoriteDictDTOs.add(0, dictDTO);
                 }
                 dbBackEnd.setHistoryItemFavorite(dictDTO, result);
+            }else {
+                favoriteDictDTOs.add(0, dictDTO);
             }
         }
         return dictDTO;

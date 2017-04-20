@@ -20,4 +20,6 @@ public interface TranslateView extends View {
     void clearAdapter(int oldSize);
 
     void hideError();
+
+    void setBtnFavoriteEnabled(Boolean enabled);
 }

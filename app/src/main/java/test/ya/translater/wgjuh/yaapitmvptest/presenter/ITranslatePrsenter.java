@@ -30,7 +30,7 @@ public interface ITranslatePrsenter extends Presenter {
      */
     void clearTranslate();
 
-    void addToFavorites();
+    void addFavorite();
 
     void restoreState();
 
@@ -39,4 +39,6 @@ public interface ITranslatePrsenter extends Presenter {
     List<DefRecyclerItem> getDictionarySate();
 
     void startRetry();
+
+    void deleteFavorite();
 }
