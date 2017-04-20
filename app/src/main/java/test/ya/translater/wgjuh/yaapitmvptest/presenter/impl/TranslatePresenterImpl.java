@@ -5,21 +5,16 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import rx.Observable;
-import rx.Observer;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import test.ya.translater.wgjuh.yaapitmvptest.DATA;
 import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
@@ -31,7 +26,6 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DefRecyclerItem;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DefTranslateItem;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.Translate;
-import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslateDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.ITranslatePrsenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.TranslateView;
@@ -65,6 +59,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
                     clearTranslate();
                     setFavorite(false);
                     iModel.setLastTranslate(null);
+                    iModel.setLastTranslateTarget(null);
                     break;
                 case START_TRANSLATE:
                     if (!event.content[0].toString().equals("")) {
@@ -97,6 +92,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
 
     @Override
     public void startTranslate() {
+        view.hideError();
         view.showProgressBar(true);
 
         if (subscription != null && !subscription.isUnsubscribed()) {
@@ -127,15 +123,11 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
                 .doOnSubscribe(() -> view.showProgressBar(true))
                 .doOnTerminate(() -> {
                     view.showProgressBar(false);
-                   /* iModel.freeCachedOBservable();*/
+                    iModel.freeCachedOBservable();
                 })
                 .subscribe(iModel::saveToDBAndNotify
                         , throwable -> {
-                            if (!hasConnection(LeakCanaryApp.getAppContext())) {
-                                view.showError("Ошибка соединения.\nПроверьте подключение к\nИнтернету и повторите попытку.");
-                            } else {
-                                view.showError("Ошибка, повторите запрос позже.");
-                            }
+                                view.showError("Ошибка соединения.\n\nПроверьте подключение к\nИнтернету и повторите попытку.");
                         });
 
         addSubscription(subscription);
@@ -156,7 +148,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
     @Override
     public void updateRecylcerView(DictDTO dictDTO) {
         dictDTO.getDef()
-                .delay(100, TimeUnit.MILLISECONDS)
+                .delay(200, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(this::getDefRecyclerItemObservable)
@@ -232,6 +224,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
 
     @Override
     public void clearTranslate() {
+        view.hideError();
         view.showTranslate("");
         view.clearAdapter(defRecyclerItems.size());
         defRecyclerItems.clear();
@@ -254,28 +247,18 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
     }
 
     @Override
-    public void saveOutState(Bundle outState) {
-        if (iModel.getLastTranslate() != null) {
-            outState.putParcelable(DATA.OUT_STATE, iModel.getLastTranslate());
+    public void restoreState() {
+        if(iModel.getLastTranslate() != null) {
+            updateChecboxFavorite(!iModel.getLastTranslate().getFavorite().equals("-1"));
+            updateTranslateView(iModel.getLastTranslate().getCommonTranslate());
+            updateRecylcerView(iModel.getLastTranslate());
         }
     }
 
     @Override
-    public void setLastTranslate(DictDTO lastTranslate) {
-        iModel.setLastTranslate(lastTranslate);
-    }
-
-    @Override
     public void restoreState(DictDTO dictDTO) {
-        setLastTranslate(dictDTO);
-        updateChecboxFavorite(!iModel.getLastTranslate().getFavorite().equals("-1"));
-        updateTranslateView(dictDTO.getCommonTranslate());
-        updateRecylcerView(dictDTO);
-    }
-
-    @Override
-    public void restoreState() {
-        translateFromInternet();
+        iModel.setLastTranslate(dictDTO);
+        restoreState();
     }
 
     @Override
@@ -285,20 +268,10 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
 
     @Override
     public void startRetry() {
-        subscription = iModel
-                .getZipTranslate()
-                //.doOnSubscribe(() -> view.startAnimateButton())
-                //.retryWhen(observable -> observable.flatMap(o -> Observable.timer(3000, TimeUnit.MILLISECONDS)))
-                .retry(5)
-                .doOnEach(notification ->Log.d(TAG, "doOnEach") )
-                .doOnNext(dictDTO -> Log.d(TAG, "doOnNext"))
-                .doOnError(throwable -> Log.d(TAG, "doOnError " + throwable.getMessage()))
-                .doOnCompleted(() -> Log.d(TAG, "doOnCompleted"))
-                .doOnTerminate(() -> Log.d(TAG, "doOnTerminate"))
-                .subscribe(dictDTO -> {
-                    iModel.saveToDBAndNotify(dictDTO);
-                    view.hideError();
-                }, throwable -> view.stopAnimateButton());
+        if(hasConnection(LeakCanaryApp.getAppContext())) {
+            initTranslateCache(iModel.getLastTranslateTarget(), iModel.getTranslateLangPair());
+            startTranslate();
+        }
     }
 
 

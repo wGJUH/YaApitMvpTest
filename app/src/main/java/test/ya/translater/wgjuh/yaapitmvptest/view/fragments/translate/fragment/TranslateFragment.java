@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.RotateAnimation;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -52,13 +53,14 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
     @BindView(R.id.error_frame)
     RelativeLayout error_frame;
     @BindView(R.id.btn_retry)
-    ImageButton btn_retry;
+    Button btn_retry;
+    @BindView(R.id.error_text)
+    TextView textView;
 
     View view;
     private DictionaryTranslateRecyclerViewAdapter viewAdapter;
 
     private ITranslatePrsenter translatePresenterImpl;
-    private Snackbar snackbar;
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -66,13 +68,8 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
         translatePresenterImpl = new TranslatePresenterImpl(ModelImpl.getInstance(), EventBusImpl.getInstance());
         viewAdapter = new DictionaryTranslateRecyclerViewAdapter(translatePresenterImpl.getDictionarySate());
         translatePresenterImpl.onBindView(this);
-        if(savedInstanceState != null) {
-            DictDTO dictDTO  = savedInstanceState.getParcelable(DATA.OUT_STATE);
-            if(dictDTO != null) {
-                translatePresenterImpl.restoreState(dictDTO);
-            }else {
+        if (savedInstanceState != null) {
                 translatePresenterImpl.restoreState();
-            }
         }
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         recyclerView.setAdapter(viewAdapter);
@@ -86,8 +83,8 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-         view = inflater.inflate(R.layout.list_translate_block,container,false);
-        ButterKnife.bind(this,view);
+        view = inflater.inflate(R.layout.list_translate_block, container, false);
+        ButterKnife.bind(this, view);
         return view;
     }
 
@@ -103,11 +100,11 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
 
     @Override
     public void showProgressBar(Boolean show) {
-       if(show) {
-           progressBar.setVisibility(View.VISIBLE);
-       }else {
-           progressBar.hide();
-       }
+        if (show) {
+            progressBar.setVisibility(View.VISIBLE);
+        } else {
+            progressBar.hide();
+        }
     }
 
     @Override
@@ -129,37 +126,22 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
     }
 
     @Override
-    public void stopAnimateButton() {
-        Log.d(TAG, "stopAnimateButton: ");
-        btn_retry.clearAnimation();
-    }
-
-    @Override
-    public void startAnimateButton() {
-        Log.d(TAG, "startAnimateButton: ");
-        if(btn_retry.getAnimation() == null) {
-
-            RotateAnimation ranim = (RotateAnimation) AnimationUtils.loadAnimation(getContext(), R.anim.rotate);
-            btn_retry.setAnimation(ranim);
-            btn_retry.startAnimation(ranim);
+    public void hideError() {
+        Log.d(TAG, "hideError: ");
+        if (error_frame.getVisibility() == View.VISIBLE) {
+            error_frame.setVisibility(View.GONE);
         }
     }
 
     @Override
-    public void hideError() {
-        Log.d(TAG, "hideError: ");
-        stopAnimateButton();
-        error_frame.setVisibility(View.GONE);
-    }
-
-    @Override
     public void showError(String error) {
+        textView.setText(error);
         error_frame.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        translatePresenterImpl.saveOutState(outState);
+        //ftranslatePresenterImpl.saveOutState(outState);
         super.onSaveInstanceState(outState);
     }
 
@@ -168,6 +150,7 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
         super.onDetach();
         Log.d(TAG, "onDetach: " + getClass().getName());
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();

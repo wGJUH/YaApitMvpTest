@@ -32,13 +32,9 @@ public interface ITranslatePrsenter extends Presenter {
 
     void addToFavorites();
 
-    void saveOutState(Bundle outState);
-
-    void setLastTranslate(DictDTO lastTranslate);
+    void restoreState();
 
     void restoreState(DictDTO dictDTO);
-
-    void restoreState();
 
     List<DefRecyclerItem> getDictionarySate();
 

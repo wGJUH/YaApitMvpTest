@@ -54,14 +54,22 @@
     <RelativeLayout
         android:id="@+id/error_frame"
         android:visibility="gone"
-        android:background="@color/colorPrimaryTransparent"
         android:layout_width="match_parent"
+        android:background="@color/colorWhite"
         android:layout_height="match_parent"
         android:clickable="true">
-        <ImageButton
+        <TextView
+            android:id="@+id/error_text"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <Button
+            android:layout_below="@id/error_text"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:id="@+id/btn_retry"
-            android:src="@mipmap/ic_retry"
-            android:background="@color/transparent"
+            android:text="@string/translate_error"
             android:layout_centerInParent="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

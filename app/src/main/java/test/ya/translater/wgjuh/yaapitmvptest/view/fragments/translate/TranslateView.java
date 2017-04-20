@@ -19,9 +19,5 @@ public interface TranslateView extends View {
 
     void clearAdapter(int oldSize);
 
-    void stopAnimateButton();
-
-    void startAnimateButton();
-
     void hideError();
 }

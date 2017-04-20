@@ -1,6 +1,7 @@
 package test.ya.translater.wgjuh.yaapitmvptest.model;
 
 
+import android.app.Application;
 import android.content.Context;
 import android.preference.PreferenceManager;
 import android.support.annotation.VisibleForTesting;
@@ -18,6 +19,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import test.ya.translater.wgjuh.yaapitmvptest.DATA;
 import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
+import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.db.DbBackEnd;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.model.network.YandexDictionaryApiInterface;
@@ -45,7 +47,7 @@ public class ModelImpl implements IModel {
     private Observable cachedRequest;
     private DictDTO lastTranslate;
     private String lastTranslateTarget;
-    private LangsDirsModelDTO langsDirsModelDTOs;
+    private LangsDirsModelDTO langsDirsModelDTOs = new LangsDirsModelDTO();
     private List<DictDTO> historyDictDTOs = new ArrayList<>();
     private List<DictDTO> favoriteDictDTOs = new ArrayList<>();
 
@@ -69,17 +71,14 @@ public class ModelImpl implements IModel {
 
     private void initStoredLangs() {
         if (langsDirsModelDTOs == null) {
-            Observable
-                    .just(dbBackEnd.getStoredLangs())
-                    .subscribe(langsDirsModelDTO -> langsDirsModelDTOs = langsDirsModelDTO,
-                            throwable -> Log.d(TAG, "initStoredLangs: " + throwable.getMessage()));
+            updateLanguages();
         }
     }
 
     private void initFavoriteArray() {
         if (favoriteDictDTOs.size() == 0) {
             Observable.from(dbBackEnd.getFavoriteListTranslate())
-                    .compose(applySchedulers())
+                    //.compose(applySchedulers())
                     .flatMap(s -> Observable.just(new Gson().fromJson(s, DictDTO.class)))
                     .map(dictDTO -> dictDTO.setId(dbBackEnd.getHistoryId(dictDTO)))
                     .map(dictDTO -> dictDTO.setFavorite(dbBackEnd.getFavoriteId(dictDTO)))
@@ -90,7 +89,7 @@ public class ModelImpl implements IModel {
     private void initHistoryArray() {
         if (historyDictDTOs.size() == 0) {
             Observable.from(dbBackEnd.getHistoryListTranslate())
-                    .compose(applySchedulers())
+                    //.compose(applySchedulers())
                     .flatMap(s -> Observable.just(new Gson().fromJson(s, DictDTO.class)))
                     .map(dictDTO -> dictDTO.setId(dbBackEnd.getHistoryId(dictDTO)))
                     .map(dictDTO -> dictDTO.setFavorite(dbBackEnd.getFavoriteId(dictDTO)))
@@ -125,7 +124,7 @@ public class ModelImpl implements IModel {
 
     @Override
     public void insertHistoryDictDTOs(DictDTO historyDictDTO) {
-            historyDictDTOs.add(0, historyDictDTO);
+        historyDictDTOs.add(0, historyDictDTO);
     }
 
     @Override
@@ -135,7 +134,7 @@ public class ModelImpl implements IModel {
 
     @Override
     public void insertFavoriteDictDTOs(DictDTO favoriteDictDTO) {
-            favoriteDictDTOs.add(0, favoriteDictDTO);
+        favoriteDictDTOs.add(0, favoriteDictDTO);
     }
 
 
@@ -177,24 +176,35 @@ public class ModelImpl implements IModel {
         dictDTO.setTarget(target);
         dictDTO.setLangs(langs);
         int position = historyDictDTOs.indexOf(dictDTO);
-        if(position != -1){
+        if (position != -1) {
             return historyDictDTOs.get(position);
-        }else {
+        } else {
             return null;
         }
     }
 
     @Override
     public void updateLanguages() {
+        langsDirsModelDTOs = dbBackEnd.getStoredLangs();
+        String[] strings = (LeakCanaryApp.getAppContext()).getResources().getStringArray(R.array.ru_ui_languages);
+        if(langsDirsModelDTOs.getLangs().size() == 0) {
+            for (String s : strings) {
+                String[] singleLang = s.split("\\|");
+                langsDirsModelDTOs.getLangs().put(singleLang[1], singleLang[0]);
+            }
+        }
         yandexTranslateApiInterface
                 .getLangs(DATA.API_KEY, Locale.getDefault().getLanguage())
-                .compose(applySchedulers())
-                .retryWhen(observable -> observable
-                        .zipWith(Observable.range(1, 3), (o, integer) -> 0)
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .retryWhen(observable -> observable/*
+                        .zipWith(Observable.range(1, 3), (o, integer) -> 0)*/
                         .flatMap(o -> Observable.timer(3000, TimeUnit.MILLISECONDS)))
-                .doOnNext(dbBackEnd::upateLangs)
-                .subscribe(langsDirsModelDTO ->
-                                iEventBus.post(iEventBus.createEvent(Event.EventType.CHANGE_LANGUAGES)),
+                .subscribe(langsDirsModelDTO -> {
+                    dbBackEnd.upateLangs(langsDirsModelDTO);
+                    langsDirsModelDTOs = dbBackEnd.getStoredLangs();
+                    iEventBus.post(iEventBus.createEvent(Event.EventType.CHANGE_LANGUAGES));
+                },
                         Throwable::printStackTrace);
     }
 
@@ -216,9 +226,9 @@ public class ModelImpl implements IModel {
                         return dictDTOFromDB;
                     })
                     .subscribe(dictDTOFromDB -> iEventBus
-                            .post(iEventBus.createEvent(Event
-                                    .EventType
-                                .WORD_TRANSLATED, dictDTOFromDB)),                              //В случае успех уведомляем об успехе
+                                    .post(iEventBus.createEvent(Event
+                                            .EventType
+                                            .WORD_TRANSLATED, dictDTOFromDB)),                              //В случае успех уведомляем об успехе
                             throwable -> Log.e(TAG, throwable.getMessage()));              //В случае ошибки выводим в лог ошибку
         } else {
             iEventBus
@@ -234,41 +244,23 @@ public class ModelImpl implements IModel {
         if (!dbBackEnd.getFavoriteId(dictDTO).equals("-1")) {
             dbBackEnd.removeFavoriteItemAndUpdateHistory(dictDTO);
             dictDTO.setFavorite("-1");
-            favoriteDictDTOs.set(favoriteDictDTOs.indexOf(dictDTO),dictDTO);
+            favoriteDictDTOs.set(favoriteDictDTOs.indexOf(dictDTO), dictDTO);
             return result;
         } else {
             dictDTO.setFavorite(Long.toString(dbBackEnd.insertFavoriteItem(dictDTO)));
             if (!dictDTO.getFavorite().equals("-1") && !dbBackEnd.getHistoryId(dictDTO).equals("-1")) {
                 dictDTO.setId(dbBackEnd.getHistoryId(dictDTO));
-                if(favoriteDictDTOs.contains(dictDTO)) {
+                if (favoriteDictDTOs.contains(dictDTO)) {
                     favoriteDictDTOs.set(favoriteDictDTOs.indexOf(dictDTO), dictDTO);
-                }else{
-                    favoriteDictDTOs.add(0,dictDTO);
+                } else {
+                    favoriteDictDTOs.add(0, dictDTO);
                 }
                 dbBackEnd.setHistoryItemFavorite(dictDTO, result);
             }
         }
         return result;
     }
-/*    @Override
-    public long setFavorites(DictDTO dictDTO) {
-        long result = -1;
-        if (!dbBackEnd.getFavoriteId(dictDTO).equals("-1")) {
-            dbBackEnd.removeFavoriteItemAndUpdateHistory(dictDTO);
-            favoriteDictDTOs.remove(dictDTO);
-            dictDTO.setFavorite("-1");
-            return result;
-        } else {
-            dictDTO.setFavorite(Long.toString(dbBackEnd.insertFavoriteItem(dictDTO)));
-            if (!dictDTO.getFavorite().equals("-1") && !dbBackEnd.getHistoryId(dictDTO).equals("-1")) {
-                dictDTO.setId(dbBackEnd.getHistoryId(dictDTO));
-                historyDictDTOs.set(historyDictDTOs.indexOf(dictDTO),dictDTO);
-                favoriteDictDTOs.add(0,dictDTO);
-                dbBackEnd.setHistoryItemFavorite(dictDTO, result);
-            }
-        }
-        return result;
-    }*/
+
     @Override
     public void updateHistoryDate(String id) {
         dbBackEnd.updateHistoryDate(id);
@@ -294,7 +286,9 @@ public class ModelImpl implements IModel {
 
     @Override
     public String getLangByCode(String code) {
-        return langsDirsModelDTOs.getLangs().get(code);
+        if (langsDirsModelDTOs.getLangs().size() > 0) {
+            return langsDirsModelDTOs.getLangs().get(code);
+        } else return code;
     }
 
     @Override
@@ -311,9 +305,9 @@ public class ModelImpl implements IModel {
         dictDTO.setTarget(targetText);
         dictDTO.setLangs(translateDirection);
         int position = favoriteDictDTOs.indexOf(dictDTO);
-        if(position != -1){
+        if (position != -1) {
             return favoriteDictDTOs.get(position);
-        }else {
+        } else {
             return null;
         }
     }
@@ -357,6 +351,7 @@ public class ModelImpl implements IModel {
     public String getLastTranslateTarget() {
         return lastTranslateTarget;
     }
+
     @Override
     public void setLastTranslateTarget(String lastTranslateTarget) {
         this.lastTranslateTarget = lastTranslateTarget;
@@ -364,7 +359,7 @@ public class ModelImpl implements IModel {
 
     @Override
     public void updateHistoryDto(int position, DictDTO dictDTO) {
-        historyDictDTOs.set(position,dictDTO);
+        historyDictDTOs.set(position, dictDTO);
     }
 
     @Override
@@ -383,7 +378,7 @@ public class ModelImpl implements IModel {
 
     @Override
     public void updateFavoriteDto(int position, DictDTO dictDTO) {
-        favoriteDictDTOs.set(position,dictDTO);
+        favoriteDictDTOs.set(position, dictDTO);
     }
 
     @Override
