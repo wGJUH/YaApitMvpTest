@@ -275,8 +275,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
     }
 
 
-    public boolean hasConnection(Context context) {
-
+    private boolean hasConnection(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo wifiInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         if (wifiInfo != null && wifiInfo.isConnected()) {
@@ -287,10 +286,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
             return true;
         }
         wifiInfo = cm.getActiveNetworkInfo();
-        if (wifiInfo != null && wifiInfo.isConnected()) {
-            return true;
-        }
-        return false;
+        return wifiInfo != null && wifiInfo.isConnected();
     }
 
 }

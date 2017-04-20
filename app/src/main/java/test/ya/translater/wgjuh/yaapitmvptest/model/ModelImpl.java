@@ -98,11 +98,6 @@ public class ModelImpl implements IModel {
     }
 
     @Override
-    public LangsDirsModelDTO getLangsDirsModelDTOs() {
-        return langsDirsModelDTOs;
-    }
-
-    @Override
     public List<DictDTO> getHistoryDictDTOs() {
         return historyDictDTOs;
     }
@@ -127,10 +122,6 @@ public class ModelImpl implements IModel {
         historyDictDTOs.add(0, historyDictDTO);
     }
 
-    @Override
-    public void insertHistoryDictDTOToTheTale(DictDTO historyDictDTO) {
-        historyDictDTOs.add(historyDictDTO);
-    }
 
     @Override
     public void insertFavoriteDictDTOs(DictDTO favoriteDictDTO) {
@@ -221,10 +212,6 @@ public class ModelImpl implements IModel {
                     .compose(applySchedulers())
                     .flatMap(aLong -> Observable.just(dictDTO.setId(Long.toString(aLong))))     //Уставнавливаем объекту id из базы
                     .map(dictDTOFromDB -> dictDTO.setFavorite(dbBackEnd.getFavoriteId(dictDTO)))//Устанавливаем favorite id из базы
-                    .map(dictDTOFromDB -> {
-                        historyDictDTOs.add(dictDTO);                                           //Добавляем в хранилище приложения
-                        return dictDTOFromDB;
-                    })
                     .subscribe(dictDTOFromDB -> iEventBus
                                     .post(iEventBus.createEvent(Event
                                             .EventType
@@ -364,9 +351,8 @@ public class ModelImpl implements IModel {
 
     @Override
     public void moveHistoryDictDto(int oldPosition, DictDTO historyDictDTO) {
-        int position = historyDictDTOs.indexOf(historyDictDTO);
-        if (position != -1) {
-            historyDictDTOs.remove(position);
+        if (oldPosition != -1) {
+            historyDictDTOs.remove(oldPosition);
             historyDictDTOs.add(0, historyDictDTO);
         }
     }
