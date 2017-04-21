@@ -13,6 +13,7 @@ import java.util.Locale;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import test.ya.translater.wgjuh.yaapitmvptest.DATA;
 import test.ya.translater.wgjuh.yaapitmvptest.App;
@@ -238,14 +239,13 @@ public class ModelImpl implements Model {
     public void initZipTranslate(String target, String lang) {
         cachedRequest = getDicTionaryTranslateForLanguage(target, lang)
                 .compose(applySchedulers())
+                .onErrorReturn(throwable -> new DictDTO())
                 .zipWith(getTranslateForLanguage(target, lang), (dictDTO, translateDTO) -> {
                     dictDTO.setCommonTranslate(translateDTO.getText());
                     dictDTO.setTarget(target);
                     dictDTO.setLangs(translateDTO.getLang());
                     return dictDTO;
                 })
-                .flatMap(Observable::just)
-                .compose(applySchedulers())
                 .cache();
     }
 

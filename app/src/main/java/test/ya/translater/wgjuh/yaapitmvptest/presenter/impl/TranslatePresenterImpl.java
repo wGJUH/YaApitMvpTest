@@ -117,7 +117,10 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
                 .doOnSubscribe(() -> view.showProgressBar(true))
                 .doOnTerminate(() -> view.showProgressBar(false)).flatMap(model::saveToDB)
                 .subscribe(dictDTO -> eventBus.post(eventBus.createEvent(Event.EventType.WORD_TRANSLATED, dictDTO))
-                        , throwable -> view.showError("Ошибка соединения.\n\nПроверьте подключение к\nИнтернету и повторите попытку."),
+                        , throwable -> {
+                            view.showError("Ошибка соединения.\n\nПроверьте подключение к\nИнтернету и повторите попытку.");
+                            throwable.printStackTrace();
+                        },
                         model::freeCachedOBservable);
         addSubscription(subscription);
     }
