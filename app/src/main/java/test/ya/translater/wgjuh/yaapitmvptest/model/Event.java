@@ -2,9 +2,6 @@ package test.ya.translater.wgjuh.yaapitmvptest.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
-
-import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
 public class Event implements Parcelable {
 
@@ -32,10 +29,8 @@ public class Event implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        Log.d(TAG, "writeToParcel");
         parcel.writeArray(content);
         parcel.writeString(eventType.toString());
-
     }
 
     public enum EventType {
@@ -47,14 +42,14 @@ public class Event implements Parcelable {
         UPDATE_FAVORITE,
         DELETE_FAVORITE,
         START_TRANSLATE,
-         CHANGE_LANGUAGES
+        CHANGE_LANGUAGES
     }
 
     public final Object[] content;
     public final EventType eventType;
 
 
-    public Event(EventType eventType, Object...content){
+    public Event(EventType eventType, Object... content) {
         this.eventType = eventType;
         this.content = content;
     }

@@ -5,9 +5,9 @@ import java.util.List;
 
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
+import test.ya.translater.wgjuh.yaapitmvptest.model.Model;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.IHistoryFavoritePresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.HistoryFavoritePresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.HistoryFavoriteView;
 
@@ -15,20 +15,20 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.Hi
  * Created by wGJUH on 16.04.2017.
  */
 
-public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> implements IHistoryFavoritePresenter {
+public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> implements HistoryFavoritePresenter {
 
-    private final IModel iModel;
+    private final Model model;
     private final EventBusImpl eventBusImpl;
 
-    public FavoritePresenterImpl(IModel iModel, EventBusImpl eventBusImpl) {
-        this.iModel = iModel;
+    public FavoritePresenterImpl(Model model, EventBusImpl eventBusImpl) {
+        this.model = model;
         this.eventBusImpl = eventBusImpl;
     }
 
 
     @Override
     public List<DictDTO> getTranslateList() {
-        return iModel.getFavoriteDictDTOs();
+        return model.getFavoriteDictDTOs();
     }
 
 
@@ -39,7 +39,7 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
 
     @Override
     public void insertItemInNoseOfAdapterDataAndNotify(DictDTO dictDTO) {
-         view.updateAdapterNose(iModel.getFavoriteDictDTOs().indexOf(dictDTO));
+         view.updateAdapterNose(model.getFavoriteDictDTOs().indexOf(dictDTO));
          view.scrollToPosition(0);
     }
 
@@ -55,9 +55,9 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
 
     @Override
     public void updateFavorite(DictDTO dictDTO) {
-        int position = iModel.getFavoriteDictDTOs().indexOf(dictDTO);
+        int position = model.getFavoriteDictDTOs().indexOf(dictDTO);
         if (position != -1) {
-            iModel.updateFavoriteDto(position, dictDTO);
+            model.updateFavoriteDto(position, dictDTO);
             view.updateAdapterItemOnPosition(position);
         }
     }
@@ -79,7 +79,7 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
     }
 
     private void removeAllNotFavorite() {
-        for (Iterator<DictDTO> it = iModel.getFavoriteDictDTOs().iterator(); it.hasNext(); ) {
+        for (Iterator<DictDTO> it = model.getFavoriteDictDTOs().iterator(); it.hasNext(); ) {
             if (it.next().getFavorite().equals("-1")) {
                 it.remove();
             }
@@ -92,8 +92,8 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
         switch (event.eventType) {
             case UPDATE_FAVORITE:
                 DictDTO dictDTO = (DictDTO) event.content[0];
-                int position = iModel.getFavoriteDictDTOs().indexOf(dictDTO);
-                iModel.setFavorites(dictDTO);
+                int position = model.getFavoriteDictDTOs().indexOf(dictDTO);
+                model.setFavorites(dictDTO);
                 if (dictDTO.getFavorite().equals("-1")) {
                     updateFavorite(dictDTO);
                 } else {

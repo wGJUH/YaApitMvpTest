@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +24,6 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.activity_tabs.TranslateContainerView;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment.InputFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment.TranslateFragment;
-
-import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
 public class InputTranslateContainerFragmentContainer extends BaseFragment implements TranslateContainerView {
 
@@ -58,7 +55,7 @@ public class InputTranslateContainerFragmentContainer extends BaseFragment imple
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.translate_page_fragment, container, false);
+        View view = inflater.inflate(R.layout.fragemnt_translate, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -122,7 +119,6 @@ public class InputTranslateContainerFragmentContainer extends BaseFragment imple
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.d(TAG, "onDestroyView: " + getClass().getName());
         translatePresenter = null;
     }
 }

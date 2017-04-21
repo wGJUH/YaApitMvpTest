@@ -6,7 +6,6 @@ import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,14 +20,12 @@ import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.ITranslatePrsenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.TranslatePrsenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.TranslatePresenterImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.DictionaryTranslateRecyclerViewAdapter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.TranslateView;
-
-import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
 public class TranslateFragment extends BaseFragment implements TranslateView {
     @BindView(R.id.textview_common_translate)
@@ -48,7 +45,7 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
 
     private DictionaryTranslateRecyclerViewAdapter viewAdapter;
 
-    private ITranslatePrsenter translatePresenterImpl;
+    private TranslatePrsenter translatePresenterImpl;
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -75,7 +72,7 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.list_translate_block, container, false);
+        View view = inflater.inflate(R.layout.fragment_translate_recycler_list, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -119,7 +116,6 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
 
     @Override
     public void hideError() {
-        Log.d(TAG, "hideError: ");
         if (error_frame.getVisibility() == View.VISIBLE) {
             error_frame.setVisibility(View.GONE);
         }

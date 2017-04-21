@@ -8,7 +8,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.translate.LangsDirsModelDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslateDTO;
 
 
-public interface IModel {
+public interface Model {
 
     List<DictDTO> getHistoryDictDTOs();
 

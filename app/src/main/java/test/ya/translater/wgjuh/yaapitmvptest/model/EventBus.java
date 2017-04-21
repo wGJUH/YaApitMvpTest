@@ -4,7 +4,7 @@ import rx.Subscriber;
 import rx.Subscription;
 import rx.functions.Action1;
 
-public interface IEventBus {
+public interface EventBus {
 
     void post(Event event);
 

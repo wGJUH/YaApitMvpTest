@@ -12,7 +12,7 @@ import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
 
 
-public class EventBusImpl implements IEventBus {
+public class EventBusImpl implements EventBus {
 
     private static EventBusImpl instance;
     private static final Subject<Event, Event> eventBus = PublishSubject.create();

@@ -4,7 +4,6 @@ package test.ya.translater.wgjuh.yaapitmvptest.presenter.impl;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -15,31 +14,31 @@ import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
+import test.ya.translater.wgjuh.yaapitmvptest.App;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
-import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
-import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
+import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
+import test.ya.translater.wgjuh.yaapitmvptest.model.Model;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.Def;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DefRecyclerItem;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DefTranslateItem;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.Translate;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.ITranslatePrsenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.TranslatePrsenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.TranslateView;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
-public class TranslatePresenterImpl extends BasePresenter<TranslateView> implements ITranslatePrsenter {
+public class TranslatePresenterImpl extends BasePresenter<TranslateView> implements TranslatePrsenter {
 
-    private final IModel iModel;
-    private final IEventBus eventBus;
+    private final Model model;
+    private final EventBus eventBus;
     private final List<DefRecyclerItem> defRecyclerItems = new ArrayList<>();
     private Subscription subscription;
 
-    public TranslatePresenterImpl(IModel iModel, IEventBus eventBus) {
+    public TranslatePresenterImpl(Model model, EventBus eventBus) {
 
-        this.iModel = iModel;
+        this.model = model;
         this.eventBus = eventBus;
     }
 
@@ -51,25 +50,25 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
                 case BTN_CLEAR_CLICKED:
                     clearTranslate();
                     setFavorite(false);
-                    iModel.setLastTranslate(null);
-                    iModel.setLastTranslateTarget(null);
+                    model.setLastTranslate(null);
+                    model.setLastTranslateTarget(null);
                     break;
                 case START_TRANSLATE:
                     if (!event.content[0].toString().equals("")) {
-                        iModel.setLastTranslateTarget(event.content[0].toString());
-                        initTranslateCache(iModel.getLastTranslateTarget(), iModel.getTranslateLangPair());
+                        model.setLastTranslateTarget(event.content[0].toString());
+                        initTranslateCache(model.getLastTranslateTarget(), model.getTranslateLangPair());
                         startTranslate();
                     }
                     break;
                 case WORD_TRANSLATED:
                     restoreState((DictDTO) event.content[0]);
-                    iModel.updateHistoryDate(((DictDTO) event.content[0]).getId());
+                    model.updateHistoryDate(((DictDTO) event.content[0]).getId());
                     break;
                 case WORD_UPDATED:
                     restoreState((DictDTO) event.content[0]);
                     break;
                 case UPDATE_FAVORITE:
-                    if (iModel.getLastTranslate() != null && iModel.getLastTranslate().equals(event.content[0])) {
+                    if (model.getLastTranslate() != null && model.getLastTranslate().equals(event.content[0])) {
                         setFavorite(!((DictDTO) event.content[0]).getFavorite().equals("-1"));
                     }
                     break;
@@ -80,7 +79,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
     }
 
     private void initTranslateCache(String target, String langs) {
-        iModel.initZipTranslate(target, langs);
+        model.initZipTranslate(target, langs);
     }
 
     @Override
@@ -92,17 +91,17 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
             subscription.isUnsubscribed();
         }
 
-        String translateDirection = iModel.getTranslateLangPair();
+        String translateDirection = model.getTranslateLangPair();
 
-        DictDTO historyTranslate = iModel.getHistoryTranslate(iModel.getLastTranslateTarget(), translateDirection);
+        DictDTO historyTranslate = model.getHistoryTranslate(model.getLastTranslateTarget(), translateDirection);
 
-        DictDTO favoriteTranslate = iModel.getFavoriteTranslate(iModel.getLastTranslateTarget(), translateDirection);
+        DictDTO favoriteTranslate = model.getFavoriteTranslate(model.getLastTranslateTarget(), translateDirection);
 
         if (historyTranslate != null) {
-            iModel.updateHistoryDate(historyTranslate.getId());
+            model.updateHistoryDate(historyTranslate.getId());
             eventBus.post(eventBus.createEvent(Event.EventType.WORD_UPDATED, historyTranslate));
         } else if (favoriteTranslate != null) {
-            iModel.saveToDB(favoriteTranslate)
+            model.saveToDB(favoriteTranslate)
                     .subscribe(dictDTO -> eventBus
                                     .post(eventBus
                                             .createEvent(Event.EventType.WORD_TRANSLATED, dictDTO)),
@@ -113,13 +112,13 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
     }
 
     private void translateFromInternet() {
-        subscription = iModel
+        subscription = model
                 .getZipTranslate()
                 .doOnSubscribe(() -> view.showProgressBar(true))
-                .doOnTerminate(() -> view.showProgressBar(false)).flatMap(iModel::saveToDB)
+                .doOnTerminate(() -> view.showProgressBar(false)).flatMap(model::saveToDB)
                 .subscribe(dictDTO -> eventBus.post(eventBus.createEvent(Event.EventType.WORD_TRANSLATED, dictDTO))
                         , throwable -> view.showError("Ошибка соединения.\n\nПроверьте подключение к\nИнтернету и повторите попытку."),
-                        iModel::freeCachedOBservable);
+                        model::freeCachedOBservable);
         addSubscription(subscription);
     }
 
@@ -180,29 +179,19 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
 
     private void SetSyns(Translate translate, DefTranslateItem defTranslateItem) {
         if (translate.getSynonyme() != null && translate.getSynonyme().size() != 0) {
-            translate.getSynonymeObservable().subscribe(syn -> {
-                Log.d(TAG, "Synonyms: " + syn.getText());
-                defTranslateItem.getTextAndSyn().add(syn.getText());
-                Log.d(TAG, "Synonyms After add: " + TextUtils.join(", ", defTranslateItem.getTextAndSyn()));
-            });
+            translate.getSynonymeObservable().subscribe(syn -> defTranslateItem.getTextAndSyn().add(syn.getText()));
         }
     }
 
     private void SetMeans(Translate translate, DefTranslateItem defTranslateItem) {
         if (translate.getMean() != null && translate.getMean().size() != 0) {
-            translate.getMeanObservable().subscribe(mean -> {
-                Log.d(TAG, "Means: " + mean.getText());
-                defTranslateItem.getMeans().add(mean.getText());
-            });
+            translate.getMeanObservable().subscribe(mean -> defTranslateItem.getMeans().add(mean.getText()));
         }
     }
 
     private void SetExamples(Translate translate, DefTranslateItem defTranslateItem) {
         if (translate.getExample() != null && translate.getExample().size() != 0) {
-            translate.getExampleObservable().subscribe(example -> {
-                Log.d(TAG, "Example: " + example.toString());
-                defTranslateItem.getExamples().add(example.toString());
-            });
+            translate.getExampleObservable().subscribe(example -> defTranslateItem.getExamples().add(example.toString()));
         }
     }
 
@@ -217,29 +206,29 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
         view.showTranslate("");
         view.setBtnFavoriteEnabled(false);
         view.clearAdapter(defRecyclerItems.size());
-        iModel.freeCachedOBservable();
+        model.freeCachedOBservable();
         defRecyclerItems.clear();
         if (subscription != null && !subscription.isUnsubscribed()) {
             subscription.unsubscribe();
             view.showProgressBar(false);
-            iModel.freeCachedOBservable();
+            model.freeCachedOBservable();
         }
     }
 
     @Override
     public void addFavorite() {
-        if (iModel.getLastTranslate() != null) {
-            eventBus.post(eventBus.createEvent(Event.EventType.UPDATE_FAVORITE, iModel.getLastTranslate()));
+        if (model.getLastTranslate() != null) {
+            eventBus.post(eventBus.createEvent(Event.EventType.UPDATE_FAVORITE, model.getLastTranslate()));
         }
     }
 
     @Override
     public void restoreState() {
-        if (iModel.getLastTranslate() != null) {
+        if (model.getLastTranslate() != null) {
             view.setBtnFavoriteEnabled(true);
-            updateChecboxFavorite(!iModel.getLastTranslate().getFavorite().equals("-1"));
-            updateTranslateView(iModel.getLastTranslate().getCommonTranslate());
-            updateRecylcerView(iModel.getLastTranslate());
+            updateChecboxFavorite(!model.getLastTranslate().getFavorite().equals("-1"));
+            updateTranslateView(model.getLastTranslate().getCommonTranslate());
+            updateRecylcerView(model.getLastTranslate());
         } else {
 
             view.setBtnFavoriteEnabled(false);
@@ -249,9 +238,9 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
 
     @Override
     public void restoreState(DictDTO dictDTO) {
-        iModel
+        model
                 .saveToDB(dictDTO)
-                .subscribe(iModel::setLastTranslate,
+                .subscribe(model::setLastTranslate,
                         throwable -> Log.e(TAG, "restoreStateError: " + throwable.getMessage()),
                         this::restoreState);
 
@@ -264,15 +253,15 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
 
     @Override
     public void startRetry() {
-        if (hasConnection(LeakCanaryApp.getAppContext())) {
-            initTranslateCache(iModel.getLastTranslateTarget(), iModel.getTranslateLangPair());
+        if (hasConnection(App.getAppContext())) {
+            initTranslateCache(model.getLastTranslateTarget(), model.getTranslateLangPair());
             startTranslate();
         }
     }
 
     @Override
     public void deleteFavorite() {
-        eventBus.post(eventBus.createEvent(Event.EventType.UPDATE_FAVORITE, iModel.getLastTranslate()));
+        eventBus.post(eventBus.createEvent(Event.EventType.UPDATE_FAVORITE, model.getLastTranslate()));
         eventBus.post(eventBus.createEvent(Event.EventType.DELETE_FAVORITE));
     }
 

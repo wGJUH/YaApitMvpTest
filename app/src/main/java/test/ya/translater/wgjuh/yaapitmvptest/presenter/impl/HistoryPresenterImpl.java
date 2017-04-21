@@ -5,9 +5,9 @@ import java.util.List;
 
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
+import test.ya.translater.wgjuh.yaapitmvptest.model.Model;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.IHistoryFavoritePresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.HistoryFavoritePresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.HistoryFavoriteView;
 
@@ -15,14 +15,14 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.Hi
  * Created by wGJUH on 16.04.2017.
  */
 
-public class HistoryPresenterImpl extends BasePresenter<HistoryFavoriteView> implements IHistoryFavoritePresenter {
+public class HistoryPresenterImpl extends BasePresenter<HistoryFavoriteView> implements HistoryFavoritePresenter {
 
-    private final IModel iModel;
+    private final Model model;
     private final EventBusImpl eventBusImpl;
 
 
-    public HistoryPresenterImpl(IModel iModel, EventBusImpl eventBusImpl) {
-        this.iModel = iModel;
+    public HistoryPresenterImpl(Model model, EventBusImpl eventBusImpl) {
+        this.model = model;
         this.eventBusImpl = eventBusImpl;
     }
 
@@ -34,7 +34,7 @@ public class HistoryPresenterImpl extends BasePresenter<HistoryFavoriteView> imp
 
     @Override
     public List<DictDTO> getTranslateList() {
-        return iModel.getHistoryDictDTOs();
+        return model.getHistoryDictDTOs();
     }
 
     @Override
@@ -51,9 +51,9 @@ public class HistoryPresenterImpl extends BasePresenter<HistoryFavoriteView> imp
 
     @Override
     public void updateFavorite(DictDTO dictDTO) {
-        int position = iModel.getHistoryDictDTOs().indexOf(dictDTO);
+        int position = model.getHistoryDictDTOs().indexOf(dictDTO);
         if(position != -1) {
-            iModel.updateHistoryDto(position, dictDTO);
+            model.updateHistoryDto(position, dictDTO);
             view.updateAdapterItemOnPosition(position);
         }
     }
@@ -70,12 +70,12 @@ public class HistoryPresenterImpl extends BasePresenter<HistoryFavoriteView> imp
 
     @Override
     public void insertItemInNoseOfAdapterDataAndNotify(DictDTO dictDTO) {
-        int position = iModel.getHistoryDictDTOs().indexOf(dictDTO);
+        int position = model.getHistoryDictDTOs().indexOf(dictDTO);
         if(position > -1){
-            iModel.moveHistoryDictDto(position,dictDTO);
+            model.moveHistoryDictDto(position,dictDTO);
             view.changeAdapterItemPosition(position,0);
         }else {
-            iModel.insertHistoryDictDTOs(dictDTO);
+            model.insertHistoryDictDTOs(dictDTO);
             view.updateAdapterNose();
         }
     }
@@ -103,7 +103,7 @@ public class HistoryPresenterImpl extends BasePresenter<HistoryFavoriteView> imp
 
     @Override
     public void deleteItem(DictDTO dictDTO) {
-        int removed = iModel.removeHistoryItem(dictDTO);
+        int removed = model.removeHistoryItem(dictDTO);
         view.removeItemOnPosition(removed);
     }
 

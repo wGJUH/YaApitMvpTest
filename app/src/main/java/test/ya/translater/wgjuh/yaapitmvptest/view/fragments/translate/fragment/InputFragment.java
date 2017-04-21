@@ -16,7 +16,7 @@ import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.InputPresenterImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.IInputPresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.InputPresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.InputView;
@@ -29,7 +29,7 @@ public class InputFragment extends BaseFragment implements InputView {
     EditText editText;
     @BindView(R.id.btn_clear_input)
     ImageButton imageButton;
-    private IInputPresenter inputPresenter;
+    private InputPresenter inputPresenter;
 
 
     @Override
@@ -42,7 +42,7 @@ public class InputFragment extends BaseFragment implements InputView {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.edittext_translate_block, container, false);
+        View view = inflater.inflate(R.layout.fragement_input_edittext, container, false);
         ButterKnife.bind(this, view);
         imageButton.setOnClickListener(btn -> inputPresenter.clearInput());
         editText.setOnEditorActionListener((input, action, event) -> {

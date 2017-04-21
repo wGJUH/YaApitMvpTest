@@ -13,30 +13,30 @@ import java.util.List;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.LangsDirsModelDTO;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.SettingsPresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.SettingsPresenterImpl;
 
 public class LanguageSettingsRecyclerViewAdapter extends RecyclerView.Adapter<LanguageSettingsRecyclerViewAdapter.ViewHolder> {
 
     private final List<String> codes;
     private final List<String> names;
-    private final SettingsPresenter settingsPresenter;
+    private final SettingsPresenterImpl settingsPresenterImpl;
     private final Event.EventType eventType;
 
-    public LanguageSettingsRecyclerViewAdapter(LangsDirsModelDTO langModel, SettingsPresenter settingsPresenter, Event.EventType eventType) {
+    public LanguageSettingsRecyclerViewAdapter(LangsDirsModelDTO langModel, SettingsPresenterImpl settingsPresenterImpl, Event.EventType eventType) {
         codes = new ArrayList<>(langModel.getLangs().keySet());
         names = new ArrayList<>(langModel.getLangs().values());
-        this.settingsPresenter = settingsPresenter;
+        this.settingsPresenterImpl = settingsPresenterImpl;
         this.eventType = eventType;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.language_settings_item, parent, false);
+                .inflate(R.layout.fragment_languagesettings_recycler_item, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         viewHolder.mView.setOnClickListener(view1 -> {
-                    settingsPresenter.popBackStack();
-                    settingsPresenter.sentLanguageChangedEvent(eventType, viewHolder.code);
+                    settingsPresenterImpl.popBackStack();
+                    settingsPresenterImpl.sentLanguageChangedEvent(eventType, viewHolder.code);
                 }
         );
         return viewHolder;
@@ -54,11 +54,11 @@ public class LanguageSettingsRecyclerViewAdapter extends RecyclerView.Adapter<La
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        public final LinearLayout mView;
-        public final TextView mIdView;
+        final LinearLayout mView;
+        final TextView mIdView;
         public String code;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             mView = (LinearLayout) view.findViewById(R.id.item_container);
             mIdView = (TextView) view.findViewById(R.id.id);

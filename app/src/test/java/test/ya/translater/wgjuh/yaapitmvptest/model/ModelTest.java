@@ -15,7 +15,7 @@ import java.util.List;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.observers.TestSubscriber;
-import test.ya.translater.wgjuh.yaapitmvptest.model.db.DbBackEnd;
+import test.ya.translater.wgjuh.yaapitmvptest.model.db.DbBackEndImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.model.network.YandexDictionaryApiInterface;
 import test.ya.translater.wgjuh.yaapitmvptest.model.network.YandexTranslateApiInterface;
@@ -28,13 +28,13 @@ import static org.mockito.Mockito.when;
  * Created by wGJUH on 18.04.2017.
  */
 @RunWith(RobolectricTestRunner.class)
-public class IModelTest {
+public class ModelTest {
 
-    IModel iModel;
+    Model model;
     YandexDictionaryApiInterface yandexDictionaryApiInterface;
     YandexTranslateApiInterface yandexTranslateApiInterface;
     @Mock
-    DbBackEnd dbBackEnd;
+    DbBackEndImpl dbBackEndImpl;
 
     @Before
     public void setUp() {
@@ -42,14 +42,14 @@ public class IModelTest {
 
         yandexDictionaryApiInterface = Mockito.mock(YandexDictionaryApiInterface.class);
         yandexTranslateApiInterface = Mockito.mock(YandexTranslateApiInterface.class);
-        iModel = new ModelImpl(EventBusImpl.getInstance(),yandexTranslateApiInterface,yandexDictionaryApiInterface);
+        model = new ModelImpl(EventBusImpl.getInstance(),yandexTranslateApiInterface,yandexDictionaryApiInterface);
     }
 
     @After
     public void tearDown(){
         yandexDictionaryApiInterface = null;
         yandexTranslateApiInterface = null;
-        iModel = null;
+        model = null;
     }
 
     @Test
@@ -57,7 +57,7 @@ public class IModelTest {
         TranslateDTO translateDTO = new TranslateDTO();
         when(yandexTranslateApiInterface.translateForLanguage(anyString(), anyString(), anyString())).thenReturn(Observable.just(translateDTO));
         TestSubscriber<TranslateDTO> testSubscriber = new TestSubscriber<>();
-        iModel.getTranslateForLanguage("test", "en-ru")
+        model.getTranslateForLanguage("test", "en-ru")
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe(testSubscriber);
         testSubscriber.assertValuesAndClear(translateDTO);
@@ -71,7 +71,7 @@ public class IModelTest {
         dictDTO.setLangs("en-ru");
         when(yandexDictionaryApiInterface.translateForLanguage(anyString(), anyString(), anyString(), anyString())).thenReturn(Observable.just(dictDTO));
         TestSubscriber<DictDTO> testSubscriber = new TestSubscriber<>();
-        iModel.getDicTionaryTranslateForLanguage("test", "en-ru")
+        model.getDicTionaryTranslateForLanguage("test", "en-ru")
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe(testSubscriber);
         testSubscriber.assertValuesAndClear(dictDTO);
@@ -83,9 +83,9 @@ public class IModelTest {
     public void getHistoryListTranslateTest() throws Exception{
         TestSubscriber<DictDTO> testSubscriber = new TestSubscriber<>();
         List<DictDTO> dictDTOs = initDictoDtoList(10);
-        iModel = new ModelImpl(dbBackEnd);
-       // when(dbBackEnd.getHistoryListTranslate()).thenReturn(dictDTOs);
-      //  iModel.getHistoryListTranslate().subscribe(testSubscriber);
+        model = new ModelImpl(dbBackEndImpl);
+       // when(dbBackEndImpl.getHistoryListTranslate()).thenReturn(dictDTOs);
+      //  model.getHistoryListTranslate().subscribe(testSubscriber);
         testSubscriber.assertReceivedOnNext(dictDTOs);
         testSubscriber.assertUnsubscribed();
     }
@@ -93,9 +93,9 @@ public class IModelTest {
     public void getHistoryListTranslateTestError() throws Exception{
         TestSubscriber<DictDTO> testSubscriber = new TestSubscriber<>();
         List<DictDTO> dictDTOs = initDictoDtoList(10);
-        iModel = new ModelImpl(dbBackEnd);
-       // when(dbBackEnd.getHistoryListTranslate()).thenReturn(dictDTOs);
-      //  iModel.getHistoryListTranslate().subscribe(testSubscriber);
+        model = new ModelImpl(dbBackEndImpl);
+       // when(dbBackEndImpl.getHistoryListTranslate()).thenReturn(dictDTOs);
+      //  model.getHistoryListTranslate().subscribe(testSubscriber);
         testSubscriber.assertReceivedOnNext(dictDTOs);
         testSubscriber.assertUnsubscribed();
     }
@@ -103,9 +103,9 @@ public class IModelTest {
     public void getFavoriteListTranslateTest(){
         TestSubscriber<DictDTO> testSubscriber = new TestSubscriber<>();
         List<DictDTO> dictDTOs = initDictoDtoList(10);
-        iModel = new ModelImpl(dbBackEnd);
-       // when(dbBackEnd.getFavoriteListTranslate()).thenReturn(dictDTOs);
-      //  iModel.getFavoriteListTranslate().subscribe(testSubscriber);
+        model = new ModelImpl(dbBackEndImpl);
+       // when(dbBackEndImpl.getFavoriteListTranslate()).thenReturn(dictDTOs);
+      //  model.getFavoriteListTranslate().subscribe(testSubscriber);
         testSubscriber.assertReceivedOnNext(dictDTOs);
         testSubscriber.assertUnsubscribed();
     }
@@ -114,9 +114,9 @@ public class IModelTest {
     public void getLangsTest(){
 /*        TestSubscriber<LangModel> testSubscriber = new TestSubscriber<>();
         LangModel langModel = initLangModels(10);
-        iModel = new ModelImpl(dbBackEnd);
-        when(dbBackEnd.getStoredLangs()).thenReturn(langModel);
-        iModel.getLangs().subscribe(testSubscriber);
+        model = new ModelImpl(dbBackEndImpl);
+        when(dbBackEndImpl.getStoredLangs()).thenReturn(langModel);
+        model.getLangs().subscribe(testSubscriber);
         testSubscriber.assertValue(langModel);
         testSubscriber.assertUnsubscribed();*/
     }

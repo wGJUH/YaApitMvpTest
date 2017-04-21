@@ -20,13 +20,13 @@ import rx.Observable;
 import rx.observers.TestSubscriber;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
-import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
+import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
+import test.ya.translater.wgjuh.yaapitmvptest.model.Model;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.Def;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.Translate;
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslateDTO;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.ITranslatePrsenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.TranslatePrsenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.TranslateView;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -38,11 +38,11 @@ import static org.mockito.Mockito.times;
 public class TranslatePresenterImplTest {
 
 
-    private ITranslatePrsenter translatePresenter;
+    private TranslatePrsenter translatePresenter;
 
-    TranslateView translateView;
-    IModel iModel;
-    IEventBus iEventBus;
+    private TranslateView translateView;
+    private Model model;
+    private EventBus eventBus;
 
 
     @Rule
@@ -54,11 +54,11 @@ public class TranslatePresenterImplTest {
 
         translateView = Mockito.mock(TranslateView.class);
 
-        iModel = Mockito.mock(IModel.class);
+        model = Mockito.mock(Model.class);
 
-        iEventBus = EventBusImpl.getInstance();
+        eventBus = EventBusImpl.getInstance();
 
-        translatePresenter = new TranslatePresenterImpl(iModel,iEventBus);
+        translatePresenter = new TranslatePresenterImpl(model, eventBus);
 
         translatePresenter.onBindView(translateView);
     }
@@ -72,7 +72,7 @@ public class TranslatePresenterImplTest {
     @Test
     public void startTranslateWhenDictionaryAndTranslate() throws Exception {
         TestSubscriber testSubscriber = new TestSubscriber();
-        iEventBus.subscribe(testSubscriber);
+        eventBus.subscribe(testSubscriber);
         String langs = "en-ru";
         String target = "test";
         DictDTO dictDTO = new DictDTO();
@@ -95,23 +95,23 @@ public class TranslatePresenterImplTest {
 
         dictDTO.setDef(defs);
 
-        Mockito.when(iModel.getTranslateLangPair()).thenReturn("en-ru");
+        Mockito.when(model.getTranslateLangPair()).thenReturn("en-ru");
 
-        Mockito.when(iModel.getDicTionaryTranslateForLanguage("test", "en-ru"))
+        Mockito.when(model.getDicTionaryTranslateForLanguage("test", "en-ru"))
                 .thenReturn(Observable.just(dictDTO));
 
-        Mockito.when(iModel.getTranslateForLanguage("test", "en-ru"))
+        Mockito.when(model.getTranslateForLanguage("test", "en-ru"))
                 .thenReturn(Observable.just(translateDTO));
 
         //translatePresenter.startTranslate("test");
 
 
 
-       // Mockito.verify(iModel,times(1)).saveToDBAndNotify(any(DictDTO.class));
-        Mockito.verify(iModel,times(1)).getTranslateLangPair();
-        Mockito.verify(iModel,times(1)).getHistoryTranslate(anyString(),anyString());
-        Mockito.verify(iModel,times(1)).getDicTionaryTranslateForLanguage(anyString(),anyString());
-        Mockito.verify(iModel,times(1)).getTranslateForLanguage(anyString(),anyString());
+       // Mockito.verify(model,times(1)).saveToDBAndNotify(any(DictDTO.class));
+        Mockito.verify(model,times(1)).getTranslateLangPair();
+        Mockito.verify(model,times(1)).getHistoryTranslate(anyString(),anyString());
+        Mockito.verify(model,times(1)).getDicTionaryTranslateForLanguage(anyString(),anyString());
+        Mockito.verify(model,times(1)).getTranslateForLanguage(anyString(),anyString());
         Mockito.verify(translateView,times(1)).showProgressBar(true);
         testSubscriber.assertValue(new Event(Event.EventType.WORD_TRANSLATED,any(DictDTO.class)));
         //Mockito.verify(translateView,times(1)).showProgressBar(false);
@@ -127,23 +127,23 @@ public class TranslatePresenterImplTest {
         dictDTO.setCommonTranslate("тест");
         dictDTO.setFavorite("-1");
 
-        Mockito.when(iModel.getTranslateLangPair()).thenReturn("en-ru");
+        Mockito.when(model.getTranslateLangPair()).thenReturn("en-ru");
 
-        Mockito.when(iModel.getDicTionaryTranslateForLanguage("test", "en-ru"))
+        Mockito.when(model.getDicTionaryTranslateForLanguage("test", "en-ru"))
                 .thenReturn(Observable.just(new DictDTO()));
 
-        Mockito.when(iModel.getTranslateForLanguage("test", "en-ru"))
+        Mockito.when(model.getTranslateForLanguage("test", "en-ru"))
                 .thenReturn(Observable.just(translateDTO));
 
       //  translatePresenter.startTranslate("test");
-        iEventBus.post(iEventBus.createEvent(Event.EventType.WORD_TRANSLATED,dictDTO));
+        eventBus.post(eventBus.createEvent(Event.EventType.WORD_TRANSLATED,dictDTO));
 
 
-      //  Mockito.verify(iModel,times(1)).saveToDBAndNotify(any(DictDTO.class));
-        Mockito.verify(iModel,times(1)).getTranslateLangPair();
-        Mockito.verify(iModel,times(1)).getHistoryTranslate(anyString(),anyString());
-        Mockito.verify(iModel,times(1)).getDicTionaryTranslateForLanguage(anyString(),anyString());
-        Mockito.verify(iModel,times(1)).getTranslateForLanguage(anyString(),anyString());
+      //  Mockito.verify(model,times(1)).saveToDBAndNotify(any(DictDTO.class));
+        Mockito.verify(model,times(1)).getTranslateLangPair();
+        Mockito.verify(model,times(1)).getHistoryTranslate(anyString(),anyString());
+        Mockito.verify(model,times(1)).getDicTionaryTranslateForLanguage(anyString(),anyString());
+        Mockito.verify(model,times(1)).getTranslateForLanguage(anyString(),anyString());
         Mockito.verify(translateView,times(1)).showProgressBar(true);
         Mockito.verify(translateView,times(1)).showProgressBar(false);
     }
@@ -151,19 +151,19 @@ public class TranslatePresenterImplTest {
     public void startTranslateWhenDictionaryAndNoCommonTranslate() throws TimeoutException {
         TestSubscriber testSubscriber = new TestSubscriber();
 
-        Mockito.when(iModel.getTranslateLangPair()).thenReturn("en-ru");
+        Mockito.when(model.getTranslateLangPair()).thenReturn("en-ru");
 
-        Mockito.when(iModel.getDicTionaryTranslateForLanguage("test", "en-ru"))
+        Mockito.when(model.getDicTionaryTranslateForLanguage("test", "en-ru"))
                 .thenReturn(Observable.just(new DictDTO()));
 
-        Mockito.when(iModel.getTranslateForLanguage("test", "en-ru"))
+        Mockito.when(model.getTranslateForLanguage("test", "en-ru"))
                 .thenReturn(Observable.error(new TimeoutException("Ошибка")));
 
-        iModel.getDicTionaryTranslateForLanguage("test", "en-ru").subscribe(testSubscriber);
+        model.getDicTionaryTranslateForLanguage("test", "en-ru").subscribe(testSubscriber);
 
         testSubscriber.assertCompleted();
 
-        iModel.getTranslateForLanguage("test", "en-ru").subscribe(testSubscriber);
+        model.getTranslateForLanguage("test", "en-ru").subscribe(testSubscriber);
 
         testSubscriber.assertError(TimeoutException.class);
 
@@ -173,12 +173,12 @@ public class TranslatePresenterImplTest {
     }
     @Test
     public void startTranslateWhenNoDictionaryAndNoCommonTranslate() throws TimeoutException {
-        Mockito.when(iModel.getTranslateLangPair()).thenReturn("en-ru");
+        Mockito.when(model.getTranslateLangPair()).thenReturn("en-ru");
 
-        Mockito.when(iModel.getDicTionaryTranslateForLanguage("test", "en-ru"))
+        Mockito.when(model.getDicTionaryTranslateForLanguage("test", "en-ru"))
                 .thenReturn(Observable.error(new TimeoutException("Ошибка")));
 
-        Mockito.when(iModel.getTranslateForLanguage("test", "en-ru"))
+        Mockito.when(model.getTranslateForLanguage("test", "en-ru"))
                 .thenReturn(Observable.error(new TimeoutException("Ошибка")));
 
       //  translatePresenter.startTranslate("test");

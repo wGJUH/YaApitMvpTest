@@ -9,7 +9,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
  * Created by wGJUH on 16.04.2017.
  */
 
-public interface IHistoryFavoritePresenter extends Presenter {
+public interface HistoryFavoritePresenter extends Presenter {
 
 
     /**

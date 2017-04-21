@@ -4,18 +4,18 @@ package test.ya.translater.wgjuh.yaapitmvptest.presenter.impl;
 import java.util.Locale;
 
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
-import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
+import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.IInputPresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.InputPresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.InputView;
 
 
-public class InputPresenterImpl extends BasePresenter<InputView> implements IInputPresenter {
-    private final IEventBus eventBus;
+public class InputPresenterImpl extends BasePresenter<InputView> implements InputPresenter {
+    private final EventBus eventBus;
 
 
-    public InputPresenterImpl(IEventBus eventBus) {
+    public InputPresenterImpl(EventBus eventBus) {
         this.eventBus = eventBus;
     }
 

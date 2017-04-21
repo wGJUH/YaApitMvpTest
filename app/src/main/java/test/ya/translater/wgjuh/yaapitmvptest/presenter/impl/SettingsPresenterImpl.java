@@ -1,8 +1,8 @@
 package test.ya.translater.wgjuh.yaapitmvptest.presenter.impl;
 
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
-import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
-import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
+import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
+import test.ya.translater.wgjuh.yaapitmvptest.model.Model;
 import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.LanguageSettingsRecyclerViewAdapter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.SettingLangsFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
@@ -11,15 +11,15 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
  * Created by wGJUH on 11.04.2017.
  */
 
-public class SettingsPresenter extends BasePresenter<SettingLangsFragment> {
+public class SettingsPresenterImpl extends BasePresenter<SettingLangsFragment> {
 
-    private final IModel iModel;
-    private final IEventBus iEventBus;
+    private final Model model;
+    private final EventBus eventBus;
     private final Event.EventType direction;
 
-    public SettingsPresenter(IModel iModel, IEventBus iEventBus, Event.EventType direction) {
-        this.iModel = iModel;
-        this.iEventBus = iEventBus;
+    public SettingsPresenterImpl(Model model, EventBus eventBus, Event.EventType direction) {
+        this.model = model;
+        this.eventBus = eventBus;
         this.direction = direction;
     }
 
@@ -34,12 +34,12 @@ public class SettingsPresenter extends BasePresenter<SettingLangsFragment> {
     }
 
     public void sentLanguageChangedEvent(Event.EventType eventType, String code) {
-        iEventBus.post(iEventBus.createEvent(eventType, code));
+        eventBus.post(eventBus.createEvent(eventType, code));
     }
 
 
     private void initRecyclerView() {
-        view.setRecyclerViewAdapter(new LanguageSettingsRecyclerViewAdapter(iModel.getLangs(), this, direction));
+        view.setRecyclerViewAdapter(new LanguageSettingsRecyclerViewAdapter(model.getLangs(), this, direction));
     }
 
 }

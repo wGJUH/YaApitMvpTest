@@ -7,21 +7,19 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import test.ya.translater.wgjuh.yaapitmvptest.DATA;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.FavoritePresenterImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.HistoryPresenterImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.IHistoryFavoritePresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.HistoryFavoritePresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.HistoryFavoriteRecyclerViewAdapter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
@@ -35,7 +33,7 @@ public class HistoryFavoritesFragment extends BaseFragment implements HistoryFav
 
     private static final String IS_HISTORY = "is_history";
     private boolean isHistory;
-    private IHistoryFavoritePresenter historyFavoritePresenter;
+    private HistoryFavoritePresenter historyFavoritePresenter;
     private HistoryFavoriteRecyclerViewAdapter viewAdapter;
 
 
@@ -67,7 +65,7 @@ public class HistoryFavoritesFragment extends BaseFragment implements HistoryFav
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_historyfavoriteitem_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_historyfavorite_recycler_list, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -99,7 +97,6 @@ public class HistoryFavoritesFragment extends BaseFragment implements HistoryFav
     public void onDestroyView() {
         super.onDestroyView();
         viewAdapter = null;
-        Log.d(DATA.TAG, "onDestroyView: " + getClass().getName());
     }
 
     @Override

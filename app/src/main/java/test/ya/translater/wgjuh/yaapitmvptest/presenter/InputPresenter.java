@@ -4,7 +4,7 @@ package test.ya.translater.wgjuh.yaapitmvptest.presenter;
  * Created by wGJUH on 16.04.2017.
  */
 
-public interface IInputPresenter extends Presenter {
+public interface InputPresenter extends Presenter {
 
     boolean onButtonTranslateClick();
     /**

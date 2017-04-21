@@ -14,7 +14,7 @@ import org.robolectric.RuntimeEnvironment;
 
 import rx.Observable;
 import rx.observers.TestSubscriber;
-import test.ya.translater.wgjuh.yaapitmvptest.model.db.DbBackEnd;
+import test.ya.translater.wgjuh.yaapitmvptest.model.db.DbBackEndImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.db.DbOpenHelper;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 
@@ -24,13 +24,13 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 @RunWith(RobolectricTestRunner.class)
 public class DbBackendTest {
 
-    private DbBackEnd dbBackEnd;
+    private DbBackEndImpl dbBackEndImpl;
     private SQLiteDatabase database;
 
     @Before
     public void setUp() {
         DbOpenHelper dbOpenHelper = new DbOpenHelper(RuntimeEnvironment.application);
-        dbBackEnd = new DbBackEnd(dbOpenHelper);
+        dbBackEndImpl = new DbBackEndImpl(dbOpenHelper);
         MockitoAnnotations.initMocks(this);
     }
 
@@ -43,9 +43,9 @@ public class DbBackendTest {
         dictDTO.setTarget("test");
         dictDTO.setCommonTranslate("тест");
         dictDTO.setLangs("en-ru");
-        dbBackEnd.insertHistoryTranslate(dictDTO);
+        dbBackEndImpl.insertHistoryTranslate(dictDTO);
 
-//        dictDTO = dbBackEnd.getHistoryTranslate("test", "en-ru");
+//        dictDTO = dbBackEndImpl.getHistoryTranslate("test", "en-ru");
 //        Assert.assertEquals(dictDTO.getCommonTranslate(), "тест");
 //        Assert.assertEquals(dictDTO.getLangs(), "en-ru");
 //        Assert.assertEquals(dictDTO.getTarget(), "test");

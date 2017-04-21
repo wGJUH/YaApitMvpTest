@@ -39,7 +39,7 @@ public class  HistoryFavoriteFragmentContainer extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.history_bookmark_container, container, false);
+        View view = inflater.inflate(R.layout.fragment_historyfavorite_container, container, false);
         ButterKnife.bind(this, view);
         return view;
     }

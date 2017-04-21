@@ -1,10 +1,8 @@
 package test.ya.translater.wgjuh.yaapitmvptest.presenter.impl;
 
-import android.util.Log;
-
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
-import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
-import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
+import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
+import test.ya.translater.wgjuh.yaapitmvptest.model.Model;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.SettingLangsFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
@@ -12,11 +10,9 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.activity_tabs.Trans
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment.InputFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment.TranslateFragment;
 
-import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
-
 public class TranslateFragmentContainerImpl extends BasePresenter<TranslateContainerView> {
-    private final IModel iModel;
-    private final IEventBus iEventBus;
+    private final Model model;
+    private final EventBus eventBus;
 
     @Override
     public void onBindView(View view) {
@@ -27,14 +23,14 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TranslateConta
     /**
      * Данный презентер будет являтся презентером для composite view состоящего из трех фрагментов
      */
-    public TranslateFragmentContainerImpl(IModel iModel, IEventBus iEventBus) {
-        this.iModel = iModel;
-        this.iEventBus = iEventBus;
+    public TranslateFragmentContainerImpl(Model model, EventBus eventBus) {
+        this.model = model;
+        this.eventBus = eventBus;
 
     }
 
     public void addFragments(InputFragment inputFragment, TranslateFragment translateFragment) {
-        iModel.updateLanguages();
+        model.updateLanguages();
         view.getTranslateFragmentManager()
                 .beginTransaction()
                .add(view.getInputFrame().getId(), inputFragment, inputFragment.getClass().getName())
@@ -52,10 +48,10 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TranslateConta
     }
 
     public void onChangeLanguages() {
-        String from = iModel.getFromLang();
-        iModel.setFromLang(iModel.getTranslateLang());
-        iModel.setTranslateLang(from);
-        iEventBus.post(iEventBus
+        String from = model.getFromLang();
+        model.setFromLang(model.getTranslateLang());
+        model.setTranslateLang(from);
+        eventBus.post(eventBus
                         .createEvent(Event
                                 .EventType
                                 .CHANGE_LANGUAGES));
@@ -65,34 +61,34 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TranslateConta
     public void updateToolbarLanguages(Boolean withSubscribe) {
         if (withSubscribe) {
             if (this.view != null) {
-                addSubscription(iEventBus.subscribe(event -> {
+                addSubscription(eventBus.subscribe(event -> {
                     switch (event.eventType) {
                         case WORD_TRANSLATED:
                             DictDTO dictDTO = (DictDTO) event.content[0];
                             String[] langs = dictDTO.getLangs().split("-");
 
-                            iModel.setTranslateLang(langs[1]);
-                            iModel.setFromLang(langs[0]);
+                            model.setTranslateLang(langs[1]);
+                            model.setFromLang(langs[0]);
 
-                            view.setToLanguageTextView(iModel.getLangByCode(langs[1]));
-                            view.setFromLanguageTextView(iModel.getLangByCode(langs[0]));
+                            view.setToLanguageTextView(model.getLangByCode(langs[1]));
+                            view.setFromLanguageTextView(model.getLangByCode(langs[0]));
 
                             view.notifyActivityHistoryShown();
                             break;
                         case CHANGE_LANGUAGES:
-                            view.setToLanguageTextView(iModel.getLangByCode(iModel.getTranslateLang()));
-                            view.setFromLanguageTextView(iModel.getLangByCode(iModel.getFromLang()));
+                            view.setToLanguageTextView(model.getLangByCode(model.getTranslateLang()));
+                            view.setFromLanguageTextView(model.getLangByCode(model.getFromLang()));
                             break;
                         case TARGET_LANGUAGE:
-                            iModel.setTranslateLang((String) event.content[0]);
-                            iEventBus.post(iEventBus
+                            model.setTranslateLang((String) event.content[0]);
+                            eventBus.post(eventBus
                                             .createEvent(Event
                                                     .EventType
                                                     .CHANGE_LANGUAGES));
                             break;
                         case FROM_LANGUAGE:
-                            iModel.setFromLang((String) event.content[0]);
-                            iEventBus.post(iEventBus
+                            model.setFromLang((String) event.content[0]);
+                            eventBus.post(eventBus
                                             .createEvent(Event
                                                     .EventType
                                                     .CHANGE_LANGUAGES));
@@ -103,15 +99,8 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TranslateConta
                 }));
             }
         }else {
-            view.setToLanguageTextView(iModel.getLangByCode(iModel.getTranslateLang()));
-            view.setFromLanguageTextView(iModel.getLangByCode(iModel.getFromLang()));
+            view.setToLanguageTextView(model.getLangByCode(model.getTranslateLang()));
+            view.setFromLanguageTextView(model.getLangByCode(model.getFromLang()));
         }
-    }
-
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop: " + this.getClass().getName());
     }
 }

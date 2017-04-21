@@ -12,14 +12,14 @@ import java.util.Locale;
 
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.IHistoryFavoritePresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.HistoryFavoritePresenter;
 
 public class HistoryFavoriteRecyclerViewAdapter extends RecyclerView.Adapter<HistoryFavoriteRecyclerViewAdapter.ViewHolder> {
 
     private final List<DictDTO> mValues;
-    private final IHistoryFavoritePresenter historyFavoritePresenter;
+    private final HistoryFavoritePresenter historyFavoritePresenter;
 
-    public HistoryFavoriteRecyclerViewAdapter(List<DictDTO> items, IHistoryFavoritePresenter historyFavoritePresenter) {
+    public HistoryFavoriteRecyclerViewAdapter(List<DictDTO> items, HistoryFavoritePresenter historyFavoritePresenter) {
         mValues = items;
         this.historyFavoritePresenter = historyFavoritePresenter;
     }
@@ -28,7 +28,7 @@ public class HistoryFavoriteRecyclerViewAdapter extends RecyclerView.Adapter<His
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_historyfavoriteitem, parent, false);
+                .inflate(R.layout.fragment_historyfavorite_recycler_item, parent, false);
         ViewHolder holder = new ViewHolder(view);
         holder.checkBox.setOnClickListener(v -> {
             int position = holder.getAdapterPosition();
@@ -70,15 +70,15 @@ public class HistoryFavoriteRecyclerViewAdapter extends RecyclerView.Adapter<His
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public final CheckBox checkBox;
+    class ViewHolder extends RecyclerView.ViewHolder {
+        final View mView;
+        final TextView mIdView;
+        final TextView mContentView;
+        final CheckBox checkBox;
         public final TextView langs;
-        public DictDTO mItem;
+        DictDTO mItem;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.id);

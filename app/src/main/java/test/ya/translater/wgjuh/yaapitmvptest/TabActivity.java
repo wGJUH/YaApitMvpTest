@@ -75,7 +75,7 @@ public class TabActivity extends AppCompatActivity implements ActivityCallback, 
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
     }
-
+    
     @Override
     public void onShowHistoryWord() {
         viewPager.setCurrentItem(0);

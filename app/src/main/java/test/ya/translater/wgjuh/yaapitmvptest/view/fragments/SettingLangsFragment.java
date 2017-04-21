@@ -18,7 +18,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
-import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.SettingsPresenter;
+import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.SettingsPresenterImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.LanguageSettingsRecyclerViewAdapter;
 
 public class SettingLangsFragment extends BaseFragment implements test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View {
@@ -28,7 +28,7 @@ public class SettingLangsFragment extends BaseFragment implements test.ya.transl
     RecyclerView recyclerView;
     @BindView(R.id.fragment_toolbar)
     Toolbar toolbar;
-    private SettingsPresenter settingsPresenter;
+    private SettingsPresenterImpl settingsPresenterImpl;
     public SettingLangsFragment() {
     }
 
@@ -53,7 +53,7 @@ public class SettingLangsFragment extends BaseFragment implements test.ya.transl
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.language_setting_item_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_languagesetting_recycler_list, container, false);
         ButterKnife.bind(this, view);
         toolbar.setTitle(R.string.choose_language);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -69,11 +69,6 @@ public class SettingLangsFragment extends BaseFragment implements test.ya.transl
         recyclerView.setLayoutManager(linearLayoutManager);
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
     public void setRecyclerViewAdapter(LanguageSettingsRecyclerViewAdapter languageSettingsRecyclerViewAdapter){
         recyclerView.setAdapter(languageSettingsRecyclerViewAdapter);
     }
@@ -81,8 +76,8 @@ public class SettingLangsFragment extends BaseFragment implements test.ya.transl
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        settingsPresenter = new SettingsPresenter(ModelImpl.getInstance(), EventBusImpl.getInstance(), direction);
-        settingsPresenter.onBindView(this);
+        settingsPresenterImpl = new SettingsPresenterImpl(ModelImpl.getInstance(), EventBusImpl.getInstance(), direction);
+        settingsPresenterImpl.onBindView(this);
             }
 
     @Override
@@ -92,6 +87,6 @@ public class SettingLangsFragment extends BaseFragment implements test.ya.transl
 
     @Override
     protected Presenter getPresenter() {
-        return settingsPresenter;
+        return settingsPresenterImpl;
     }
 }
