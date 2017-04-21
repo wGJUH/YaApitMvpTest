@@ -62,9 +62,7 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
         translatePresenterImpl = new TranslatePresenterImpl(ModelImpl.getInstance(), EventBusImpl.getInstance());
         viewAdapter = new DictionaryTranslateRecyclerViewAdapter(translatePresenterImpl.getDictionarySate());
         translatePresenterImpl.onBindView(this);
-        if (savedInstanceState != null) {
-                translatePresenterImpl.restoreState();
-        }
+        translatePresenterImpl.restoreState();
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         recyclerView.setAdapter(viewAdapter);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
@@ -147,7 +145,7 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
 
     @Override
     public void setBtnFavoriteEnabled(Boolean enabled) {
-        this.btnFavorite.setClickable(enabled);
+        this.btnFavorite.setEnabled(enabled);
     }
 
     @Override

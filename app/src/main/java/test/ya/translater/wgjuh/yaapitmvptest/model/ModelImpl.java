@@ -239,7 +239,9 @@ public class ModelImpl implements IModel {
                     favoriteDictDTOs.add(0, dictDTO);
                 }
                 dbBackEnd.setHistoryItemFavorite(dictDTO, result);
-            }else {
+            }else if (favoriteDictDTOs.contains(dictDTO)) {
+                favoriteDictDTOs.set(favoriteDictDTOs.indexOf(dictDTO), dictDTO);
+            }else{
                 favoriteDictDTOs.add(0, dictDTO);
             }
         }

@@ -110,9 +110,9 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
         } else if (favoriteTranslate != null) {
             iModel.saveToDB(favoriteTranslate)
                     .subscribe(dictDTO -> eventBus
-                            .post(eventBus
-                                    .createEvent(Event.EventType.WORD_TRANSLATED, dictDTO)),
-                                    throwable -> Log.e(TAG, "startTranslate: " + throwable.getMessage()));
+                                    .post(eventBus
+                                            .createEvent(Event.EventType.WORD_TRANSLATED, dictDTO)),
+                            throwable -> Log.e(TAG, "startTranslate: " + throwable.getMessage()));
             return;
         } else {
             translateFromInternet();
@@ -123,9 +123,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
         subscription = iModel
                 .getZipTranslate()
                 .doOnSubscribe(() -> view.showProgressBar(true))
-                .doOnTerminate(() -> {
-                    view.showProgressBar(false);
-                }).flatMap(iModel::saveToDB)
+                .doOnTerminate(() -> view.showProgressBar(false)).flatMap(iModel::saveToDB)
                 .subscribe(dictDTO -> eventBus.post(eventBus.createEvent(Event.EventType.WORD_TRANSLATED, dictDTO))
                         , throwable -> view.showError("Ошибка соединения.\n\nПроверьте подключение к\nИнтернету и повторите попытку."),
                         iModel::freeCachedOBservable);
@@ -227,6 +225,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
         view.showTranslate("");
         view.setBtnFavoriteEnabled(false);
         view.clearAdapter(defRecyclerItems.size());
+        iModel.freeCachedOBservable();
         defRecyclerItems.clear();
         if (subscription != null && !subscription.isUnsubscribed()) {
             subscription.unsubscribe();
@@ -237,19 +236,21 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
 
     @Override
     public void addFavorite() {
-        if(iModel.getLastTranslate() != null) {
+        if (iModel.getLastTranslate() != null) {
             eventBus.post(eventBus.createEvent(Event.EventType.UPDATE_FAVORITE, iModel.getLastTranslate()));
         }
     }
 
     @Override
     public void restoreState() {
-        translateFromInternet();
         if (iModel.getLastTranslate() != null) {
             view.setBtnFavoriteEnabled(true);
             updateChecboxFavorite(!iModel.getLastTranslate().getFavorite().equals("-1"));
             updateTranslateView(iModel.getLastTranslate().getCommonTranslate());
             updateRecylcerView(iModel.getLastTranslate());
+        } else {
+            view.setBtnFavoriteEnabled(false);
+            translateFromInternet();
         }
     }
 
