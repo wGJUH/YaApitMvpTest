@@ -48,4 +48,6 @@ public interface IHistoryFavoritePresenter extends Presenter {
 
     void showTranslate(DictDTO dictDTO);
 
+    void onLongItemClick(DictDTO dictDTO);
+
 }

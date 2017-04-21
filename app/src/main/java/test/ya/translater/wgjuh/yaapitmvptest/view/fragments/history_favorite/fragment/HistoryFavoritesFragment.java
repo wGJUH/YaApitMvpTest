@@ -1,8 +1,10 @@
 package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -20,6 +22,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.db.DbBackEnd;
 import test.ya.translater.wgjuh.yaapitmvptest.model.db.DbOpenHelper;
+import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.FavoritePresenterImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.HistoryPresenterImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.IHistoryFavoritePresenter;
@@ -144,6 +147,16 @@ public class HistoryFavoritesFragment extends BaseFragment implements HistoryFav
     @Override
     public void updateAdapterNose() {
         viewAdapter.notifyItemInserted(0);
+    }
+
+    @Override
+    public boolean showDeleteDialog(DictDTO dictDTO) {
+        AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+        alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Удалить", (dialogInterface, i) -> {
+            historyFavoritePresenter.deleteItem(dictDTO);
+        });
+        alertDialog.show();
+        return false;
     }
 
     @Override

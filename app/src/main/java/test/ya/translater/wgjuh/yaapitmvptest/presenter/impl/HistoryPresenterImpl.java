@@ -1,15 +1,8 @@
 package test.ya.translater.wgjuh.yaapitmvptest.presenter.impl;
 
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.support.v7.view.ContextThemeWrapper;
-
 import java.util.List;
 
-import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
-import test.ya.translater.wgjuh.yaapitmvptest.R;
-import test.ya.translater.wgjuh.yaapitmvptest.TabActivity;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
@@ -102,6 +95,10 @@ public class HistoryPresenterImpl extends BasePresenter<HistoryFavoriteView> imp
             default:
                 break;
         }
+    }
+
+    public void onLongItemClick(DictDTO dictDTO){
+        view.showDeleteDialog(dictDTO);
     }
 
     @Override

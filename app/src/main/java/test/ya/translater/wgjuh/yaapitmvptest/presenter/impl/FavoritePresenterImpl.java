@@ -124,4 +124,10 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
         eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.BTN_CLEAR_CLICKED));
         eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.WORD_TRANSLATED,dictDTO));
     }
+
+    @Override
+    public void onLongItemClick(DictDTO dictDTO) {
+        deleteItem(dictDTO);
+        //view.showDeleteDialog(dictDTO);
+    }
 }

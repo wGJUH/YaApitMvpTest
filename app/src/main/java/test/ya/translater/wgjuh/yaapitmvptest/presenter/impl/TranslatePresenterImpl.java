@@ -249,6 +249,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
             updateTranslateView(iModel.getLastTranslate().getCommonTranslate());
             updateRecylcerView(iModel.getLastTranslate());
         } else {
+
             view.setBtnFavoriteEnabled(false);
             translateFromInternet();
         }
