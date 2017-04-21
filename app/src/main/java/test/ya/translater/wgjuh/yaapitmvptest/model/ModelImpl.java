@@ -70,7 +70,6 @@ public class ModelImpl implements Model {
     private void initFavoriteArray() {
         if (favoriteDictDTOs.size() == 0) {
             Observable.from(dbBackEndImpl.getFavoriteListTranslate())
-                    //.compose(applySchedulers())
                     .flatMap(s -> Observable.just(new Gson().fromJson(s, DictDTO.class)))
                     .map(dictDTO -> dictDTO.setId(dbBackEndImpl.getHistoryId(dictDTO)))
                     .map(dictDTO -> dictDTO.setFavorite(dbBackEndImpl.getFavoriteId(dictDTO)))
@@ -81,7 +80,6 @@ public class ModelImpl implements Model {
     private void initHistoryArray() {
         if (historyDictDTOs.size() == 0) {
             Observable.from(dbBackEndImpl.getHistoryListTranslate())
-                    //.compose(applySchedulers())
                     .flatMap(s -> Observable.just(new Gson().fromJson(s, DictDTO.class)))
                     .map(dictDTO -> dictDTO.setId(dbBackEndImpl.getHistoryId(dictDTO)))
                     .map(dictDTO -> dictDTO.setFavorite(dbBackEndImpl.getFavoriteId(dictDTO)))

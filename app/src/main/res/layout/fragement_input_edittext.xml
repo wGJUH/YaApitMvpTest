@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/btn_clear_input"
         android:gravity="start"
-        android:imeActionLabel="Готово"
+        android:backgroundTint="@color/transparent"
         android:inputType="textMultiLine"
         android:textColor="@color/colorBlack" />
 
