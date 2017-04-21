@@ -16,7 +16,8 @@
         android:id="@+id/textview_common_translate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/textview_translate_textsize"
+        android:clickable="true"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/colorBlack" />
     </ScrollView>
     <CheckBox

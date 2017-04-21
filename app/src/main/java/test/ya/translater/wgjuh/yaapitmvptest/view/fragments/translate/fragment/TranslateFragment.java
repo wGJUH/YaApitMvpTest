@@ -1,5 +1,8 @@
 package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.ContentLoadingProgressBar;
@@ -14,6 +17,7 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -67,6 +71,12 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
             }
         });
         btn_retry.setOnClickListener(btn_retry -> translatePresenterImpl.startRetry());
+        translate.setOnClickListener(textView -> {
+            ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText(((TextView)textView).getText(), ((TextView)textView).getText());
+            clipboard.setPrimaryClip(clip);
+            Toast.makeText(getActivity().getApplicationContext(),getActivity().getResources().getText(R.string.copy_to_clipdoard), Toast.LENGTH_SHORT).show();
+        });
     }
 
     @Nullable
@@ -134,6 +144,7 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
 
     @Override
     public void setBtnFavoriteEnabled(Boolean enabled) {
+        this.translate.setEnabled(enabled);
         this.btnFavorite.setEnabled(enabled);
     }
 }

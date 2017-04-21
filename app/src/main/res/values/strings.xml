@@ -7,6 +7,7 @@
     <string name="translate_error">ПОВТОРИТЬ</string>
     <string name="content_description_btn_clear">Очистить</string>
     <string name="content_description_btn_change_langs">Сменить языки</string>
+    <string name="copy_to_clipdoard">Скопировано в буфер обмена.</string>
     <string-array name="ru_ui_languages">
         <item>Азербайджанский|az</item>
         <item>Албанский|sq</item>
