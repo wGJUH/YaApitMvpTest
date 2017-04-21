@@ -27,6 +27,7 @@ public class LangsDirsModelDTO {
     }
 
     public void addLang(String code, String name){
-        langs.put(code,name);
+        langs.put(code, name);
+
     }
 }

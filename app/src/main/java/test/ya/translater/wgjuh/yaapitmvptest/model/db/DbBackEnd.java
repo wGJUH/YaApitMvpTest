@@ -139,7 +139,6 @@ public class DbBackEnd implements Contractor, IDbBackEnd {
     @Override
     public void upateLangs(LangsDirsModelDTO langsDirsModelDTO) {
         long inserted = -1;
-        if(langsDirsModelDTO.getLangs().size() != getCountForTable(DB_TABLE_LANGS)) {
             sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
             sqLiteDatabase.beginTransaction();
             sqLiteDatabase.delete(DB_TABLE_LANGS, null, null);
@@ -155,7 +154,6 @@ public class DbBackEnd implements Contractor, IDbBackEnd {
             }
             sqLiteDatabase.endTransaction();
             sqLiteDatabase.close();
-        }
     }
 
     @Override
