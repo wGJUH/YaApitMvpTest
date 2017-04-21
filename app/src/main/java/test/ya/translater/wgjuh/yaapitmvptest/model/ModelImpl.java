@@ -1,7 +1,6 @@
 package test.ya.translater.wgjuh.yaapitmvptest.model;
 
 
-import android.app.Application;
 import android.content.Context;
 import android.preference.PreferenceManager;
 import android.support.annotation.VisibleForTesting;
@@ -12,7 +11,6 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -31,10 +29,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslateDTO;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
-/**
- * Created by wGJUH on 04.04.2017.
- */
-// TODO: 09.04.2017 модель можно реализовать как синглтон
+
 public class ModelImpl implements IModel {
 
     private static ModelImpl model;
@@ -48,8 +43,8 @@ public class ModelImpl implements IModel {
     private DictDTO lastTranslate;
     private String lastTranslateTarget;
     private LangsDirsModelDTO langsDirsModelDTOs = new LangsDirsModelDTO();
-    private List<DictDTO> historyDictDTOs = new ArrayList<>();
-    private List<DictDTO> favoriteDictDTOs = new ArrayList<>();
+    private final List<DictDTO> historyDictDTOs = new ArrayList<>();
+    private final List<DictDTO> favoriteDictDTOs = new ArrayList<>();
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     ModelImpl(IEventBus iEventBus, YandexTranslateApiInterface yandexTranslateApiInterface, YandexDictionaryApiInterface yandexDictionaryApiInterface) {
@@ -222,13 +217,12 @@ public class ModelImpl implements IModel {
     }
 
     @Override
-    public DictDTO setFavorites(DictDTO dictDTO) {
+    public void setFavorites(DictDTO dictDTO) {
         long result = -1;
         if (!dbBackEnd.getFavoriteId(dictDTO).equals("-1")) {
             dbBackEnd.removeFavoriteItemAndUpdateHistory(dictDTO);
             dictDTO.setFavorite("-1");
             favoriteDictDTOs.set(favoriteDictDTOs.indexOf(dictDTO), dictDTO);
-            return dictDTO;
         } else {
             dictDTO.setFavorite(Long.toString(dbBackEnd.insertFavoriteItem(dictDTO)));
             if (!dictDTO.getFavorite().equals("-1") && !dbBackEnd.getHistoryId(dictDTO).equals("-1")) {
@@ -245,7 +239,6 @@ public class ModelImpl implements IModel {
                 favoriteDictDTOs.add(0, dictDTO);
             }
         }
-        return dictDTO;
     }
 
     @Override

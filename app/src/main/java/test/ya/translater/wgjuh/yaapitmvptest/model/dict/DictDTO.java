@@ -8,14 +8,12 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-// TODO: 16.04.2017 поменять на parcelable
-public class DictDTO implements Parcelable{
+public class DictDTO implements Parcelable {
 
     @SerializedName("def")
     @Expose
@@ -35,7 +33,7 @@ public class DictDTO implements Parcelable{
         def = in.createTypedArrayList(Def.CREATOR);
     }
 
-    public DictDTO(){
+    public DictDTO() {
 
     }
 
@@ -52,13 +50,14 @@ public class DictDTO implements Parcelable{
     };
 
     public Observable<Def> getDef() {
-        if(def != null) {
+        if (def != null) {
             return Observable.from(def)
 
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .unsubscribeOn(Schedulers.io());
-        }return Observable.never();
+        }
+        return Observable.never();
     }
 
     public void setCommonTranslate(String commonTranslate) {
@@ -109,12 +108,9 @@ public class DictDTO implements Parcelable{
 
     @Override
     public boolean equals(Object obj) {
-        DictDTO dictDTO = (DictDTO)obj;
-        if(dictDTO.target.equals(target) && dictDTO.langs.equals(langs)) {
-            return true;
-        }else {
-            return false;
-        }
+        return obj instanceof DictDTO
+                && ((DictDTO) obj).target.equals(target)
+                && ((DictDTO) obj).langs.equals(langs);
     }
 
     @Override

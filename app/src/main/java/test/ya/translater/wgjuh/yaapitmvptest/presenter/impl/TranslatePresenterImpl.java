@@ -30,16 +30,11 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.Translate
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
-
-/**
- * Created by wGJUH on 07.04.2017.
- */
-
 public class TranslatePresenterImpl extends BasePresenter<TranslateView> implements ITranslatePrsenter {
 
     private final IModel iModel;
     private final IEventBus eventBus;
-    private List<DefRecyclerItem> defRecyclerItems = new ArrayList<>();
+    private final List<DefRecyclerItem> defRecyclerItems = new ArrayList<>();
     private Subscription subscription;
 
     public TranslatePresenterImpl(IModel iModel, IEventBus eventBus) {
@@ -106,14 +101,12 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
         if (historyTranslate != null) {
             iModel.updateHistoryDate(historyTranslate.getId());
             eventBus.post(eventBus.createEvent(Event.EventType.WORD_UPDATED, historyTranslate));
-            return;
         } else if (favoriteTranslate != null) {
             iModel.saveToDB(favoriteTranslate)
                     .subscribe(dictDTO -> eventBus
                                     .post(eventBus
                                             .createEvent(Event.EventType.WORD_TRANSLATED, dictDTO)),
                             throwable -> Log.e(TAG, "startTranslate: " + throwable.getMessage()));
-            return;
         } else {
             translateFromInternet();
         }
@@ -176,7 +169,6 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
     private DefRecyclerItem getDefRecyclerItem(Def def) {
         DefRecyclerItem defRecyclerItem = new DefRecyclerItem();
         defRecyclerItem.setText(def.getText());
-        defRecyclerItem.setTs("[" + def.getTranscription() + "]");
         defRecyclerItem.setPos(def.getPos());
         return defRecyclerItem;
     }
@@ -288,6 +280,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
     private boolean hasConnection(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo wifiInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
         if (wifiInfo != null && wifiInfo.isConnected()) {
             return true;
         }

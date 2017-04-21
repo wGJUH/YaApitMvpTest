@@ -12,10 +12,6 @@ import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
 
 
-/**
- * Created by wGJUH on 09.04.2017.
- */
-
 public class EventBusImpl implements IEventBus {
 
     private static EventBusImpl instance;
@@ -40,7 +36,7 @@ public class EventBusImpl implements IEventBus {
     }
 
     @Override
-    public Subscription subscribe(Subscriber subscriber) {
+    public Subscription subscribe(Subscriber<Event> subscriber) {
         return getEventBus().subscribe(subscriber);
     }
 

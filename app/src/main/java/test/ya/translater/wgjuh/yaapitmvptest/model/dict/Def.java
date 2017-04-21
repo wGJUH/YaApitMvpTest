@@ -11,7 +11,7 @@ import java.util.List;
 
 import rx.Observable;
 
-public class Def implements Parcelable{
+public class Def implements Parcelable {
 
     @SerializedName("text")
     @Expose
@@ -26,13 +26,15 @@ public class Def implements Parcelable{
     @Expose
     private List<Translate> translate = null;
 
-    protected Def(Parcel in) {
+    private Def(Parcel in) {
         text = in.readString();
         pos = in.readString();
         transcription = in.readString();
         translate = in.createTypedArrayList(Translate.CREATOR);
     }
-    public Def(){}
+
+    public Def() {
+    }
 
     public static final Creator<Def> CREATOR = new Creator<Def>() {
         @Override
@@ -66,18 +68,12 @@ public class Def implements Parcelable{
         return Observable.from(translate);
     }
 
-    public int getTranslate(){
+    public int getTranslate() {
         return translate.size();
     }
 
     public void setTranslate(List<Translate> translate) {
         this.translate = translate;
-    }
-
-    @Override
-    public String toString() {
-        return "DEF: " +
-                "\ntranscription: " + getTranscription() + " " + getTranslateObservable().toString();
     }
 
     @Override
@@ -95,14 +91,10 @@ public class Def implements Parcelable{
 
     @Override
     public boolean equals(Object obj) {
-        Def def = (Def)obj;
-        if(obj == this) return true;
-        if(!(obj instanceof Def))return false;
-
-
-        return (text.equals(def.getText())
-                && pos.equals(def.getPos())
-                && transcription.equals(def.getTranscription()));
+        return obj instanceof Def
+                && (text.equals(((Def) obj).getText())
+                && pos.equals(((Def) obj).getPos())
+                && transcription.equals(((Def) obj).getTranscription()));
     }
 
     @Override

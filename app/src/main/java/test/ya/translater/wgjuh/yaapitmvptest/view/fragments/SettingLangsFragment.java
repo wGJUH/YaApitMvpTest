@@ -1,6 +1,5 @@
 package test.ya.translater.wgjuh.yaapitmvptest.view.fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
@@ -24,12 +23,12 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.LanguageSettingsRecy
 
 public class SettingLangsFragment extends BaseFragment implements test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View {
 
-    Event.EventType direction;
+    private Event.EventType direction;
     @BindView(R.id.langs_recycler_view)
     RecyclerView recyclerView;
     @BindView(R.id.fragment_toolbar)
     Toolbar toolbar;
-    SettingsPresenter settingsPresenter;
+    private SettingsPresenter settingsPresenter;
     public SettingLangsFragment() {
     }
 
@@ -65,14 +64,9 @@ public class SettingLangsFragment extends BaseFragment implements test.ya.transl
         return view;
     }
 
-    public void setRecyclerDecorator(LinearLayoutManager linearLayoutManager, DividerItemDecoration dividerItemDecoration ){
+    private void setRecyclerDecorator(LinearLayoutManager linearLayoutManager, DividerItemDecoration dividerItemDecoration){
         recyclerView.addItemDecoration(dividerItemDecoration);
         recyclerView.setLayoutManager(linearLayoutManager);
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
     }
 
     @Override

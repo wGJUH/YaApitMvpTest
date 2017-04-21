@@ -1,7 +1,5 @@
 package test.ya.translater.wgjuh.yaapitmvptest.presenter;
 
-import android.os.Bundle;
-
 import java.util.List;
 
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DefRecyclerItem;

@@ -56,7 +56,7 @@ public class IModelTest {
     public void getTranslateForLanguage() throws Exception {
         TranslateDTO translateDTO = new TranslateDTO();
         when(yandexTranslateApiInterface.translateForLanguage(anyString(), anyString(), anyString())).thenReturn(Observable.just(translateDTO));
-        TestSubscriber<TranslateDTO> testSubscriber = new TestSubscriber<TranslateDTO>();
+        TestSubscriber<TranslateDTO> testSubscriber = new TestSubscriber<>();
         iModel.getTranslateForLanguage("test", "en-ru")
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe(testSubscriber);
@@ -70,7 +70,7 @@ public class IModelTest {
         dictDTO.setTarget("test");
         dictDTO.setLangs("en-ru");
         when(yandexDictionaryApiInterface.translateForLanguage(anyString(), anyString(), anyString(), anyString())).thenReturn(Observable.just(dictDTO));
-        TestSubscriber<DictDTO> testSubscriber = new TestSubscriber<DictDTO>();
+        TestSubscriber<DictDTO> testSubscriber = new TestSubscriber<>();
         iModel.getDicTionaryTranslateForLanguage("test", "en-ru")
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe(testSubscriber);

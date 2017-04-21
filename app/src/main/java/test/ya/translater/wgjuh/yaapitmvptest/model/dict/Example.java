@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class Example implements Parcelable{
+public class Example implements Parcelable {
 
     @SerializedName("text")
     @Expose
@@ -18,7 +18,7 @@ public class Example implements Parcelable{
     @Expose
     private List<EmbeddedTranslate> tr = null;
 
-    protected Example(Parcel in) {
+    private Example(Parcel in) {
         text = in.readString();
         tr = in.createTypedArrayList(EmbeddedTranslate.CREATOR);
     }
@@ -43,7 +43,7 @@ public class Example implements Parcelable{
         this.text = text;
     }
 
-    public EmbeddedTranslate getTr() {
+    private EmbeddedTranslate getTr() {
         return tr.get(0);
     }
 
@@ -67,13 +67,14 @@ public class Example implements Parcelable{
         parcel.writeTypedList(tr);
     }
 }
-class EmbeddedTranslate implements Parcelable{
+
+class EmbeddedTranslate implements Parcelable {
 
     @SerializedName("text")
     @Expose
     private String text;
 
-    protected EmbeddedTranslate(Parcel in) {
+    private EmbeddedTranslate(Parcel in) {
         text = in.readString();
     }
 
@@ -92,6 +93,7 @@ class EmbeddedTranslate implements Parcelable{
     public String getText() {
         return text;
     }
+
     public void setText(String text) {
         this.text = text;
     }

@@ -1,7 +1,5 @@
 package test.ya.translater.wgjuh.yaapitmvptest.view.adapters;
 
-import android.graphics.Color;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -11,9 +9,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.squareup.leakcanary.LeakTraceElement;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -21,19 +16,13 @@ import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DefRecyclerItem;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DefTranslateItem;
-import test.ya.translater.wgjuh.yaapitmvptest.model.dict.Mean;
-import test.ya.translater.wgjuh.yaapitmvptest.model.dict.Synonyme;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
-/**
- * Created by wGJUH on 16.04.2017.
- */
-
 public class DictionaryTranslateRecyclerViewAdapter extends RecyclerView.Adapter<DictionaryTranslateRecyclerViewAdapter.ViewHolder> {
 
-    List<DefRecyclerItem> defRecyclerItems;
-    ViewHolder viewHolder;
+    private final List<DefRecyclerItem> defRecyclerItems;
+    private ViewHolder viewHolder;
     public DictionaryTranslateRecyclerViewAdapter(List<DefRecyclerItem> defRecyclerItems) {
         this.defRecyclerItems = defRecyclerItems;
 
@@ -61,7 +50,7 @@ public class DictionaryTranslateRecyclerViewAdapter extends RecyclerView.Adapter
                         view.findViewById(R.id.pos).setVisibility(View.GONE);
                     }
                         DefTranslateItem defTranslateItem = defRecyclerItem.getDefTranslateItems().get(i);
-                        ((TextView)view.findViewById(R.id.row_number)).setText(Integer.toString(i+1));
+                        ((TextView)view.findViewById(R.id.row_number)).setText(String.format(Locale.getDefault(),"%d",i+1));
                         ((TextView)view.findViewById(R.id.synonyms)).setText(TextUtils.join(", ",defTranslateItem.getTextAndSyn()));
                         Log.d(TAG,"synonyms adapter: " + TextUtils.join(", ",defTranslateItem.getTextAndSyn()));
                         if(defTranslateItem.getMeans().size() != 0) {

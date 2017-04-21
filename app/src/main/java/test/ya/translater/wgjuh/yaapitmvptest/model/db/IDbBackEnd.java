@@ -9,7 +9,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.translate.LangsDirsModelDTO;
  * Created by wGJUH on 16.04.2017.
  */
 
-public interface IDbBackEnd {
+interface IDbBackEnd {
     /**
      * Метод добавления объекта в историю
      *

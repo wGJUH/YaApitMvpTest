@@ -15,13 +15,9 @@ import android.view.ViewGroup;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import test.ya.translater.wgjuh.yaapitmvptest.DATA;
-import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
-import test.ya.translater.wgjuh.yaapitmvptest.model.db.DbBackEnd;
-import test.ya.translater.wgjuh.yaapitmvptest.model.db.DbOpenHelper;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.FavoritePresenterImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.impl.HistoryPresenterImpl;
@@ -85,24 +81,13 @@ public class HistoryFavoritesFragment extends BaseFragment implements HistoryFav
         } else {
             historyFavoritePresenter = new FavoritePresenterImpl(ModelImpl.getInstance(), EventBusImpl.getInstance());
         }
-        viewAdapter = new HistoryFavoriteRecyclerViewAdapter(historyFavoritePresenter.getTranslateList(), isHistory, historyFavoritePresenter);
+        viewAdapter = new HistoryFavoriteRecyclerViewAdapter(historyFavoritePresenter.getTranslateList(), historyFavoritePresenter);
         historyFavoritePresenter.onBindView(this);
         Context context = view.getContext();
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(viewAdapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemViewCacheSize(1);
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
     }
 
     @Override
@@ -121,13 +106,6 @@ public class HistoryFavoritesFragment extends BaseFragment implements HistoryFav
     public void showError(String error) {
 
     }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        LeakCanaryApp.getRefWatcher(this.getContext()).watch(this);
-    }
-
 
     @Override
     public void scrollToPosition(int position) {
@@ -150,13 +128,11 @@ public class HistoryFavoritesFragment extends BaseFragment implements HistoryFav
     }
 
     @Override
-    public boolean showDeleteDialog(DictDTO dictDTO) {
+    public void showDeleteDialog(DictDTO dictDTO) {
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-        alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Удалить", (dialogInterface, i) -> {
-            historyFavoritePresenter.deleteItem(dictDTO);
-        });
+        alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Удалить",
+                (dialogInterface, i) -> historyFavoritePresenter.deleteItem(dictDTO));
         alertDialog.show();
-        return false;
     }
 
     @Override
@@ -173,6 +149,4 @@ public class HistoryFavoritesFragment extends BaseFragment implements HistoryFav
     public void updateAdapterNose(int i) {
         viewAdapter.notifyItemInserted(i);
     }
-
-
 }

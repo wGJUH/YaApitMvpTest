@@ -13,7 +13,7 @@ public class Mean implements Parcelable {
     @Expose
     private String text;
 
-    protected Mean(Parcel in) {
+    private Mean(Parcel in) {
         text = in.readString();
     }
 

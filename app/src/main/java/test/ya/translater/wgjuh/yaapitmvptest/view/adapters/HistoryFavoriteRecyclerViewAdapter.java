@@ -17,12 +17,10 @@ import test.ya.translater.wgjuh.yaapitmvptest.presenter.IHistoryFavoritePresente
 public class HistoryFavoriteRecyclerViewAdapter extends RecyclerView.Adapter<HistoryFavoriteRecyclerViewAdapter.ViewHolder> {
 
     private final List<DictDTO> mValues;
-    private boolean isHistory;
-    private IHistoryFavoritePresenter historyFavoritePresenter;
+    private final IHistoryFavoritePresenter historyFavoritePresenter;
 
-    public HistoryFavoriteRecyclerViewAdapter(List<DictDTO> items, boolean isHistory, IHistoryFavoritePresenter historyFavoritePresenter) {
+    public HistoryFavoriteRecyclerViewAdapter(List<DictDTO> items, IHistoryFavoritePresenter historyFavoritePresenter) {
         mValues = items;
-        this.isHistory = isHistory;
         this.historyFavoritePresenter = historyFavoritePresenter;
     }
 

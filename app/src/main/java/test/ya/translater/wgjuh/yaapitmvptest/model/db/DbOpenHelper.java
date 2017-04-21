@@ -7,10 +7,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import static test.ya.translater.wgjuh.yaapitmvptest.model.db.Contractor.*;
 
 
-/**
- * Created by wGJUH on 25.03.2017.
- */
-
 public class DbOpenHelper extends SQLiteOpenHelper {
 
     private static final int DB_VERSION = 1;
@@ -48,8 +44,6 @@ public class DbOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onConfigure(SQLiteDatabase db) {
         super.onConfigure(db);
-        db.setForeignKeyConstraintsEnabled(true);
-
     }
 
     @Override

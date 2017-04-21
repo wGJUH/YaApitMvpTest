@@ -9,10 +9,6 @@ import android.text.TextUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by wGJUH on 19.03.2017.
- */
-
 public class FragmentAdapter extends FragmentPagerAdapter {
     private final List<Fragment> mFragmentList = new ArrayList<>();
 

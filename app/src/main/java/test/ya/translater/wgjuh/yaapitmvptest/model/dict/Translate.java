@@ -32,7 +32,7 @@ public class Translate implements Parcelable {
     @Expose
     private List<Example> example = null;
 
-    protected Translate(Parcel in) {
+    private Translate(Parcel in) {
         text = in.readString();
         pos = in.readString();
         gen = in.readString();
@@ -64,11 +64,11 @@ public class Translate implements Parcelable {
         this.text = text;
     }
 
-    public String getPos() {
+    private String getPos() {
         return pos;
     }
 
-    public String getGen() {
+    private String getGen() {
         return gen;
     }
 

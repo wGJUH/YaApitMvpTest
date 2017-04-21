@@ -6,10 +6,6 @@ import rx.Observable;
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.LangsDirsModelDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 
-/**
- * Created by wGJUH on 08.04.2017.
- */
-
 public interface YandexDictionaryApiInterface {
 
     @GET("/api/v1/dicservice/getStoredLangs")

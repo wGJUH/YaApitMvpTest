@@ -1,7 +1,6 @@
 package test.ya.translater.wgjuh.yaapitmvptest.presenter.impl;
 
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
-import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
 import test.ya.translater.wgjuh.yaapitmvptest.view.adapters.LanguageSettingsRecyclerViewAdapter;
@@ -16,7 +15,7 @@ public class SettingsPresenter extends BasePresenter<SettingLangsFragment> {
 
     private final IModel iModel;
     private final IEventBus iEventBus;
-    private Event.EventType direction;
+    private final Event.EventType direction;
 
     public SettingsPresenter(IModel iModel, IEventBus iEventBus, Event.EventType direction) {
         this.iModel = iModel;
@@ -39,7 +38,7 @@ public class SettingsPresenter extends BasePresenter<SettingLangsFragment> {
     }
 
 
-    public void initRecyclerView() {
+    private void initRecyclerView() {
         view.setRecyclerViewAdapter(new LanguageSettingsRecyclerViewAdapter(iModel.getLangs(), this, direction));
     }
 

@@ -8,10 +8,6 @@ import retrofit2.http.Query;
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.LangsDirsModelDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslateDTO;
 
-/**
- * Created by wGJUH on 04.04.2017.
- */
-
 public interface YandexTranslateApiInterface {
     @POST("/api/v1.5/tr.json/getLangs")
     Observable<LangsDirsModelDTO> getLangs(@Query("key") String apiKey, @Query("ui") String lang);

@@ -17,8 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/textview_translate_textsize"
-        android:textColor="@color/colorBlack"
-        android:layout_marginTop="@dimen/text_top_margin" />
+        android:textColor="@color/colorBlack" />
     </ScrollView>
     <CheckBox
         android:id="@+id/btn_add_favorite"
@@ -28,6 +27,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginTop="@dimen/text_top_margin"
         android:layout_marginRight="@dimen/text_top_margin"
+        android:layout_marginEnd="@dimen/text_top_margin"
         android:button="@drawable/favorite_checkbox" />
 
     <android.support.v7.widget.RecyclerView

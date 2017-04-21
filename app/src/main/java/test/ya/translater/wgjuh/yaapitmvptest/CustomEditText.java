@@ -1,16 +1,14 @@
 package test.ya.translater.wgjuh.yaapitmvptest;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
-import android.widget.EditText;
 
 /**
  * Расширяем EditText для возможности использовать кнопку Готово вместе с multiLine режимом ввода
  */
-public class CustomEditText extends EditText {
+public class CustomEditText extends android.support.v7.widget.AppCompatEditText {
     public CustomEditText(Context context) {
         super(context);
     }
@@ -23,10 +21,6 @@ public class CustomEditText extends EditText {
         super(context, attrs, defStyleAttr);
     }
 
-    @Override
-    public void setCompoundDrawables(Drawable left, Drawable top, Drawable right, Drawable bottom) {
-        super.setCompoundDrawables(left, top, right, bottom);
-    }
 
     @Override
     public InputConnection onCreateInputConnection(EditorInfo outAttrs) {

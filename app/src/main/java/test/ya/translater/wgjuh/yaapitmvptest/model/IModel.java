@@ -7,9 +7,6 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.LangsDirsModelDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslateDTO;
 
-/**
- * Created by wGJUH on 04.04.2017.
- */
 
 public interface IModel {
 
@@ -45,7 +42,7 @@ public interface IModel {
 
     LangsDirsModelDTO getLangs();
 
-    DictDTO setFavorites(DictDTO dictDTO);
+    void setFavorites(DictDTO dictDTO);
 
     void updateHistoryDate(String id);
 

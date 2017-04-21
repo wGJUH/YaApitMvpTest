@@ -1,36 +1,21 @@
 package test.ya.translater.wgjuh.yaapitmvptest.presenter.impl;
 
 
-import android.app.Application;
-import android.content.Context;
-import android.util.Log;
-import android.view.inputmethod.InputMethodManager;
-
 import java.util.Locale;
 
-import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.IEventBus;
-import test.ya.translater.wgjuh.yaapitmvptest.model.IModel;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.IInputPresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.InputView;
 
-import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
-
-/**
- * Created by wGJUH on 07.04.2017.
- */
 
 public class InputPresenterImpl extends BasePresenter<InputView> implements IInputPresenter {
-    private final IModel model;
     private final IEventBus eventBus;
 
 
-    public InputPresenterImpl(IModel model,
-                              IEventBus eventBus) {
-        this.model = model;
+    public InputPresenterImpl(IEventBus eventBus) {
         this.eventBus = eventBus;
     }
 
@@ -66,7 +51,7 @@ public class InputPresenterImpl extends BasePresenter<InputView> implements IInp
         }));
     }
 
-    public void  setText(String text){
+    private void  setText(String text){
         view.setText(text);
 
     }
@@ -74,11 +59,5 @@ public class InputPresenterImpl extends BasePresenter<InputView> implements IInp
     public void clearInput() {
         view.clearText();
         eventBus.post(eventBus.createEvent(Event.EventType.BTN_CLEAR_CLICKED));
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop: " + this.getClass().getName());
     }
 }

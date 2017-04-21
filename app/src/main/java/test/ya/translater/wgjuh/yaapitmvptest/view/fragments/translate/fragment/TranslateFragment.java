@@ -18,7 +18,6 @@ import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import test.ya.translater.wgjuh.yaapitmvptest.LeakCanaryApp;
 import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.ModelImpl;
@@ -30,10 +29,6 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.TranslateView;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
-
-/**
- * Created by wGJUH on 06.04.2017.
- */
 
 public class TranslateFragment extends BaseFragment implements TranslateView {
     @BindView(R.id.textview_common_translate)
@@ -51,7 +46,6 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
     @BindView(R.id.error_text)
     TextView textView;
 
-    View view;
     private DictionaryTranslateRecyclerViewAdapter viewAdapter;
 
     private ITranslatePrsenter translatePresenterImpl;
@@ -81,7 +75,7 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.list_translate_block, container, false);
+        View view = inflater.inflate(R.layout.list_translate_block, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -139,7 +133,6 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putBoolean("IS_ERROR",error_frame.getVisibility() == View.VISIBLE);
         super.onSaveInstanceState(outState);
     }
 
@@ -147,29 +140,4 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
     public void setBtnFavoriteEnabled(Boolean enabled) {
         this.btnFavorite.setEnabled(enabled);
     }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        Log.d(TAG, "onDetach: " + getClass().getName());
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "onDestroy: " + getClass().getName());
-        LeakCanaryApp.getRefWatcher(this.getContext()).watch(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop: " + getClass().getName());
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
 }

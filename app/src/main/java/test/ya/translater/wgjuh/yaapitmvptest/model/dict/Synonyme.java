@@ -14,12 +14,12 @@ public class Synonyme implements Parcelable {
     private String text;
     @SerializedName("pos")
     @Expose
-    private String pos;
+    private final String pos;
     @SerializedName("gen")
     @Expose
-    private String gen;
+    private final String gen;
 
-    protected Synonyme(Parcel in) {
+    private Synonyme(Parcel in) {
         text = in.readString();
         pos = in.readString();
         gen = in.readString();

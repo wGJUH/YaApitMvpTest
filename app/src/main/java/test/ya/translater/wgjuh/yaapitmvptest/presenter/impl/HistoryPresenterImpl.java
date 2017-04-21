@@ -102,10 +102,9 @@ public class HistoryPresenterImpl extends BasePresenter<HistoryFavoriteView> imp
     }
 
     @Override
-    public int deleteItem(DictDTO dictDTO) {
+    public void deleteItem(DictDTO dictDTO) {
         int removed = iModel.removeHistoryItem(dictDTO);
         view.removeItemOnPosition(removed);
-        return removed;
     }
 
     @Override

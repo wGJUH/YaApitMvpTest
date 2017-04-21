@@ -10,15 +10,11 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
-
-/**
- * Created by wGJUH on 04.04.2017.
- */
-
+@SuppressWarnings("DefaultFileTemplate")
 public abstract  class BasePresenter<T extends View> implements Presenter {
 
     private final CompositeSubscription compositeSubscription = new CompositeSubscription();
-    public T view;
+    T view;
 
 
     void addSubscription(Subscription subscription) {

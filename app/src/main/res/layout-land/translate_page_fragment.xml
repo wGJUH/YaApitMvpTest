@@ -1,7 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorWhite"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
@@ -11,7 +10,8 @@
         android:layout_below="@+id/fragment_toolbar"
         android:orientation="horizontal"
         android:padding="@dimen/activity_horizontal_margin"
-        android:weightSum="2">
+        android:weightSum="2"
+        android:baselineAligned="true">
 
         <FrameLayout
             android:id="@+id/input_translateblock"
@@ -55,6 +55,7 @@
             <ImageButton
                 android:id="@+id/btn_change_langs"
                 android:src="@drawable/ic_action_change_langs"
+                android:contentDescription="@string/content_description_btn_change_langs"
                 android:background="@color/transparent"
                 android:layout_weight="1"
                 android:layout_width="0dp"

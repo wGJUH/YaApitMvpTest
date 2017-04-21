@@ -4,7 +4,6 @@
     android:layout_height="wrap_content"
     android:padding="@dimen/fragment_historyfavoriteitem_high_padding">
     <LinearLayout
-        android:id="@+id/history_translate_linear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -28,6 +27,7 @@
         android:textSize="16sp"
         android:layout_marginTop="@dimen/text_top_margin"
         android:layout_marginLeft="@dimen/text_top_margin"
+        android:layout_marginStart="@dimen/text_top_margin"
         android:textColor="@android:color/darker_gray"
         android:maxLines="1"
         android:ellipsize="end"

@@ -78,7 +78,7 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
         addSubscription(eventBusImpl.subscribe(this::onEvent));
     }
 
-    public void removeAllNotFavorite() {
+    private void removeAllNotFavorite() {
         for (Iterator<DictDTO> it = iModel.getFavoriteDictDTOs().iterator(); it.hasNext(); ) {
             if (it.next().getFavorite().equals("-1")) {
                 it.remove();
@@ -114,9 +114,8 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
     }
 
     @Override
-    public int deleteItem(DictDTO dictDTO) {
+    public void deleteItem(DictDTO dictDTO) {
         eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.UPDATE_FAVORITE, dictDTO));
-        return 0;
     }
 
     @Override
@@ -128,6 +127,5 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
     @Override
     public void onLongItemClick(DictDTO dictDTO) {
         deleteItem(dictDTO);
-        //view.showDeleteDialog(dictDTO);
     }
 }

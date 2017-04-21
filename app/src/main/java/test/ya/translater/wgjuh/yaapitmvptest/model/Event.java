@@ -6,13 +6,9 @@ import android.util.Log;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
-/**
- * Created by wGJUH on 07.04.2017.
- */
-
 public class Event implements Parcelable {
 
-    protected Event(Parcel in) {
+    private Event(Parcel in) {
         this.content = in.createTypedArray(Event.CREATOR);
         this.eventType = EventType.valueOf(in.readString());
     }
@@ -62,10 +58,4 @@ public class Event implements Parcelable {
         this.eventType = eventType;
         this.content = content;
     }
-
-    public Object getFirst(){
-        return content[0];
-    }
-
-    // TODO: 09.04.2017  выпилить методы, дергать поля на прямую
 }

@@ -57,9 +57,10 @@ public class  HistoryFavoriteFragmentContainer extends BaseFragment {
         fragmentPagerAdapter.addFragment(HistoryFavoritesFragment.newInstance(false), HistoryFavoritesFragment.class.getName()+2);
         viewPager.setAdapter(fragmentPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
-        // TODO: 14.04.2017 Как можно избежать подобного именования вкладок ?
-        tabLayout.getTabAt(0).setText(R.string.tab_history);
-        tabLayout.getTabAt(1).setText(R.string.tab_favorite);
+        if(tabLayout.getTabCount() == 2) {
+            tabLayout.getTabAt(0).setText(R.string.tab_history);
+            tabLayout.getTabAt(1).setText(R.string.tab_favorite);
+        }
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -68,11 +69,9 @@ public class  HistoryFavoriteFragmentContainer extends BaseFragment {
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                // TODO: 15.04.2017  НЕОБХОДИМО СРОЧНО ПОПРАВИТЬ  УДАЛЕНИЕ ИЗ ИЗБРАННОГО ЧЕРЕЗ ИСТОРИЮ !
                 if(tab.getPosition() == 1) {
                     EventBusImpl.getInstance().post(EventBusImpl.getInstance().createEvent(Event.EventType.DELETE_FAVORITE));
                 }
-
             }
 
             @Override

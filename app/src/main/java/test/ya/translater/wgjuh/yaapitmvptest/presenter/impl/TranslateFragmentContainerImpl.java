@@ -14,11 +14,6 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment.
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
-
-/**
- * Created by wGJUH on 04.04.2017.
- */
-// TODO: 06.04.2017 добавить bind, unbind для вьюх срочно !
 public class TranslateFragmentContainerImpl extends BasePresenter<TranslateContainerView> {
     private final IModel iModel;
     private final IEventBus iEventBus;
@@ -39,7 +34,6 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TranslateConta
     }
 
     public void addFragments(InputFragment inputFragment, TranslateFragment translateFragment) {
-        // TODO: 11.04.2017 Ипсравить баг с падением приложения при недоступности сети
         iModel.updateLanguages();
         view.getTranslateFragmentManager()
                 .beginTransaction()
