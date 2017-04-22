@@ -47,6 +47,8 @@ public class HistoryPresenterImpl extends BasePresenter<HistoryFavoriteView> imp
     @Override
     public void addItem(DictDTO dictDTO) {
             insertItemInNoseOfAdapterDataAndNotify(dictDTO);
+            view.scrollToPosition(0);
+
     }
 
     @Override
