@@ -2,78 +2,92 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-    <ScrollView
-        android:id="@+id/textview_common_translate_scroll"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toLeftOf="@+id/btn_add_favorite"
-        android:layout_toStartOf="@+id/btn_add_favorite">
-    <TextView
-        android:id="@+id/textview_common_translate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/colorBlack" />
-    </ScrollView>
-    <CheckBox
-        android:id="@+id/btn_add_favorite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="@dimen/text_top_margin"
-        android:layout_marginRight="@dimen/text_top_margin"
-        android:layout_marginEnd="@dimen/text_top_margin"
-        android:button="@drawable/favorite_checkbox" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_translate"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:overScrollMode="never"
-        android:layout_below="@id/textview_common_translate_scroll"
-        android:layout_toLeftOf="@+id/btn_add_favorite"
-        android:layout_toStartOf="@+id/btn_add_favorite">
-    </android.support.v7.widget.RecyclerView>
-
-    <android.support.v4.widget.ContentLoadingProgressBar
-        android:id="@+id/progressBar"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:visibility="invisible"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:orientation="vertical">
 
 
-</RelativeLayout>
+        <ScrollView
+            android:id="@+id/textview_common_translate_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/btn_add_favorite"
+            android:layout_toStartOf="@+id/btn_add_favorite">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            <TextView
+                android:id="@+id/textview_common_translate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/colorBlack" />
+                <include layout="@layout/license"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:id="@+id/license_window"
+                    android:visibility="gone"/>
+            </LinearLayout>
+        </ScrollView>
+
+
+
+        <CheckBox
+            android:id="@+id/btn_add_favorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="@dimen/text_top_margin"
+            android:layout_marginRight="@dimen/text_top_margin"
+            android:layout_marginTop="@dimen/text_top_margin"
+            android:button="@drawable/favorite_checkbox" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_translate"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/textview_common_translate_scroll"
+            android:layout_toLeftOf="@+id/btn_add_favorite"
+            android:layout_toStartOf="@+id/btn_add_favorite"
+            android:overScrollMode="never">
+        </android.support.v7.widget.RecyclerView>
+
+        <android.support.v4.widget.ContentLoadingProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:visibility="invisible" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/error_frame"
-        android:visibility="gone"
         android:layout_width="match_parent"
-        android:background="@color/colorWhite"
         android:layout_height="match_parent"
-        android:clickable="true">
+        android:clickable="true"
+        android:visibility="gone">
+
         <TextView
             android:id="@+id/error_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
         <Button
-            android:layout_below="@id/error_text"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:id="@+id/btn_retry"
-            android:text="@string/translate_error"
-            android:layout_centerInParent="true"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_below="@id/error_text"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="@string/translate_error" />
     </RelativeLayout>
 </FrameLayout>

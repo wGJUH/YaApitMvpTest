@@ -9,6 +9,7 @@ import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +46,9 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
     @BindView(R.id.btn_retry)
     Button btn_retry;
     @BindView(R.id.error_text)
-    TextView textView;
+    TextView error_textView;
+    @BindView(R.id.license_window)
+    LinearLayout license;
 
     private DictionaryTranslateRecyclerViewAdapter viewAdapter;
 
@@ -55,8 +58,8 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         translatePresenterImpl = new TranslatePresenterImpl(ModelImpl.getInstance(), EventBusImpl.getInstance());
-        viewAdapter = new DictionaryTranslateRecyclerViewAdapter(translatePresenterImpl.getDictionarySate());
         translatePresenterImpl.onBindView(this);
+        viewAdapter = new DictionaryTranslateRecyclerViewAdapter(translatePresenterImpl.getDictionarySate(), getActivity());
         translatePresenterImpl.restoreState();
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         recyclerView.setAdapter(viewAdapter);
@@ -64,22 +67,22 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
                 LinearLayout.VERTICAL);
         recyclerView.addItemDecoration(dividerItemDecoration);
         btnFavorite.setOnClickListener(btn -> {
-            if(btnFavorite.isChecked()) {
+            if (btnFavorite.isChecked()) {
                 translatePresenterImpl.addFavorite();
-            }else {
+            } else {
                 translatePresenterImpl.deleteFavorite();
             }
         });
         btn_retry.setOnClickListener(btn_retry -> translatePresenterImpl.startRetry());
         translate.setOnClickListener(textView -> {
             ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData clip = ClipData.newPlainText(((TextView)textView).getText(), ((TextView)textView).getText());
+            ClipData clip = ClipData.newPlainText(((TextView) textView).getText(), ((TextView) textView).getText());
             clipboard.setPrimaryClip(clip);
-            Toast.makeText(getActivity().getApplicationContext(),getActivity().getResources().getText(R.string.copy_to_clipdoard), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity().getApplicationContext(), getActivity().getResources().getText(R.string.copy_to_clipdoard), Toast.LENGTH_SHORT).show();
         });
+
     }
 
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_translate_recycler_list, container, false);
@@ -133,7 +136,7 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
 
     @Override
     public void showError(String error) {
-        textView.setText(error);
+        error_textView.setText(error);
         error_frame.setVisibility(View.VISIBLE);
     }
 
@@ -147,4 +150,17 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
         this.translate.setEnabled(enabled);
         this.btnFavorite.setEnabled(enabled);
     }
+
+    @Override
+    public void showLicenseUnderCommonTranslate(Boolean show) {
+        if (show) {
+            license.setVisibility(View.VISIBLE);
+            license.findViewById(R.id.textview_dictionary_license).setVisibility(View.GONE);
+            ((TextView)license.findViewById(R.id.textview_translate_license)).setMovementMethod(LinkMovementMethod.getInstance());
+        } else {
+            license.setVisibility(View.GONE);
+        }
+
+    }
+
 }

@@ -8,6 +8,8 @@
     <string name="content_description_btn_clear">Очистить</string>
     <string name="content_description_btn_change_langs">Сменить языки</string>
     <string name="copy_to_clipdoard">Скопировано в буфер обмена.</string>
+    <string name="yandext_translate_license">Переведено сервисом <a href='http://translate.yandex.ru/'>Яндекс.Переводчик</a></string>
+    <string name="yandext_dictionary_license">Реализовано с помощью сервиса <a href='http://api.yandex.ru/dictionary/'>Яндекс.Словарь</a></string>
     <string-array name="ru_ui_languages">
         <item>Азербайджанский|az</item>
         <item>Албанский|sq</item>

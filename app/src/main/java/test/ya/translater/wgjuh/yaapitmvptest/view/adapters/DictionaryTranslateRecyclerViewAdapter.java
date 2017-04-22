@@ -1,7 +1,9 @@
 package test.ya.translater.wgjuh.yaapitmvptest.view.adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,10 +22,11 @@ public class DictionaryTranslateRecyclerViewAdapter extends RecyclerView.Adapter
 
     private final List<DefRecyclerItem> defRecyclerItems;
     private ViewHolder viewHolder;
+    private Context context;
 
-    public DictionaryTranslateRecyclerViewAdapter(List<DefRecyclerItem> defRecyclerItems) {
+    public DictionaryTranslateRecyclerViewAdapter(List<DefRecyclerItem> defRecyclerItems, Context context) {
         this.defRecyclerItems = defRecyclerItems;
-
+        this.context = context;
     }
 
     @Override
@@ -65,6 +68,10 @@ public class DictionaryTranslateRecyclerViewAdapter extends RecyclerView.Adapter
                 }
 
             }
+            holder.licenseView = LayoutInflater.from(context).inflate(R.layout.license, null);
+            ((TextView) holder.licenseView.findViewById(R.id.textview_translate_license)).setMovementMethod(LinkMovementMethod.getInstance());
+            ((TextView) holder.licenseView.findViewById(R.id.textview_dictionary_license)).setMovementMethod(LinkMovementMethod.getInstance());
+            holder.linearLayout.addView(holder.licenseView);
         }
     }
 
@@ -80,6 +87,7 @@ public class DictionaryTranslateRecyclerViewAdapter extends RecyclerView.Adapter
 
     class ViewHolder extends RecyclerView.ViewHolder {
         final LinearLayout linearLayout;
+        View licenseView;
 
         ViewHolder(View itemView) {
             super(itemView);

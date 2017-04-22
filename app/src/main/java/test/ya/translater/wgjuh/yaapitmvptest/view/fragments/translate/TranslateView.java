@@ -17,4 +17,6 @@ public interface TranslateView extends View {
     void hideError();
 
     void setBtnFavoriteEnabled(Boolean enabled);
+
+    void showLicenseUnderCommonTranslate(Boolean show);
 }

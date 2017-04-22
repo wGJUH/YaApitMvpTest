@@ -48,6 +48,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
         addSubscription(eventBus.subscribe(event -> {
             switch (event.eventType) {
                 case BTN_CLEAR_CLICKED:
+                    showLicenseUnderCommonTranslate(false);
                     clearTranslate();
                     setFavorite(false);
                     model.setLastTranslate(null);
@@ -76,6 +77,10 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
                     break;
             }
         }));
+    }
+
+    private void showLicenseUnderCommonTranslate(boolean show) {
+        view.showLicenseUnderCommonTranslate(show);
     }
 
     private void initTranslateCache(String target, String langs) {
@@ -125,7 +130,6 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
         addSubscription(subscription);
     }
 
-
     @Override
     public void setFavorite(boolean isFavorite) {
         view.setBtnFavoriteSelected(isFavorite);
@@ -144,7 +148,12 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(this::getDefRecyclerItemObservable)
-                .subscribe(this::insertItemInTaleOfAdapterListAndNotify);
+                .subscribe(this::insertItemInTaleOfAdapterListAndNotify,throwable -> {
+                    Log.e(TAG, "updateRecylcerView: " + throwable.getMessage() );
+                    if(throwable.getMessage().equals("emptyDef")){
+                        showLicenseUnderCommonTranslate(true);
+                    }
+                });
         view.showProgressBar(false);
     }
 
@@ -232,8 +241,8 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
             updateChecboxFavorite(!model.getLastTranslate().getFavorite().equals("-1"));
             updateTranslateView(model.getLastTranslate().getCommonTranslate());
             updateRecylcerView(model.getLastTranslate());
-        } else {
 
+        } else {
             view.setBtnFavoriteEnabled(false);
             translateFromInternet();
         }

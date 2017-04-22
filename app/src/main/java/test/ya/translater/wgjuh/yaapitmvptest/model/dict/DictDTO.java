@@ -50,14 +50,14 @@ public class DictDTO implements Parcelable {
     };
 
     public Observable<Def> getDef() {
-        if (def != null) {
+        if (def != null && def.size() != 0) {
             return Observable.from(def)
 
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .unsubscribeOn(Schedulers.io());
         }
-        return Observable.never();
+        return Observable.error(new Throwable("emptyDef"));
     }
 
     public void setCommonTranslate(String commonTranslate) {
