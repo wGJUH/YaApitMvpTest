@@ -10,25 +10,17 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslateDTO;
 
 public interface Model {
 
-    void initArrays();
-
-    List<DictDTO> getHistoryDictDTOs();
-
-    List<DictDTO> getFavoriteDictDTOs();
-
-    DictDTO getLastTranslate();
-
-    void setLastTranslate(DictDTO lastTranslate);
-
-    void insertHistoryDictDTOs(DictDTO historyDictDTO);
-
-    void insertFavoriteDictDTOs(DictDTO favoriteDictDTO);
-
     Observable<TranslateDTO> getTranslateForLanguage (String target, String language);
+
+    Observable<DictDTO> getZipTranslate();
+
+    Observable<DictDTO> saveToDB(DictDTO dictDTO);
 
     Observable<DictDTO> getDicTionaryTranslateForLanguage(String target, String language);
 
-    DictDTO getHistoryTranslate(String target, String langs);
+    int removeHistoryItem(DictDTO dictDTO);
+
+    LangsDirsModelDTO getLangs();
 
     String getTranslateLangPair();
 
@@ -36,13 +28,33 @@ public interface Model {
 
     String getFromLang();
 
+    String getLangByCode(String code);
+
+    String getLastTranslateTarget();
+
+    DictDTO getFavoriteTranslate(String targetText, String translateDirection);
+
+    DictDTO getHistoryTranslate(String target, String langs);
+
+    DictDTO getLastTranslate();
+
+    List<DictDTO> getFavoriteDictDTOs();
+
+    List<DictDTO> getHistoryDictDTOs();
+
+    void initArrays();
+
+    void insertHistoryDictDTOs(DictDTO historyDictDTO);
+
+    void insertFavoriteDictDTOs(DictDTO favoriteDictDTO);
+
+    void setLastTranslate(DictDTO lastTranslate);
+
     void setTranslateLang(String translateLang);
 
     void setFromLang(String translateLang);
 
     void updateLanguages();
-
-    LangsDirsModelDTO getLangs();
 
     void setFavorites(DictDTO dictDTO);
 
@@ -50,17 +62,7 @@ public interface Model {
 
     void initZipTranslate(String target, String lang);
 
-    Observable<DictDTO> getZipTranslate();
-
-    String getLangByCode(String code);
-
-    int removeHistoryItem(DictDTO dictDTO);
-
-    DictDTO getFavoriteTranslate(String targetText, String translateDirection);
-
     void freeCachedOBservable();
-
-    String getLastTranslateTarget();
 
     void setLastTranslateTarget(String lastTranslateTarget);
 
@@ -68,12 +70,5 @@ public interface Model {
 
     void moveHistoryDictDto(int oldPosition, DictDTO historyDictDTO);
 
-    void insertFavoriteDictDTOToTheTale(DictDTO dictDTO);
-
     void updateFavoriteDto(int position, DictDTO dictDTO);
-
-    void moveFavoriteDictDto(int oldPosition, DictDTO dictDTO);
-
-
-    Observable<DictDTO> saveToDB(DictDTO dictDTO);
 }

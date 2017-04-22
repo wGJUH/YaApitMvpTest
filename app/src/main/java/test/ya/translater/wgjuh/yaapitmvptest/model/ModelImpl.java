@@ -13,7 +13,6 @@ import java.util.Locale;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import test.ya.translater.wgjuh.yaapitmvptest.DATA;
 import test.ya.translater.wgjuh.yaapitmvptest.App;
@@ -31,7 +30,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslateDTO;
 public class ModelImpl implements Model {
 
     private static ModelImpl model;
-    private final Context context = App.getAppContext();
+    private Context context = App.getAppContext();
     private final Observable.Transformer schedulersTransformer;
     private final YandexTranslateApiInterface yandexTranslateApiInterface;
     private final YandexDictionaryApiInterface yandexDictionaryApiInterface;
@@ -45,11 +44,16 @@ public class ModelImpl implements Model {
     private final List<DictDTO> favoriteDictDTOs = new ArrayList<>();
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    ModelImpl(EventBus eventBus, YandexTranslateApiInterface yandexTranslateApiInterface, YandexDictionaryApiInterface yandexDictionaryApiInterface) {
+    ModelImpl(EventBus eventBus,
+              YandexTranslateApiInterface yandexTranslateApiInterface,
+              YandexDictionaryApiInterface yandexDictionaryApiInterface,
+              DbBackEndImpl dbBackEnd,
+              Context context) {
         this.eventBus = eventBus;
         this.yandexTranslateApiInterface = yandexTranslateApiInterface;
         this.yandexDictionaryApiInterface = yandexDictionaryApiInterface;
-        dbBackEndImpl = new DbBackEndImpl(context);
+        dbBackEndImpl = dbBackEnd;
+        this.context = context;
         schedulersTransformer = o -> ((Observable) o).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .unsubscribeOn(Schedulers.io());
@@ -133,7 +137,11 @@ public class ModelImpl implements Model {
 
     public static Model getInstance() {
         if (model == null) {
-            model = new ModelImpl(EventBusImpl.getInstance(), YandexTranslateApiModule.getYandexTranslateApiInterface(), YandexDictionaryApiModule.getYandexDictionaryApiInterface());
+            model = new ModelImpl(EventBusImpl.getInstance(),
+                    YandexTranslateApiModule.getYandexTranslateApiInterface(),
+                    YandexDictionaryApiModule.getYandexDictionaryApiInterface(),
+                    new DbBackEndImpl(App.getAppContext()),
+                    App.getAppContext());
         }
         return model;
     }
@@ -169,8 +177,8 @@ public class ModelImpl implements Model {
     @Override
     public void updateLanguages() {
         langsDirsModelDTOs = dbBackEndImpl.getStoredLangs();
-        String[] strings = (App.getAppContext()).getResources().getStringArray(R.array.ru_ui_languages);
-        if(langsDirsModelDTOs.getLangs().size() == 0) {
+        String[] strings = context.getResources().getStringArray(R.array.ru_ui_languages);
+        if (langsDirsModelDTOs.getLangs().size() == 0) {
             for (String s : strings) {
                 String[] singleLang = s.split("\\|");
                 langsDirsModelDTOs.getLangs().put(singleLang[1], singleLang[0]);
@@ -202,7 +210,7 @@ public class ModelImpl implements Model {
                     .flatMap(aLong -> Observable.just(dictDTO.setId(Long.toString(aLong))))     //Уставнавливаем объекту id из базы
                     .map(dbBackEndImpl::getFavoriteId)
                     .map(dictDTO::setFavorite);
-        }else {
+        } else {
             return Observable.just(model.getHistoryTranslate(dictDTO.getTarget(), dictDTO.getLangs()));
         }
     }
@@ -211,7 +219,7 @@ public class ModelImpl implements Model {
     public void setFavorites(DictDTO dictDTO) {
         long result = -1;
         if (!dbBackEndImpl.getFavoriteId(dictDTO).equals("-1")) {
-            dbBackEndImpl.removeFavoriteItemAndUpdateHistory(dictDTO);
+            dbBackEndImpl.removeFavoriteItem(dictDTO);
             dictDTO.setFavorite("-1");
             favoriteDictDTOs.set(favoriteDictDTOs.indexOf(dictDTO), dictDTO);
         } else {
@@ -221,12 +229,12 @@ public class ModelImpl implements Model {
                 if (favoriteDictDTOs.contains(dictDTO)) {
                     favoriteDictDTOs.set(favoriteDictDTOs.indexOf(dictDTO), dictDTO);
                 } else {
-                    favoriteDictDTOs.add(0, dictDTO);
+                    insertFavoriteDictDTOs(dictDTO);
                 }
-            }else if (favoriteDictDTOs.contains(dictDTO)) {
+            } else if (favoriteDictDTOs.contains(dictDTO)) {
                 favoriteDictDTOs.set(favoriteDictDTOs.indexOf(dictDTO), dictDTO);
-            }else{
-                favoriteDictDTOs.add(0, dictDTO);
+            } else {
+                insertFavoriteDictDTOs(dictDTO);
             }
         }
     }
@@ -341,24 +349,7 @@ public class ModelImpl implements Model {
     }
 
     @Override
-    public void insertFavoriteDictDTOToTheTale(DictDTO dictDTO) {
-        favoriteDictDTOs.add(dictDTO);
-    }
-
-    @Override
     public void updateFavoriteDto(int position, DictDTO dictDTO) {
         favoriteDictDTOs.set(position, dictDTO);
     }
-
-    @Override
-    public void moveFavoriteDictDto(int oldPosition, DictDTO dictDTO) {
-        int position = favoriteDictDTOs.indexOf(dictDTO);
-        if (position != -1) {
-            favoriteDictDTOs.remove(position);
-            favoriteDictDTOs.add(0, dictDTO);
-        }
-    }
-
-
-
 }

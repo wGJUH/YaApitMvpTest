@@ -19,20 +19,9 @@ interface DbBackEnd {
      */
     long insertHistoryTranslate(DictDTO dictDTO);
 
-    void removeFavoriteItemAndUpdateHistory(DictDTO dictDTO);
+    void removeFavoriteItem(DictDTO dictDTO);
 
     String getHistoryTranslate(String target, String langs);
-
-    /**
-     * Метод позволяет получать сохраненный перевод из бд.
-     * При получении в объекта типа DictDTO ему присваевается id записи в бд.
-     *
-     * @param id идентификатор в таблице история
-     * @return DictDTO объект перевода
-     * @see DictDTO
-     */
-
-    String getHistoryTranslate(long id);
 
     /**
      * Метод обнавляет список доступных языков в таблице Языки
@@ -49,15 +38,17 @@ interface DbBackEnd {
      */
     LangsDirsModelDTO getStoredLangs();
 
-    int removeHistoryItem(DictDTO dictDTO);
+    void removeHistoryItem(DictDTO dictDTO);
 
     long insertFavoriteItem(DictDTO dictDTO);
 
     List<String> getHistoryListTranslate();
 
-    String getFavoriteTranslate(String targetText, String translateDirection);
-
     List<String> getFavoriteListTranslate();
 
-    String getLangByCode(String code);
+    long updateHistoryDate(String id);
+
+    String getHistoryId(DictDTO dictDTO);
+
+    String getFavoriteId(DictDTO dictDTO);
 }
