@@ -87,7 +87,11 @@ public class HistoryFavoriteRecyclerViewAdapter extends RecyclerView.Adapter<His
 
     @Override
     public int getItemCount() {
-        return mValues.size()+1;
+        if(mValues.size() == 0){
+            return 0;
+        }else {
+            return mValues.size() + 1;
+        }
     }
 
 
