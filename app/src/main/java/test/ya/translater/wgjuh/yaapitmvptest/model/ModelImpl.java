@@ -56,14 +56,15 @@ public class ModelImpl implements Model {
         initArrays();
     }
 
-    private void initArrays() {
+    @Override
+    public void initArrays() {
         initStoredLangs();
         initHistoryArray();
         initFavoriteArray();
     }
 
     private void initStoredLangs() {
-        if (langsDirsModelDTOs == null) {
+        if (langsDirsModelDTOs.getLangs().size() == 0) {
             updateLanguages();
         }
     }
@@ -222,7 +223,6 @@ public class ModelImpl implements Model {
                 } else {
                     favoriteDictDTOs.add(0, dictDTO);
                 }
-                dbBackEndImpl.setHistoryItemFavorite(dictDTO, result);
             }else if (favoriteDictDTOs.contains(dictDTO)) {
                 favoriteDictDTOs.set(favoriteDictDTOs.indexOf(dictDTO), dictDTO);
             }else{

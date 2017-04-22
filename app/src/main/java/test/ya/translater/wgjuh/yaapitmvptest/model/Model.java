@@ -10,6 +10,8 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslateDTO;
 
 public interface Model {
 
+    void initArrays();
+
     List<DictDTO> getHistoryDictDTOs();
 
     List<DictDTO> getFavoriteDictDTOs();

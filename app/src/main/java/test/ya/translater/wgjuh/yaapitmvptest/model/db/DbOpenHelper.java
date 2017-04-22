@@ -28,8 +28,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
                 Translate.TARGET + " TEXT NOT NULL, " +
                 Translate.LANGS + " TEXT NOT NULL, " +
                 Translate.JSON + " TEXT UNIQUE NOT NULL, " +
-                Translate.DATE + " INTEGER NOT NULL, " +
-                Translate.FAVORITE + " INTEGER DEFAULT -1 " +
+                Translate.DATE + " INTEGER NOT NULL " +
                 ")");
 
         db.execSQL("CREATE TABLE " + DB_TABLE_FAVORITES + "(" +

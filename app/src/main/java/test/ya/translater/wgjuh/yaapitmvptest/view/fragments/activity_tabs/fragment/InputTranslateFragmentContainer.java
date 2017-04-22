@@ -25,7 +25,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.activity_tabs.Trans
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment.InputFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment.TranslateFragment;
 
-public class InputTranslateContainerFragmentContainer extends BaseFragment implements TranslateContainerView {
+public class InputTranslateFragmentContainer extends BaseFragment implements TranslateContainerView {
 
     @BindView(R.id.input_translateblock)
     FrameLayout inputFrame;
@@ -39,7 +39,8 @@ public class InputTranslateContainerFragmentContainer extends BaseFragment imple
     ImageButton imageButton;
     private TranslateFragmentContainerImpl translatePresenter;
     private FragmentManager fragmentManager;
-    public InputTranslateContainerFragmentContainer() {
+
+    public InputTranslateFragmentContainer() {
 
     }
 
@@ -83,6 +84,8 @@ public class InputTranslateContainerFragmentContainer extends BaseFragment imple
         new InputFragment();
        if (savedInstanceState == null) {
            translatePresenter.addFragments(new InputFragment(), new TranslateFragment());
+       }else{
+            translatePresenter.updateDataArrays();
        }
         translatePresenter.updateToolbarLanguages(false);
         fromLanguageTextView.setOnClickListener(text -> translatePresenter.onChooseLanguage(Event.EventType.FROM_LANGUAGE));

@@ -20,9 +20,6 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TranslateConta
         updateToolbarLanguages(true);
     }
 
-    /**
-     * Данный презентер будет являтся презентером для composite view состоящего из трех фрагментов
-     */
     public TranslateFragmentContainerImpl(Model model, EventBus eventBus) {
         this.model = model;
         this.eventBus = eventBus;
@@ -102,5 +99,9 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TranslateConta
             view.setToLanguageTextView(model.getLangByCode(model.getTranslateLang()));
             view.setFromLanguageTextView(model.getLangByCode(model.getFromLang()));
         }
+    }
+
+    public void updateDataArrays() {
+        model.initArrays();
     }
 }

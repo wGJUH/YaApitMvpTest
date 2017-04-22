@@ -27,7 +27,6 @@ interface Contractor {
         String LANGS = "langs";
         String JSON = "json";
         String DATE = "date";
-        String FAVORITE = "favorite";
     }
 
     interface Favorite {

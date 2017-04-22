@@ -45,7 +45,6 @@ public class DbBackEndImpl implements Contractor, DbBackEnd {
             sqLiteDatabase.setTransactionSuccessful();
         }
         sqLiteDatabase.endTransaction();
-        sqLiteDatabase.close();
         return inserted;
     }
 
@@ -64,22 +63,9 @@ public class DbBackEndImpl implements Contractor, DbBackEnd {
             sqLiteDatabase.setTransactionSuccessful();
         }
         sqLiteDatabase.endTransaction();
-        sqLiteDatabase.close();
         return inserted;
     }
 
-    @Override
-    public void setHistoryItemFavorite(DictDTO dictDTO, long favoriteId) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(Translate.FAVORITE, favoriteId);
-        sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
-        sqLiteDatabase.beginTransaction();
-        if (sqLiteDatabase.update(DB_TABLE_HISTORY, contentValues, "id=?", new String[]{dictDTO.getId()}) != -1) {
-            sqLiteDatabase.setTransactionSuccessful();
-        }
-        sqLiteDatabase.endTransaction();
-        sqLiteDatabase.close();
-    }
 
     @Override
     public String getFavoriteTranslate(String targetText, String translateDirection) {
@@ -145,7 +131,6 @@ public class DbBackEndImpl implements Contractor, DbBackEnd {
             sqLiteDatabase.setTransactionSuccessful();
         }
         sqLiteDatabase.endTransaction();
-        sqLiteDatabase.close();
     }
 
     @Override
@@ -159,15 +144,12 @@ public class DbBackEndImpl implements Contractor, DbBackEnd {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        sqLiteDatabase.close();
         return langModel;
     }
 
     @Override
     public int removeHistoryItem(DictDTO dictDTO) {
         int deleted;
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(Translate.FAVORITE, "-1");
         sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
         sqLiteDatabase.beginTransaction();
         deleted = sqLiteDatabase.delete(DB_TABLE_HISTORY, Translate.ID + " =? ", new String[]{dictDTO.getId()});
@@ -175,23 +157,18 @@ public class DbBackEndImpl implements Contractor, DbBackEnd {
             sqLiteDatabase.setTransactionSuccessful();
         }
         sqLiteDatabase.endTransaction();
-        sqLiteDatabase.close();
         return deleted;
     }
 
     @Override
     public void removeFavoriteItemAndUpdateHistory(DictDTO dictDTO) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(Translate.FAVORITE, "-1");
         sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
         sqLiteDatabase.beginTransaction();
         int i = sqLiteDatabase.delete(DB_TABLE_FAVORITES, Favorite.ID + "=?", new String[]{dictDTO.getFavorite()});
-        int j = sqLiteDatabase.update(DB_TABLE_HISTORY, contentValues, Translate.FAVORITE + "=?", new String[]{dictDTO.getFavorite()});
-        if (i != 0 | j != 0) {
+        if (i != 0 ) {
             sqLiteDatabase.setTransactionSuccessful();
         }
         sqLiteDatabase.endTransaction();
-        sqLiteDatabase.close();
     }
 
     @Override
@@ -206,7 +183,6 @@ public class DbBackEndImpl implements Contractor, DbBackEnd {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        sqLiteDatabase.close();
         return dictDTOs;
     }
 
@@ -222,7 +198,6 @@ public class DbBackEndImpl implements Contractor, DbBackEnd {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        sqLiteDatabase.close();
         return dictDTOs;
     }
 
@@ -238,7 +213,6 @@ public class DbBackEndImpl implements Contractor, DbBackEnd {
             sqLiteDatabase.setTransactionSuccessful();
         }
         sqLiteDatabase.endTransaction();
-        sqLiteDatabase.close();
         return update;
     }
 
@@ -255,13 +229,12 @@ public class DbBackEndImpl implements Contractor, DbBackEnd {
             historyId = cursor.getString(cursor.getColumnIndex(Translate.ID));
         }
         cursor.close();
-        sqLiteDatabase.close();
         return historyId;
     }
 
     @Override
     public String getFavoriteId(DictDTO dictDTO) {
-        String historyId = "-1";
+        String favoriteId = "-1";
         sqLiteDatabase = mDbOpenHelper.getReadableDatabase();
         Cursor cursor = sqLiteDatabase.query(DB_TABLE_FAVORITES,
                 new String[]{Favorite.ID},
@@ -269,11 +242,10 @@ public class DbBackEndImpl implements Contractor, DbBackEnd {
                 new String[]{dictDTO.getTarget(), dictDTO.getLangs()},
                 null, null, null);
         if (cursor.moveToFirst()) {
-            historyId = cursor.getString(cursor.getColumnIndex(Favorite.ID));
+            favoriteId = cursor.getString(cursor.getColumnIndex(Favorite.ID));
         }
         cursor.close();
-        sqLiteDatabase.close();
-        return historyId;
+        return favoriteId;
     }
 
     @Override
@@ -285,7 +257,6 @@ public class DbBackEndImpl implements Contractor, DbBackEnd {
             lang = cursor.getString(cursor.getColumnIndex(Langs.NAME));
         }
         cursor.close();
-        sqLiteDatabase.close();
         return lang;
     }
 
@@ -297,7 +268,6 @@ public class DbBackEndImpl implements Contractor, DbBackEnd {
             count = cursor.getInt(0);
         }
         cursor.close();
-        sqLiteDatabase.close();
         return count;
     }
 

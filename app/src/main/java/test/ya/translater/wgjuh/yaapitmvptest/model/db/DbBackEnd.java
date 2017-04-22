@@ -19,9 +19,6 @@ interface DbBackEnd {
      */
     long insertHistoryTranslate(DictDTO dictDTO);
 
-    void setHistoryItemFavorite(DictDTO dictDTO, long favoriteId);
-
-
     void removeFavoriteItemAndUpdateHistory(DictDTO dictDTO);
 
     String getHistoryTranslate(String target, String langs);

@@ -10,7 +10,6 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
-@SuppressWarnings("DefaultFileTemplate")
 public abstract  class BasePresenter<T extends View> implements Presenter {
 
     private final CompositeSubscription compositeSubscription = new CompositeSubscription();

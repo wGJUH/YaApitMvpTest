@@ -2,6 +2,9 @@ package test.ya.translater.wgjuh.yaapitmvptest;
 
 import android.database.sqlite.SQLiteDatabase;
 
+import com.google.gson.Gson;
+
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,27 +29,35 @@ public class DbBackendTest {
 
     private DbBackEndImpl dbBackEndImpl;
     private SQLiteDatabase database;
+    private DictDTO dictDTO;
 
     @Before
     public void setUp() {
         DbOpenHelper dbOpenHelper = new DbOpenHelper(RuntimeEnvironment.application);
         dbBackEndImpl = new DbBackEndImpl(dbOpenHelper);
         MockitoAnnotations.initMocks(this);
+        dictDTO = new DictDTO();
+        dictDTO.setTarget("test");
+        dictDTO.setCommonTranslate("тест");
+        dictDTO.setLangs("en-ru");
     }
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule(); // говорим мокито, что надо создавать моки с аннотацией @Mock
 
     @Test
-    public void testInsertIntoDb() {
-        DictDTO dictDTO = new DictDTO();
-        dictDTO.setTarget("test");
-        dictDTO.setCommonTranslate("тест");
-        dictDTO.setLangs("en-ru");
+    public void insertHistoryTranslateTest() {
+
         dbBackEndImpl.insertHistoryTranslate(dictDTO);
 
-//        dictDTO = dbBackEndImpl.getHistoryTranslate("test", "en-ru");
-//        Assert.assertEquals(dictDTO.getCommonTranslate(), "тест");
+        String json = dbBackEndImpl.getHistoryTranslate("test", "en-ru");
+
+
+
+        DictDTO result = new Gson().fromJson(json,DictDTO.class);
+
+        Assert.assertEquals(dictDTO,result);
+/*//        Assert.assertEquals(dictDTO.getCommonTranslate(), "тест");
 //        Assert.assertEquals(dictDTO.getLangs(), "en-ru");
 //        Assert.assertEquals(dictDTO.getTarget(), "test");
 
@@ -57,7 +68,16 @@ public class DbBackendTest {
         }).subscribe(testSubscriber);
 
         testSubscriber.assertValue("");
-        testSubscriber.assertCompleted();
+        testSubscriber.assertCompleted();*/
+    }
+
+    @Test
+    public void setHistoryItemFavoriteTest(){
+        dbBackEndImpl.insertHistoryTranslate(dictDTO);
+        String json = dbBackEndImpl.getHistoryTranslate("test", "en-ru");
+        DictDTO result = new Gson().fromJson(json,DictDTO.class);
+        Assert.assertEquals(dictDTO,result);
+        dbBackEndImpl.setHistoryItemFavorite(dictDTO,10);
 
     }
 }

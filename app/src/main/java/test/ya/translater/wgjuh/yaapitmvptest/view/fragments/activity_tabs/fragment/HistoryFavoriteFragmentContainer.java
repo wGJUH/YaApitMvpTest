@@ -47,6 +47,7 @@ public class  HistoryFavoriteFragmentContainer extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         inits();
         toolbar.setTitle(getClass().getName());
     }
