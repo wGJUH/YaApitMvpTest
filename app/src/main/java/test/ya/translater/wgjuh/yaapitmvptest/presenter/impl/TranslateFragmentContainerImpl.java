@@ -10,6 +10,8 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.activity_tabs.Trans
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment.InputFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment.TranslateFragment;
 
+import static test.ya.translater.wgjuh.yaapitmvptest.model.Event.EventType.*;
+
 public class TranslateFragmentContainerImpl extends BasePresenter<TranslateContainerView> {
     private final Model model;
     private final EventBus eventBus;
@@ -18,6 +20,44 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TranslateConta
     public void onBindView(View view) {
         super.onBindView(view);
         updateToolbarLanguages(true);
+    }
+
+    @Override
+    public void onEvent(Event event) {
+        switch (event.eventType) {
+            case WORD_TRANSLATED:
+                DictDTO dictDTO = (DictDTO) event.content[0];
+                String[] langs = dictDTO.getLangs().split("-");
+
+                model.setTranslateLang(langs[1]);
+                model.setFromLang(langs[0]);
+
+                view.setToLanguageTextView(model.getLangByCode(langs[1]));
+                view.setFromLanguageTextView(model.getLangByCode(langs[0]));
+
+                view.notifyActivityHistoryShown();
+                break;
+            case CHANGE_LANGUAGES:
+                view.setToLanguageTextView(model.getLangByCode(model.getTranslateLang()));
+                view.setFromLanguageTextView(model.getLangByCode(model.getFromLang()));
+                break;
+            case TARGET_LANGUAGE:
+                model.setTranslateLang((String) event.content[0]);
+                eventBus.post(eventBus
+                        .createEvent(Event
+                                .EventType
+                                .CHANGE_LANGUAGES));
+                break;
+            case FROM_LANGUAGE:
+                model.setFromLang((String) event.content[0]);
+                eventBus.post(eventBus
+                        .createEvent(Event
+                                .EventType
+                                .CHANGE_LANGUAGES));
+                break;
+            default:
+                break;
+        }
     }
 
     public TranslateFragmentContainerImpl(Model model, EventBus eventBus) {
@@ -30,7 +70,7 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TranslateConta
         model.updateLanguages();
         view.getTranslateFragmentManager()
                 .beginTransaction()
-               .add(view.getInputFrame().getId(), inputFragment, inputFragment.getClass().getName())
+                .add(view.getInputFrame().getId(), inputFragment, inputFragment.getClass().getName())
                 .add(view.getTranslateFrame().getId(), translateFragment, translateFragment.getClass().getName())
                 .commit();
     }
@@ -49,53 +89,22 @@ public class TranslateFragmentContainerImpl extends BasePresenter<TranslateConta
         model.setFromLang(model.getTranslateLang());
         model.setTranslateLang(from);
         eventBus.post(eventBus
-                        .createEvent(Event
-                                .EventType
-                                .CHANGE_LANGUAGES));
+                .createEvent(Event
+                        .EventType
+                        .CHANGE_LANGUAGES));
     }
-
 
     public void updateToolbarLanguages(Boolean withSubscribe) {
         if (withSubscribe) {
             if (this.view != null) {
-                addSubscription(eventBus.subscribe(event -> {
-                    switch (event.eventType) {
-                        case WORD_TRANSLATED:
-                            DictDTO dictDTO = (DictDTO) event.content[0];
-                            String[] langs = dictDTO.getLangs().split("-");
-
-                            model.setTranslateLang(langs[1]);
-                            model.setFromLang(langs[0]);
-
-                            view.setToLanguageTextView(model.getLangByCode(langs[1]));
-                            view.setFromLanguageTextView(model.getLangByCode(langs[0]));
-
-                            view.notifyActivityHistoryShown();
-                            break;
-                        case CHANGE_LANGUAGES:
-                            view.setToLanguageTextView(model.getLangByCode(model.getTranslateLang()));
-                            view.setFromLanguageTextView(model.getLangByCode(model.getFromLang()));
-                            break;
-                        case TARGET_LANGUAGE:
-                            model.setTranslateLang((String) event.content[0]);
-                            eventBus.post(eventBus
-                                            .createEvent(Event
-                                                    .EventType
-                                                    .CHANGE_LANGUAGES));
-                            break;
-                        case FROM_LANGUAGE:
-                            model.setFromLang((String) event.content[0]);
-                            eventBus.post(eventBus
-                                            .createEvent(Event
-                                                    .EventType
-                                                    .CHANGE_LANGUAGES));
-                            break;
-                        default:
-                            break;
-                    }
-                }));
+                addSubscription(eventBus.subscribe(this::onEvent,
+                        WORD_TRANSLATED,
+                        CHANGE_LANGUAGES,
+                        TARGET_LANGUAGE,
+                        FROM_LANGUAGE
+                ));
             }
-        }else {
+        } else {
             view.setToLanguageTextView(model.getLangByCode(model.getTranslateLang()));
             view.setFromLanguageTextView(model.getLangByCode(model.getFromLang()));
         }

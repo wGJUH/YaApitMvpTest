@@ -1,6 +1,7 @@
 package test.ya.translater.wgjuh.yaapitmvptest.model.db;
 
 interface Contractor {
+
     String DB_NAME = "YaApiTest.sqlite";
     String DB_TABLE_LANGS = "Langs";
     String DB_TABLE_FAVORITES = "Bookmark";

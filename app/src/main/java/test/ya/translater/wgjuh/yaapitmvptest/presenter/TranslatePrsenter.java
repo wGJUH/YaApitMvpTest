@@ -20,6 +20,10 @@ public interface TranslatePrsenter extends Presenter {
      */
     void updateTranslateView(String translate);
 
+    /**
+     * Метод для получения значений перевода
+     * @param dictDTO объект из которого будут получены значения
+     */
     void updateRecylcerView(DictDTO dictDTO);
 
     void updateChecboxFavorite(boolean isFavorite);
@@ -34,7 +38,7 @@ public interface TranslatePrsenter extends Presenter {
 
     void restoreState(DictDTO dictDTO);
 
-    List<DefRecyclerItem> getDictionarySate();
+    List<DefRecyclerItem> getDictionaryState();
 
     void startRetry();
 

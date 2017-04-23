@@ -4,6 +4,7 @@ package test.ya.translater.wgjuh.yaapitmvptest.presenter.impl;
 import java.util.List;
 
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
+import test.ya.translater.wgjuh.yaapitmvptest.model.Event.EventType;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBusImpl;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Model;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
@@ -39,8 +40,8 @@ public class HistoryPresenterImpl extends BasePresenter<HistoryFavoriteView> imp
 
     @Override
     public void deleteFavorite(DictDTO dictDTO) {
-        eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.UPDATE_FAVORITE,dictDTO));
-        eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.DELETE_FAVORITE));
+        eventBusImpl.post(eventBusImpl.createEvent(EventType.UPDATE_FAVORITE,dictDTO));
+        eventBusImpl.post(eventBusImpl.createEvent(EventType.DELETE_FAVORITE));
     }
 
 
@@ -61,12 +62,14 @@ public class HistoryPresenterImpl extends BasePresenter<HistoryFavoriteView> imp
 
     @Override
     public void addFavorite(DictDTO dictDTO) {
-        eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.UPDATE_FAVORITE,dictDTO));
+        eventBusImpl.post(eventBusImpl.createEvent(EventType.UPDATE_FAVORITE,dictDTO));
     }
 
     @Override
     public void subscribeToBusEvents() {
-        addSubscription(eventBusImpl.subscribe(this::onEvent));
+        addSubscription(eventBusImpl.subscribe(this::onEvent,
+                EventType.WORD_TRANSLATED,
+                EventType.UPDATE_FAVORITE));
     }
 
     @Override
@@ -88,9 +91,6 @@ public class HistoryPresenterImpl extends BasePresenter<HistoryFavoriteView> imp
             case WORD_TRANSLATED:
                 addItem((DictDTO)event.content[0]);
                 break;
-            case WORD_UPDATED:
-                addItem((DictDTO)event.content[0]);
-                break;
             case UPDATE_FAVORITE:
                 updateFavorite((DictDTO)event.content[0]);
                 break;
@@ -105,13 +105,19 @@ public class HistoryPresenterImpl extends BasePresenter<HistoryFavoriteView> imp
 
     @Override
     public void deleteItem(DictDTO dictDTO) {
-        int removed = model.removeHistoryItem(dictDTO);
-        view.removeItemOnPosition(removed);
+        int position = model.removeHistoryItem(dictDTO);
+        if(model.getHistoryDictDTOs().size() != 0) {
+            view.removeItemOnPosition(position);
+        }else {
+            view.updateAllData();
+        }
+
+
     }
 
     @Override
     public void showTranslate(DictDTO dictDTO) {
-        eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.BTN_CLEAR_CLICKED));
-        eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.WORD_TRANSLATED,dictDTO));
+        eventBusImpl.post(eventBusImpl.createEvent(EventType.BTN_CLEAR_CLICKED));
+        eventBusImpl.post(eventBusImpl.createEvent(EventType.WORD_TRANSLATED,dictDTO));
     }
 }

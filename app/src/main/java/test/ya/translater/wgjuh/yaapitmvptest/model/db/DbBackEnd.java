@@ -10,43 +10,26 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.translate.LangsDirsModelDTO;
  */
 
 interface DbBackEnd {
-    /**
-     * Метод добавления объекта в историю
-     *
-     * @param dictDTO объект добавляемый в историю
-     * @return положение объекта в таблице DB_TABLE_HISTORY
-     * @see test.ya.translater.wgjuh.yaapitmvptest.model.db.Contractor.Translate
-     */
+
     long insertHistoryTranslate(DictDTO dictDTO);
 
-    void removeFavoriteItem(DictDTO dictDTO);
-
-    String getHistoryTranslate(String target, String langs);
-
-    /**
-     * Метод обнавляет список доступных языков в таблице Языки
-     *
-     * @param langsDirsModelDTO объект хранящий языки
-     * @see test.ya.translater.wgjuh.yaapitmvptest.model.db.Contractor.Langs
-     */
-    void upateLangs(LangsDirsModelDTO langsDirsModelDTO);
-
-    /**
-     * Метод возвращает хранимые в базе языки
-     *
-     * @return LangModel хранимые в базе языки
-     */
-    LangsDirsModelDTO getStoredLangs();
+    long insertFavoriteItem(DictDTO dictDTO);
 
     void removeHistoryItem(DictDTO dictDTO);
 
-    long insertFavoriteItem(DictDTO dictDTO);
+    void removeFavoriteItem(DictDTO dictDTO);
 
     List<String> getHistoryListTranslate();
 
     List<String> getFavoriteListTranslate();
 
-    long updateHistoryDate(String id);
+    String getHistoryTranslate(String target, String langs);
+
+    void upateLangs(LangsDirsModelDTO langsDirsModelDTO);
+
+    LangsDirsModelDTO getStoredLangs();
+
+    void updateHistoryDate(String id);
 
     String getHistoryId(DictDTO dictDTO);
 

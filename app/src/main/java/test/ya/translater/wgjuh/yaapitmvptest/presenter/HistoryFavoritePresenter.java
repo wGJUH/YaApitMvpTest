@@ -2,7 +2,6 @@ package test.ya.translater.wgjuh.yaapitmvptest.presenter;
 
 import java.util.List;
 
-import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
 
 /**
@@ -30,18 +29,30 @@ public interface HistoryFavoritePresenter extends Presenter {
      */
     void insertItemInNoseOfAdapterDataAndNotify(DictDTO dictDTO);
 
+    /**
+     * Добавление объекта перевода в адаптер
+     * @param dictDTO
+     */
     void addItem(DictDTO dictDTO);
 
+    /**
+     * Обновление флага избранного
+     * @param dictDTO какой объект необходимо обновить
+     */
     void updateFavorite(DictDTO dictDTO);
 
+    /**
+     * Создание события обновления избранного
+     * @param dictDTO объект который необходимо обновить
+     */
     void addFavorite(DictDTO dictDTO);
 
     void subscribeToBusEvents();
 
-   // void replaceItemsInAdapterData(int oldPosition, DictDTO dictDTO);
-
-    void onEvent(Event event);
-
+    /**
+     * Удалить объект из адаптера
+     * @param dictDTO объект который необходимо удалить
+     */
     void deleteItem(DictDTO dictDTO);
 
     void showTranslate(DictDTO dictDTO);

@@ -34,20 +34,41 @@ public class Event implements Parcelable {
     }
 
     public enum EventType {
+        /**
+         * Событие очищения последней абочей информации
+         */
         BTN_CLEAR_CLICKED,
+        /**
+         * Событие окончания перевода слова
+         */
         WORD_TRANSLATED,
-        WORD_UPDATED,
+        /**
+         * Событие изменения конечного языка перевода
+         */
         TARGET_LANGUAGE,
+        /**
+         * Событие изменения целевого языка перевода
+         */
         FROM_LANGUAGE,
+        /**
+         * Событие Обновления
+         */
         UPDATE_FAVORITE,
+        /**
+         * Событие удалить все из избранного с меткой "не избранное"
+         */
         DELETE_FAVORITE,
+        /**
+         * Событие начать перевод
+         */
         START_TRANSLATE,
+        /**
+         * Событие смены языков
+         */
         CHANGE_LANGUAGES
     }
-
     public final Object[] content;
     public final EventType eventType;
-
 
     public Event(EventType eventType, Object... content) {
         this.eventType = eventType;

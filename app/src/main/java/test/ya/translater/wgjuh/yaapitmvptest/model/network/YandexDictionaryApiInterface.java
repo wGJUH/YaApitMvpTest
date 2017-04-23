@@ -5,7 +5,9 @@ import retrofit2.http.Query;
 import rx.Observable;
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.LangsDirsModelDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.model.dict.DictDTO;
-
+/**
+ * <a href="https://tech.yandex.ru/dictionary/">API Словаря</a>
+ */
 public interface YandexDictionaryApiInterface {
 
     @GET("/api/v1/dicservice/getStoredLangs")

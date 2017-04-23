@@ -66,6 +66,7 @@ public class HistoryFavoriteRecyclerViewAdapter extends RecyclerView.Adapter<His
         return holder;
     }
 
+
     @Override
     public int getItemViewType(int position) {
         if(position == mValues.size()) {
@@ -84,6 +85,7 @@ public class HistoryFavoriteRecyclerViewAdapter extends RecyclerView.Adapter<His
             holder.langs.setText(mValues.get(position).getLangs().toUpperCase(Locale.getDefault()));
         }
     }
+
 
     @Override
     public int getItemCount() {

@@ -30,13 +30,33 @@ public class EventBusImpl implements EventBus {
         getEventBusForPost().onNext(event);
     }
 
+    /**
+     * Метод подписывающий на шину событий
+     * @param eventAction метод обрабатывающий каждое новое событие
+     * @param filter эвенты которые необходимо получить
+     * @return подписка
+     */
     @Override
-    public Subscription subscribe(Action1<Event> eventAction) {
-        return getEventBus().subscribe(eventAction);
+    public Subscription subscribe(Action1<Event> eventAction, Event.EventType...filter) {
+        return getEventBus().
+                filter(event -> {
+                    for (Event.EventType eventType:filter){
+                        if (event.eventType.equals(eventType)){
+                            return true;
+                        }
+                    }
+                    return false;
+                }).
+                subscribe(eventAction);
     }
 
-    @Override
-    public Subscription subscribe(Subscriber<Event> subscriber) {
+    /**
+     * Метод подписывающий на шину событий
+     * @param subscriber определенный подписчик
+     * @return подписка
+     */
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    Subscription subscribe(Subscriber<Event> subscriber) {
         return getEventBus().subscribe(subscriber);
     }
 
@@ -44,13 +64,18 @@ public class EventBusImpl implements EventBus {
         return eventBus;
     }
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     private Observable<Event> getEventBus() {
         return eventBus.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .unsubscribeOn(Schedulers.io());
     }
 
+    /**
+     *  Создает событие с определенным типом и данными
+     * @param eventType Тип события
+     * @param container контейнер данных
+     * @return  Event
+     */
     @Override
     public final Event createEvent(Event.EventType eventType, Object... container) {
         return new Event(eventType,container);

@@ -21,6 +21,8 @@ public interface HistoryFavoriteView extends View {
 
     void removeItemOnPosition(int position);
 
+    void removeItemRange(int start, int stop);
+
     void updateAdapterNose();
 
     void showDeleteDialog(DictDTO dictDTO);

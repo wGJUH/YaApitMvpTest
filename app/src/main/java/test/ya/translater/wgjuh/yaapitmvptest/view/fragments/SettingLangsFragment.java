@@ -81,7 +81,7 @@ public class SettingLangsFragment extends BaseFragment implements test.ya.transl
             }
 
     @Override
-    public void showError(String error) {
+    public void showError(int error) {
 
     }
 

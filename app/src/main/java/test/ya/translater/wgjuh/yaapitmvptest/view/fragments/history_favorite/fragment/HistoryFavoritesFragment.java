@@ -100,7 +100,7 @@ public class HistoryFavoritesFragment extends BaseFragment implements HistoryFav
     }
 
     @Override
-    public void showError(String error) {
+    public void showError(int error) {
 
     }
 
@@ -117,6 +117,11 @@ public class HistoryFavoritesFragment extends BaseFragment implements HistoryFav
     @Override
     public void removeItemOnPosition(int position) {
         viewAdapter.notifyItemRemoved(position);
+    }
+
+    @Override
+    public void removeItemRange(int start, int stop) {
+        viewAdapter.notifyItemRangeRemoved(start,stop);
     }
 
     @Override

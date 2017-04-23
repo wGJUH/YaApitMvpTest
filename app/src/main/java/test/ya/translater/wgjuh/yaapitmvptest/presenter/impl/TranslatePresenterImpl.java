@@ -15,6 +15,7 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import test.ya.translater.wgjuh.yaapitmvptest.App;
+import test.ya.translater.wgjuh.yaapitmvptest.R;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Event;
 import test.ya.translater.wgjuh.yaapitmvptest.model.EventBus;
 import test.ya.translater.wgjuh.yaapitmvptest.model.Model;
@@ -28,6 +29,7 @@ import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.TranslateView;
 
 import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
+import static test.ya.translater.wgjuh.yaapitmvptest.model.Event.EventType.*;
 
 public class TranslatePresenterImpl extends BasePresenter<TranslateView> implements TranslatePrsenter {
 
@@ -45,7 +47,15 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
     @Override
     public void onBindView(View view) {
         super.onBindView(view);
-        addSubscription(eventBus.subscribe(event -> {
+        addSubscription(eventBus.subscribe(this::onEvent,
+                BTN_CLEAR_CLICKED,
+                START_TRANSLATE,
+                WORD_TRANSLATED,
+                UPDATE_FAVORITE));
+    }
+
+    @Override
+    public void onEvent(Event event) {
             switch (event.eventType) {
                 case BTN_CLEAR_CLICKED:
                     showLicenseUnderCommonTranslate(false);
@@ -65,9 +75,6 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
                     restoreState((DictDTO) event.content[0]);
                     model.updateHistoryDate(((DictDTO) event.content[0]).getId());
                     break;
-                case WORD_UPDATED:
-                    restoreState((DictDTO) event.content[0]);
-                    break;
                 case UPDATE_FAVORITE:
                     if (model.getLastTranslate() != null && model.getLastTranslate().equals(event.content[0])) {
                         setFavorite(!((DictDTO) event.content[0]).getFavorite().equals("-1"));
@@ -76,7 +83,6 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
                 default:
                     break;
             }
-        }));
     }
 
     private void showLicenseUnderCommonTranslate(boolean show) {
@@ -87,6 +93,10 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
         model.initZipTranslate(target, langs);
     }
 
+    /**
+     * Метод запускаает процесс перевода. Сначала поиск ведется в локадьных массивах,
+     * после этого если перевод не надйен запускается процесс перевода через интернет.
+     */
     @Override
     public void startTranslate() {
         view.hideError();
@@ -104,7 +114,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
 
         if (historyTranslate != null) {
             model.updateHistoryDate(historyTranslate.getId());
-            eventBus.post(eventBus.createEvent(Event.EventType.WORD_UPDATED, historyTranslate));
+            eventBus.post(eventBus.createEvent(Event.EventType.WORD_TRANSLATED, historyTranslate));
         } else if (favoriteTranslate != null) {
             model.saveToDB(favoriteTranslate)
                     .subscribe(dictDTO -> eventBus
@@ -116,6 +126,10 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
         }
     }
 
+    /**
+     * Метод запускает процесс перевода через интернет, в случае успеха сгенерирует
+     * событие окончания перевода, в случае ошибки, заставит view показать ошибку
+     */
     private void translateFromInternet() {
         subscription = model
                 .getZipTranslate()
@@ -123,7 +137,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
                 .doOnTerminate(() -> view.showProgressBar(false)).flatMap(model::saveToDB)
                 .subscribe(dictDTO -> eventBus.post(eventBus.createEvent(Event.EventType.WORD_TRANSLATED, dictDTO))
                         , throwable -> {
-                            view.showError("Ошибка соединения.\n\nПроверьте подключение к\nИнтернету и повторите попытку.");
+                            view.showError(R.string.fragment_error_text);
                             throwable.printStackTrace();
                         },
                         model::freeCachedOBservable);
@@ -141,6 +155,11 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
         view.showTranslate(s);
     }
 
+    /**
+     * Метож Запускает процесс извлечения данных из объекта DictDto
+     * и формирует из них объект для отображения словарной статьи
+     * @param dictDTO объект из которого будут получены значения
+     */
     @Override
     public void updateRecylcerView(DictDTO dictDTO) {
         dictDTO.getDef()
@@ -234,6 +253,10 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
         }
     }
 
+    /**
+     * Метод восстанавливает отображение послднего объекта, либо если объекта нет
+     * то пытается получить объект из интернета по кешированном запросу
+     */
     @Override
     public void restoreState() {
         if (model.getLastTranslate() != null) {
@@ -259,7 +282,7 @@ public class TranslatePresenterImpl extends BasePresenter<TranslateView> impleme
     }
 
     @Override
-    public List<DefRecyclerItem> getDictionarySate() {
+    public List<DefRecyclerItem> getDictionaryState() {
         return defRecyclerItems;
     }
 

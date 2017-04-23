@@ -33,6 +33,11 @@ public class SettingsPresenterImpl extends BasePresenter<SettingLangsFragment> {
         initRecyclerView();
     }
 
+    @Override
+    public void onEvent(Event event) {
+
+    }
+
     public void sentLanguageChangedEvent(Event.EventType eventType, String code) {
         eventBus.post(eventBus.createEvent(eventType, code));
     }

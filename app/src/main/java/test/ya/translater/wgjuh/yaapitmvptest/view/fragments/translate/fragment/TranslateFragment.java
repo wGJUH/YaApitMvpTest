@@ -59,7 +59,7 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
         super.onViewCreated(view, savedInstanceState);
         translatePresenterImpl = new TranslatePresenterImpl(ModelImpl.getInstance(), EventBusImpl.getInstance());
         translatePresenterImpl.onBindView(this);
-        viewAdapter = new DictionaryTranslateRecyclerViewAdapter(translatePresenterImpl.getDictionarySate(), getActivity());
+        viewAdapter = new DictionaryTranslateRecyclerViewAdapter(translatePresenterImpl.getDictionaryState(), getActivity());
         translatePresenterImpl.restoreState();
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         recyclerView.setAdapter(viewAdapter);
@@ -135,8 +135,8 @@ public class TranslateFragment extends BaseFragment implements TranslateView {
     }
 
     @Override
-    public void showError(String error) {
-        error_textView.setText(error);
+    public void showError(int error) {
+        error_textView.setText(getString(error));
         error_frame.setVisibility(View.VISIBLE);
     }
 

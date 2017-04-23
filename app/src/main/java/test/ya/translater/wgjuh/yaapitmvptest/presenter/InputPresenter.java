@@ -12,7 +12,8 @@ public interface InputPresenter extends Presenter {
      */
     void startTranslate();
     /**
-     * Метод для очистки поля ввода переводимого текста
+     * Метод для запуска процесса очистки полей ввода переводимого текста
+     * и перевода
      */
     void clearInput();
 

@@ -26,7 +26,9 @@ import test.ya.translater.wgjuh.yaapitmvptest.model.network.YandexTranslateApiMo
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.LangsDirsModelDTO;
 import test.ya.translater.wgjuh.yaapitmvptest.model.translate.TranslateDTO;
 
-
+/**
+ * Модель для работы с данными приложения
+ */
 public class ModelImpl implements Model {
 
     private static ModelImpl model;
@@ -54,7 +56,7 @@ public class ModelImpl implements Model {
         this.yandexDictionaryApiInterface = yandexDictionaryApiInterface;
         dbBackEndImpl = dbBackEnd;
         this.context = context;
-        schedulersTransformer = o -> ((Observable) o).subscribeOn(Schedulers.io())
+        schedulersTransformer = o -> o.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .unsubscribeOn(Schedulers.io());
         initArrays();
@@ -118,19 +120,17 @@ public class ModelImpl implements Model {
         historyDictDTOs.add(0, historyDictDTO);
     }
 
-
     @Override
     public void insertFavoriteDictDTOs(DictDTO favoriteDictDTO) {
         favoriteDictDTOs.add(0, favoriteDictDTO);
     }
-
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     ModelImpl(DbBackEndImpl dbBackendImpl) {
         this.dbBackEndImpl = dbBackendImpl;
         this.yandexTranslateApiInterface = null;
         this.yandexDictionaryApiInterface = null;
-        schedulersTransformer = o -> ((Observable) o).subscribeOn(Schedulers.io())
+        schedulersTransformer = o -> o.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .unsubscribeOn(Schedulers.io());
     }
@@ -146,7 +146,14 @@ public class ModelImpl implements Model {
         return model;
     }
 
-
+    /**
+     * Метод создает запрос на перевод через Yandex translate api
+     *
+     * @param target   цель перевода
+     * @param language направление перевода в формате "en-ru"
+     * @return Результат запроса.
+     * @see <a href="https://tech.yandex.ru/translate/">API Переводчика</a>
+     */
     @Override
     public Observable<TranslateDTO> getTranslateForLanguage(String target, String language) {
         return yandexTranslateApiInterface
@@ -154,6 +161,14 @@ public class ModelImpl implements Model {
                 .compose(applySchedulers());
     }
 
+    /**
+     * Метод создает запрос на первеод через Yandex dictionary api
+     *
+     * @param target   цель перевода
+     * @param language направление перевода в формате "en-ru"
+     * @return Результат запроса.
+     * @see <a href="https://tech.yandex.ru/dictionary/">API Словаря</a>
+     */
     @Override
     public Observable<DictDTO> getDicTionaryTranslateForLanguage(String target, String language) {
         return yandexDictionaryApiInterface
@@ -161,6 +176,13 @@ public class ModelImpl implements Model {
                 .compose(applySchedulers());
     }
 
+    /**
+     * Получает перевод и базы истории
+     *
+     * @param target цель перевода
+     * @param langs  направление перевода в формате "en-ru"
+     * @return Хранимое в базе значение или Null
+     */
     @Override
     public DictDTO getHistoryTranslate(String target, String langs) {
         DictDTO dictDTO = new DictDTO();
@@ -174,6 +196,15 @@ public class ModelImpl implements Model {
         }
     }
 
+    /**
+     * Метод запрашивает список языков из базы данных.
+     * <p>В случае если в базе нет языков они будут немедленно получены
+     * из локального хранилища, после этого делается запрос
+     * к yandex translate api для получения поддерживаемых языков
+     * относительно текущей локализации телефона
+     *
+     * @see <a href="https://tech.yandex.ru/translate/">API Переводчика</a>
+     */
     @Override
     public void updateLanguages() {
         langsDirsModelDTOs = dbBackEndImpl.getStoredLangs();
@@ -201,6 +232,14 @@ public class ModelImpl implements Model {
         return langsDirsModelDTOs;
     }
 
+    /**
+     * Метод проверяет есть ли в базе данный объект,
+     * если да, то возвращает данный объект.
+     * <p>В случае если
+     * объект отсутствует, он будет сохранен в бд.
+     *
+     * @param dictDTO объект который необходмимо сохранить в бд.
+     */
     @Override
     public Observable<DictDTO> saveToDB(DictDTO dictDTO) {
         if (dbBackEndImpl.getHistoryId(dictDTO).equals("-1")) {
@@ -215,23 +254,32 @@ public class ModelImpl implements Model {
         }
     }
 
+    /**
+     * Метод устанавливает флаг избранное для целевого объекта
+     * <ul>
+     * <li><B>В случае когда объект есть в таблице избранное:</B></li>
+     * <ul>
+     * <li>Объект удаляется из таблицы избранное</li>
+     * <li>Объекту выставляется признак отсутствия в избранном</li>
+     * <li>В локальном хранилище избранного обновляется объект</li>
+     * </ul>
+     * <li><B>В случае когда объекта нет в таблице избранное:</B></li>
+     * <ul>
+     * <li>Объект добавляется в таблицу избранное</li>
+     * <li>Добавляется в локальное хранилище или обновляется уже существующий элемент</li>
+     * </ul>
+     * </ul>
+     */
     @Override
     public void setFavorites(DictDTO dictDTO) {
-        long result = -1;
         if (!dbBackEndImpl.getFavoriteId(dictDTO).equals("-1")) {
             dbBackEndImpl.removeFavoriteItem(dictDTO);
             dictDTO.setFavorite("-1");
             favoriteDictDTOs.set(favoriteDictDTOs.indexOf(dictDTO), dictDTO);
         } else {
             dictDTO.setFavorite(Long.toString(dbBackEndImpl.insertFavoriteItem(dictDTO)));
-            if (!dictDTO.getFavorite().equals("-1") && !dbBackEndImpl.getHistoryId(dictDTO).equals("-1")) {
-                dictDTO.setId(dbBackEndImpl.getHistoryId(dictDTO));
-                if (favoriteDictDTOs.contains(dictDTO)) {
-                    favoriteDictDTOs.set(favoriteDictDTOs.indexOf(dictDTO), dictDTO);
-                } else {
-                    insertFavoriteDictDTOs(dictDTO);
-                }
-            } else if (favoriteDictDTOs.contains(dictDTO)) {
+            dictDTO.setId(dbBackEndImpl.getHistoryId(dictDTO));
+            if (favoriteDictDTOs.contains(dictDTO)) {
                 favoriteDictDTOs.set(favoriteDictDTOs.indexOf(dictDTO), dictDTO);
             } else {
                 insertFavoriteDictDTOs(dictDTO);
@@ -239,11 +287,22 @@ public class ModelImpl implements Model {
         }
     }
 
+    /**
+     * Метод обновляет дату последнего просмотра слова в таблице истории
+     * @param id идентификатор объекта в таблице который необходимо обновить
+     */
     @Override
     public void updateHistoryDate(String id) {
         dbBackEndImpl.updateHistoryDate(id);
     }
 
+    /**
+     * Метод инициализирует запрос на перевод с использованием
+     * <a href="https://tech.yandex.ru/dictionary/">API Словаря</a>,
+     * <a href="https://tech.yandex.ru/translate/">API Переводчика</a>
+     * @param target цель перевода
+     * @param lang   направление перевода в виде "en-ru"
+     */
     public void initZipTranslate(String target, String lang) {
         cachedRequest = getDicTionaryTranslateForLanguage(target, lang)
                 .compose(applySchedulers())
@@ -276,6 +335,12 @@ public class ModelImpl implements Model {
         return position;
     }
 
+    /**
+     * Методполучает объект из временного локального хранилища favoriteDictDTOs
+     * @param targetText               цель перевода
+     * @param translateDirection    направление перевода в виде "en-ru"
+     * @return результат перевода или null
+     */
     @Override
     public DictDTO getFavoriteTranslate(String targetText, String translateDirection) {
         DictDTO dictDTO = new DictDTO();

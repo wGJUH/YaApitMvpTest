@@ -3,7 +3,7 @@
     <string name="choose_language">Выберите язык</string>
     <string name="tab_history">История</string>
     <string name="tab_favorite">Избранное</string>
-    <string name="fragment_error_text">Ошибка соединения. Проверьте подключение к Интернету и повторите попытку.</string>
+    <string name="fragment_error_text">Ошибка соединения.\n\nПроверьте подключение к \nИнтернету и повторите попытку.</string>
     <string name="translate_error">ПОВТОРИТЬ</string>
     <string name="content_description_btn_clear">Очистить</string>
     <string name="content_description_btn_change_langs">Сменить языки</string>

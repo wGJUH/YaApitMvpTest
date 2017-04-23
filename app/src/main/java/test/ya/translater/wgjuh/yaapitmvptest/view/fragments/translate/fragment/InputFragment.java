@@ -3,7 +3,6 @@ package test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.fragment
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +19,6 @@ import test.ya.translater.wgjuh.yaapitmvptest.presenter.InputPresenter;
 import test.ya.translater.wgjuh.yaapitmvptest.presenter.Presenter;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.BaseFragment;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.translate.InputView;
-
-import static test.ya.translater.wgjuh.yaapitmvptest.DATA.TAG;
 
 
 public class InputFragment extends BaseFragment implements InputView {
@@ -71,8 +68,7 @@ public class InputFragment extends BaseFragment implements InputView {
 
 
     @Override
-    public void showError(String e) {
-        Log.e(TAG, "Error: " + e);
+    public void showError(int error) {
     }
 
     @Override

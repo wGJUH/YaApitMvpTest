@@ -17,6 +17,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+
         db.execSQL("CREATE TABLE " + DB_TABLE_LANGS + "(" +
                 Contractor.Langs.ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, " +
                 Contractor.Langs.CODE + " TEXT UNIQUE NOT NULL, " +

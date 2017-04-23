@@ -29,7 +29,13 @@ public class DbBackEndImpl implements Contractor, DbBackEnd {
     public DbBackEndImpl(DbOpenHelper dbOpenHelper) {
         mDbOpenHelper = dbOpenHelper;
     }
-
+    /**
+     * Метод добавления объекта в историю
+     *
+     * @param dictDTO объект добавляемый в историю
+     * @return положение объекта в таблице DB_TABLE_HISTORY
+     * @see test.ya.translater.wgjuh.yaapitmvptest.model.db.Contractor.Translate
+     */
     @Override
     public long insertHistoryTranslate(DictDTO dictDTO) {
         Long inserted;
@@ -47,7 +53,13 @@ public class DbBackEndImpl implements Contractor, DbBackEnd {
         sqLiteDatabase.endTransaction();
         return inserted;
     }
-
+    /**
+     * Метод добавления объекта в избранное
+     *
+     * @param dictDTO объект добавляемый в избранное
+     * @return положение объекта в таблице DB_TABLE_FAVORITES
+     * @see test.ya.translater.wgjuh.yaapitmvptest.model.db.Contractor.Translate
+     */
     @Override
     public long insertFavoriteItem(DictDTO dictDTO) {
         Long inserted;
@@ -66,6 +78,13 @@ public class DbBackEndImpl implements Contractor, DbBackEnd {
         return inserted;
     }
 
+    /**
+     * Метод получения перевода из таблицы истории по слову перевода и языку
+     *
+     * @param target слово которое переводили
+     * @param langs  направление перевода в формате "en-ru"
+     * @return json строку перевода
+     */
     @Override
     public String getHistoryTranslate(String target, String langs) {
         String json = null;
@@ -81,6 +100,12 @@ public class DbBackEndImpl implements Contractor, DbBackEnd {
         return json;
     }
 
+    /**
+     * Метод обновляет список доступных языков в таблице Языки
+     *
+     * @param langsDirsModelDTO объект хранящий языки
+     * @see test.ya.translater.wgjuh.yaapitmvptest.model.db.Contractor.Langs
+     */
     @Override
     public void upateLangs(LangsDirsModelDTO langsDirsModelDTO) {
         long inserted = -1;
@@ -100,6 +125,10 @@ public class DbBackEndImpl implements Contractor, DbBackEnd {
         sqLiteDatabase.endTransaction();
     }
 
+    /**
+     * Метод возвращает хранимые в базе языки
+     * @return хранимые в базе языки
+     */
     @Override
     public LangsDirsModelDTO getStoredLangs() {
         LangsDirsModelDTO langModel = new LangsDirsModelDTO();
@@ -114,6 +143,11 @@ public class DbBackEndImpl implements Contractor, DbBackEnd {
         return langModel;
     }
 
+    /**
+     * Метод удаления объекта из таблицы избранное
+     *
+     * @param dictDTO объект который необходимо удалить
+     */
     @Override
     public void removeHistoryItem(DictDTO dictDTO) {
         int deleted;
@@ -126,6 +160,11 @@ public class DbBackEndImpl implements Contractor, DbBackEnd {
         sqLiteDatabase.endTransaction();
     }
 
+    /**
+     * Метод удаления объекта из таблицы истории
+     *
+     * @param dictDTO объект который необходимо удалить
+     */
     @Override
     public void removeFavoriteItem(DictDTO dictDTO) {
         sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
@@ -137,6 +176,10 @@ public class DbBackEndImpl implements Contractor, DbBackEnd {
         sqLiteDatabase.endTransaction();
     }
 
+    /**
+     * Метод получения списка переведенных слов из таблицы история
+     * @return список всех слов из таблицы история в формате json
+     */
     @Override
     public List<String> getHistoryListTranslate() {
         ArrayList<String> dictDTOs = new ArrayList<>();
@@ -151,7 +194,10 @@ public class DbBackEndImpl implements Contractor, DbBackEnd {
         cursor.close();
         return dictDTOs;
     }
-
+    /**
+     * Метод получения списка переведенных слов из таблицы избранное
+     * @return список всех слов из таблицы избранное в формате json
+     */
     @Override
     public List<String> getFavoriteListTranslate() {
         ArrayList<String> dictDTOs = new ArrayList<>(getCountForTable(DB_TABLE_HISTORY));
@@ -167,8 +213,12 @@ public class DbBackEndImpl implements Contractor, DbBackEnd {
         return dictDTOs;
     }
 
+    /**
+     * Обновляет поле дата переведенного слова в таблице история
+     * @param id идентификатор слова в таблице история
+     */
     @Override
-    public long updateHistoryDate(String id) {
+    public void updateHistoryDate(String id) {
         long update;
         ContentValues contentValues = new ContentValues();
         sqLiteDatabase = mDbOpenHelper.getWritableDatabase();
@@ -179,9 +229,13 @@ public class DbBackEndImpl implements Contractor, DbBackEnd {
             sqLiteDatabase.setTransactionSuccessful();
         }
         sqLiteDatabase.endTransaction();
-        return update;
     }
 
+    /**
+     * Метод получения идентификатора из таблицы история по целевому объекту
+     * @param dictDTO цель поиска
+     * @return идентиыикатор
+     */
     @Override
     public String getHistoryId(DictDTO dictDTO) {
         String historyId = "-1";
@@ -197,7 +251,11 @@ public class DbBackEndImpl implements Contractor, DbBackEnd {
         cursor.close();
         return historyId;
     }
-
+    /**
+     * Метод получения идентификатора из таблицы избранное по целевому объекту
+     * @param dictDTO цель поиска
+     * @return идентиыикатор
+     */
     @Override
     public String getFavoriteId(DictDTO dictDTO) {
         String favoriteId = "-1";
@@ -214,6 +272,11 @@ public class DbBackEndImpl implements Contractor, DbBackEnd {
         return favoriteId;
     }
 
+    /**
+     * Метод получения количества строк
+     * @param tableName название таблицы для счета
+     * @return количество строк
+     */
     private int getCountForTable(String tableName) {
         int count = 0;
         sqLiteDatabase = mDbOpenHelper.getReadableDatabase();

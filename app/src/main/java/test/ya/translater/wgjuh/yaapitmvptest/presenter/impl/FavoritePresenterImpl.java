@@ -11,6 +11,8 @@ import test.ya.translater.wgjuh.yaapitmvptest.presenter.HistoryFavoritePresenter
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.View;
 import test.ya.translater.wgjuh.yaapitmvptest.view.fragments.history_favorite.HistoryFavoriteView;
 
+import static test.ya.translater.wgjuh.yaapitmvptest.model.Event.EventType.*;
+
 /**
  * Created by wGJUH on 16.04.2017.
  */
@@ -34,7 +36,7 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
 
     @Override
     public void deleteFavorite(DictDTO dictDTO) {
-        eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.UPDATE_FAVORITE, dictDTO));
+        eventBusImpl.post(eventBusImpl.createEvent(UPDATE_FAVORITE, dictDTO));
     }
 
     @Override
@@ -64,7 +66,7 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
 
     @Override
     public void addFavorite(DictDTO dictDTO) {
-        eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.UPDATE_FAVORITE, dictDTO));
+        eventBusImpl.post(eventBusImpl.createEvent(UPDATE_FAVORITE, dictDTO));
     }
 
     @Override
@@ -75,7 +77,9 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
 
     @Override
     public void subscribeToBusEvents() {
-        addSubscription(eventBusImpl.subscribe(this::onEvent));
+        addSubscription(eventBusImpl.subscribe(this::onEvent,
+                UPDATE_FAVORITE,
+                DELETE_FAVORITE));
     }
 
     private void removeAllNotFavorite() {
@@ -115,13 +119,13 @@ public class FavoritePresenterImpl extends BasePresenter<HistoryFavoriteView> im
 
     @Override
     public void deleteItem(DictDTO dictDTO) {
-        eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.UPDATE_FAVORITE, dictDTO));
+        eventBusImpl.post(eventBusImpl.createEvent(UPDATE_FAVORITE, dictDTO));
     }
 
     @Override
     public void showTranslate(DictDTO dictDTO) {
-        eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.BTN_CLEAR_CLICKED));
-        eventBusImpl.post(eventBusImpl.createEvent(Event.EventType.WORD_TRANSLATED,dictDTO));
+        eventBusImpl.post(eventBusImpl.createEvent(BTN_CLEAR_CLICKED));
+        eventBusImpl.post(eventBusImpl.createEvent(WORD_TRANSLATED,dictDTO));
     }
 
     @Override
