@@ -56,7 +56,7 @@ public class ModelImpl implements Model {
         this.yandexDictionaryApiInterface = yandexDictionaryApiInterface;
         dbBackEndImpl = dbBackEnd;
         this.context = context;
-        schedulersTransformer = o -> o.subscribeOn(Schedulers.io())
+        schedulersTransformer = o -> ((Observable) o).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .unsubscribeOn(Schedulers.io());
         initArrays();
@@ -130,7 +130,7 @@ public class ModelImpl implements Model {
         this.dbBackEndImpl = dbBackendImpl;
         this.yandexTranslateApiInterface = null;
         this.yandexDictionaryApiInterface = null;
-        schedulersTransformer = o -> o.subscribeOn(Schedulers.io())
+        schedulersTransformer = o -> ((Observable) o).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .unsubscribeOn(Schedulers.io());
     }
