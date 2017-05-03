@@ -38,12 +38,12 @@
 ---
 |SpashScreen|Окно перевода|Пример перевода|
 |:--------:|:-------:|:-----:|
-<img src="https://goo.gl/54cxqu" width="300" height="500">|<img src="https://goo.gl/jrHt4O" width="300" height="500">|<img src="https://goo.gl/bQykjR" width="300" height="500">|
+<img src="https://cloud.githubusercontent.com/assets/22330346/25656347/4d7e47b4-3001-11e7-9036-3cdbfd8fdb2f.jpg" width="300" height="500">|<img src="https://cloud.githubusercontent.com/assets/22330346/25656424/a11da3ba-3001-11e7-9a5f-29a2eab0c1bf.jpg" width="300" height="500">|<img src="https://cloud.githubusercontent.com/assets/22330346/25656369/5fc52690-3001-11e7-986e-e60858ffe7f7.jpg" width="300" height="500">|
 
 |История|Избранное|Ошибка|
 |:--------:|:-------:|:-----:|
-<img src="https://goo.gl/JEZmp6" width="300" height="500">|<img src="https://goo.gl/cfVmxu" width="300" height="500">|<img src="https://goo.gl/jtsj5Q" width="300" height="500">|
+<img src="https://cloud.githubusercontent.com/assets/22330346/25656485/e67fc6d6-3001-11e7-92ec-82fdff0088c2.jpg" width="300" height="500">|<img src="https://cloud.githubusercontent.com/assets/22330346/25656349/4f853e64-3001-11e7-9c8e-03a42c3de4e6.jpg" width="300" height="500">|<img src="https://cloud.githubusercontent.com/assets/22330346/25656354/556f9cac-3001-11e7-9115-fc816abd145e.jpg" width="300" height="500">|
 
-|Landscape перевод|Landscape Ошибка|
-|:--------:|:-------:|
-<img src="https://goo.gl/LLfLtr" width="450" height="250">|<img src="https://goo.gl/J4TiB5" width="450" height="250">
+|Пример Работы|
+|:--------:|
+<img src="https://cloud.githubusercontent.com/assets/22330346/25656292/0334fe0a-3001-11e7-92ab-94dbe91f9776.gif" width="300" height="500">
