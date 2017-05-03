@@ -44,6 +44,3 @@
 |:--------:|:-------:|:-----:|
 <img src="https://cloud.githubusercontent.com/assets/22330346/25656485/e67fc6d6-3001-11e7-92ec-82fdff0088c2.jpg" width="300" height="500">|<img src="https://cloud.githubusercontent.com/assets/22330346/25656349/4f853e64-3001-11e7-9c8e-03a42c3de4e6.jpg" width="300" height="500">|<img src="https://cloud.githubusercontent.com/assets/22330346/25656354/556f9cac-3001-11e7-9115-fc816abd145e.jpg" width="300" height="500">|
 
-|Пример Работы|
-|:--------:|
-<img src="https://cloud.githubusercontent.com/assets/22330346/25656292/0334fe0a-3001-11e7-92ab-94dbe91f9776.gif" width="300" height="500">
